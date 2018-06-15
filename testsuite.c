@@ -33,7 +33,7 @@ void get_entry_index_test(void)
 	CU_ASSERT_EQUAL(index, 5);
 	
 	index = get_entry_index(node, 5);
-	CU_ASSERT_EQUAL(index, 6);
+	CU_ASSERT_EQUAL(index, 5);
 	
 	
 	index = get_entry_index(node, 9);

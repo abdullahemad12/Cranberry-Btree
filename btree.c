@@ -25,7 +25,6 @@ static void* bt_search_helper(bt_node_t* node, int key, int n);
 static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry);
 static void destroy_bt_helper(bt_node_t* root, int n, void (* done)(void*));
 static bool is_root(btree_t* bt, bt_node_t* node);
-static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key);
 static void bt_merge_children(btree_t* bt, bt_node_t** parent_ptr, bt_node_t* node, int node_ind);
 static void* bt_delete_entry_helper(bt_node_t* node, int key, int n);
 static int get_last_entry_index(bt_node_t* node, int n);
@@ -573,7 +572,7 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* node, int key)
 		/*delete from intermediate node*/
 		void* object = bt_node_search_helper(node->entry, key, 0, node->len);
 		if(object != NULL)
-			return bt_delete_int_case(bt, node, key);
+			return bt_delete_int_case(bt, &node, key);
 	}
 	return bt_delete_helper(bt, node->children[next_node_index], key);
 	
@@ -596,7 +595,7 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key)
 	int min_n = is_leaf(child1->children[0]) ? bt->n / 2 : ceil_fn(((double) bt->n) / 2.0) - 1;
 	
 	/*tries to borrow from the children if it can */
-	if(child1->len > bt->n)
+	if(child1->len > min_n)
 	{
 		int last_ent_ind = get_last_entry_index(child1, bt->n);
 		bt_entry_t* entry_cpy = cpy_entry(child1->entry[last_ent_ind]);
@@ -608,7 +607,7 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key)
 		node_insert_entry(node, entry_cpy, bt->n);
 		return object;
 	}
-	else if(child2->len > bt->n)
+	else if(child2->len > min_n)
 	{
 		/*does the same*/
 		bt_entry_t* entry_cpy = cpy_entry(child2->entry[0]);
