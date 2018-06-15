@@ -13,11 +13,12 @@ static int ceil_fn(double n);
 static bool is_full_node(bt_node_t* node, int n);
 static void print_node(bt_node_t* node, int n);
 static bool print_level(bt_node_t* root, int n, int level, int currentLevel);
-static int node_insert_entry(bt_node_t* node, bt_entry_t* entry, int n);
+static int node_insert_entry(bt_node_t* node, bt_entry_t* entry, bool shift,  int n);
 static bt_entry_t* bt_split_child(bt_node_t* node, bt_node_t** splitted_node, int n);
 static int get_next_node_index(bt_node_t* node, int key, int n);
 static void node_shift_right(bt_node_t* node, int i,  int n);
 static void node_shift_left(bt_node_t* node, int i,  int n);
+static void node_shift_left_without_children(bt_node_t* node, int i,  int n);
 static bt_node_t* split_full_root(bt_node_t* old_root, int n);
 static bool is_leaf(bt_node_t* node);
 static void* bt_node_search_helper(bt_entry_t* entries[], int key, int min, int max);
@@ -31,11 +32,12 @@ static int get_last_entry_index(bt_node_t* node, int n);
 static int min(int x, int y);
 static bt_node_t* merge_leaf_nodes(bt_node_t* node1, bt_node_t* node2, int n);
 static void node_entry_set_null(bt_node_t* node, int entry_index, int n);
-static void children_shift_left(bt_node_t* nodes[], int n);
 static void children_shift_right(bt_node_t* nodes[], int n);
 static bt_entry_t* cpy_entry(bt_entry_t* entry_original);
 static int get_entry_index(bt_node_t* node, int key);
 static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key);
+static void fix_pointers_gaps(bt_node_t* node, int n);
+static void node_shift_right_without_children(bt_node_t* node, int i,  int n);
 
 
 /*
@@ -96,7 +98,19 @@ void* bt_search(btree_t* bt, int key)
 {
 	assert(bt != NULL);
 	return bt_search_helper(bt->root, key, bt->n);
-} 
+}
+
+/**
+  * btree_t*, int -> void*
+  * EFFECTS: Given a key, removes an object from the tree
+  * MODIFIES: btree_t*
+  * RETURNS: returns the object or NULL if no such a key was found
+  */
+void* bt_delete(btree_t* bt, int key)
+{
+	assert(bt != NULL);
+	return bt_delete_helper(bt, bt->root, key);
+}
 
 
 /**
@@ -252,7 +266,7 @@ static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry)
 	{
 		root = bt_create_node(bt->n);
 		assert(root != NULL);
-		node_insert_entry(root, entry, bt->n);
+		node_insert_entry(root, entry, true, bt->n);
 		bt->root = root;
 		return;
 	}
@@ -274,7 +288,7 @@ static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry)
 	/*this is a leaf (can be a root and a leaf at the same time)*/
 	if(is_leaf(root->children[child_index]))
 	{
-		node_insert_entry(root, entry, bt->n);
+		node_insert_entry(root, entry, true, bt->n);
 	}
 	else
 	{
@@ -284,7 +298,7 @@ static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry)
 		/* a split happened*/
 		if(median_entry != NULL)
 		{
-			int splitted_node_ptr_index = node_insert_entry(root, median_entry, bt->n);
+			int splitted_node_ptr_index = node_insert_entry(root, median_entry, true, bt->n);
 			root->children[splitted_node_ptr_index] = splitted_node;
 			child_index = get_next_node_index(root, entry->key, bt->n); /*recalculates the path*/
 		}
@@ -310,7 +324,7 @@ static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry)
 		{
 			bt_node_t* new_root = bt_create_node(n);
 			assert(new_root != NULL);
-			node_insert_entry(new_root, root_entry, n);
+			node_insert_entry(new_root, root_entry, true, n);
 			new_root->children[0] = old_root;
 			new_root->children[1] = splitted_node;
 			return new_root;
@@ -330,8 +344,9 @@ static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry)
  * REQUIRES: the node should not be full
  * RETURNS: returns the index of the child corresponding to the new inserted entry on success, or
  * 			-1 on Failure
+ * if bool shift is true then the children are shifted
  */
-static int node_insert_entry(bt_node_t* node, bt_entry_t* entry, int n)
+static int node_insert_entry(bt_node_t* node, bt_entry_t* entry, bool shift,  int n)
 {
 	assert(node != NULL);
 	assert(entry != NULL);
@@ -351,7 +366,10 @@ static int node_insert_entry(bt_node_t* node, bt_entry_t* entry, int n)
 		if(node->entry[i]->key > entry->key)
 		{
 			/*shift and insert*/
-			node_shift_right(node, i, n);
+			if(shift)
+				node_shift_right(node, i, n);
+			else
+				node_shift_right_without_children(node, i, n);
 			node->entry[i] = entry; 
 			return i + 1;
 		}	
@@ -378,6 +396,25 @@ static void node_shift_right(bt_node_t* node, int i,  int n)
 	node->entry[i] = NULL;
 	node->children[i+1] = NULL;
 }
+
+
+/*
+ * bt_node_t*, int n
+ * MODIFIES: bt_node_t*
+ * EFFECTS: shifts all the entries in the array to the right
+ * REQUIRES: the node should not be full, otherwise the rightmost element will be orphaned "i < n - 1"
+ * RETURNS: void
+ *
+ */
+static void node_shift_right_without_children(bt_node_t* node, int i,  int n)
+{
+	for(int j = n - 1; j > i; j--)
+	{
+		node->entry[j] = node->entry[j - 1];
+	}
+	node->entry[i] = NULL;
+}
+
 /*
  * bt_node_t*, int n
  * MODIFIES: bt_node_t*
@@ -400,6 +437,26 @@ static void node_shift_left(bt_node_t* node, int i,  int n)
 	node->children[n] = NULL;
 	
 }
+
+ /*
+ * bt_node_t*, int n
+ * MODIFIES: bt_node_t*
+ * EFFECTS: shifts all the entries in the array to the left 
+ * REQUIRES:  position i be NULL , otherwise the the i'th element will be orphaned "0 =< i < n-1"
+ * RETURNS: void
+ *
+ */
+static void node_shift_left_without_children(bt_node_t* node, int i,  int n)
+{
+	
+	for(int j = i + 1; j < n; j++)
+	{
+		node->entry[j - 1] = node->entry[j];
+	}
+	node->entry[n-1] = NULL;
+	
+}
+
 
 /*
  * bt_node_t*, int, int 
@@ -588,7 +645,7 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* node, int key)
 static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key)
 {
 	bt_node_t* node = *(node_ptr);
-	/*case 3a)*/
+	/*case 3*/
 	int entry_ind = get_entry_index(node, key);
 	bt_node_t* child1 = node->children[entry_ind];
 	bt_node_t* child2 = node->children[entry_ind+1];
@@ -605,7 +662,7 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key)
 		/*remove the target entry*/
 		void* object =  bt_delete_entry_helper(node, key, bt->n);
 		/*insert replacement*/
-		node_insert_entry(node, entry_cpy, bt->n);
+		node_insert_entry(node, entry_cpy, false, bt->n);
 		return object;
 	}
 	else if(child2->len > min_n)
@@ -614,13 +671,13 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key)
 		bt_entry_t* entry_cpy = cpy_entry(child2->entry[0]);
 		bt_delete_helper(bt, bt->root, entry_cpy->key);
 		void* object =  bt_delete_entry_helper(node, key, bt->n);
-		node_insert_entry(node, entry_cpy, bt->n);
+		node_insert_entry(node, entry_cpy, false, bt->n);
 		return object;
 	}
 	/*merge with the children*/
 	else
 	{
-		node_insert_entry(child1, node->entry[entry_ind], bt->n);
+		node_insert_entry(child1, node->entry[entry_ind], true, bt->n);
 		bt_node_t* new_node = merge_leaf_nodes(child1, child2, bt->n);
 		node_entry_set_null(node, entry_ind, bt->n);
 		node->children[entry_ind+1] = new_node;
@@ -666,7 +723,7 @@ static void bt_merge_children(btree_t* bt, bt_node_t** parent_ptr, bt_node_t* no
 		
 		node_entry_set_null(parent->children[node_ind+1], 0, bt->n);
 		
-		node_insert_entry(node, parent->entry[node_ind], bt->n);
+		node_insert_entry(node, parent->entry[node_ind], true, bt->n);
 		int ind = get_last_entry_index(node, bt->n);
 		node->children[ind+1] = sibling_child;
 		
@@ -682,7 +739,7 @@ static void bt_merge_children(btree_t* bt, bt_node_t** parent_ptr, bt_node_t* no
 		bt_node_t* sibling_child = parent->children[node_ind-1]->children[ind+1];
 		
 		node_entry_set_null(parent->children[node_ind-1], ind, bt->n);
-		node_insert_entry(node, parent->entry[node_ind-1], bt->n);
+		node_insert_entry(node, parent->entry[node_ind-1], true, bt->n);
 		
 		children_shift_right(node->children, bt->n);
 		node->children[0] = sibling_child;
@@ -697,7 +754,7 @@ static void bt_merge_children(btree_t* bt, bt_node_t** parent_ptr, bt_node_t* no
 	if(node_ind < bt->n &&  parent->children[node_ind+1] != NULL)
 	{
 	
-		node_insert_entry(node, parent->entry[node_ind], bt->n);
+		node_insert_entry(node, parent->entry[node_ind], true, bt->n);
 		bt_node_t*	new_node =  merge_leaf_nodes(node, parent->children[node_ind+1], bt->n);
 		node_entry_set_null(parent, node_ind, bt->n);
 		parent->children[node_ind] = new_node;
@@ -713,7 +770,7 @@ static void bt_merge_children(btree_t* bt, bt_node_t** parent_ptr, bt_node_t* no
 	{
 		assert(node_ind > 0);
 		
-		node_insert_entry(parent->children[node_ind-1], parent->entry[node_ind-1], bt->n);	
+		node_insert_entry(parent->children[node_ind-1], parent->entry[node_ind-1], true, bt->n);	
 		bt_node_t*	new_node =  merge_leaf_nodes(parent->children[node_ind-1], node , bt->n);
 		parent->children[node_ind] = NULL;
 		node_entry_set_null(parent, node_ind-1, bt->n);
@@ -742,7 +799,8 @@ static void* bt_delete_entry_helper(bt_node_t* node, int key, int n)
 		{
 			void* object = bt_destroy_entry(node->entry[i], NULL);
 			node->entry[i] = NULL;
-			node_shift_left(node, i,  n);
+			node_shift_left_without_children(node, i,  n);
+			fix_pointers_gaps(node, n);
 			node->len--;
 			return object;
 		}
@@ -784,7 +842,7 @@ static bt_node_t* merge_leaf_nodes(bt_node_t* node1, bt_node_t* node2, int n)
 	node1->children[node1->len] = node2->children[0];
 	for(int i = 0;  node2->entry[i] != NULL; i++)
 	{
-		int ind = node_insert_entry(node1, node2->entry[i], n);
+		int ind = node_insert_entry(node1, node2->entry[i], true, n);
 		node1->children[ind] = node2->children[i+1];
 		node2->entry[i] = NULL;
 		node2->children[i+1] = NULL;
@@ -907,13 +965,7 @@ static int min(int x, int y)
 	return x < y ? x : y;
 }
 
-static void children_shift_left(bt_node_t* nodes[], int n)
-{
-	for(int i = 0; i < n; i++)
-	{
-		nodes[i] = nodes[i+1];
-	}
-}
+
 static void children_shift_right(bt_node_t* nodes[], int n)
 {
 	for(int i = n; i > 0; i--)
@@ -955,4 +1007,27 @@ static int get_entry_index(bt_node_t* node, int key)
 	}
 	return -1;
 }  
+
+static void children_shift_left_i(bt_node_t* node, int i, int n)
+{
+	for(int j = i; j < n; j++)
+	{
+		node->children[j] = node->children[j+1];
+	}
+	node->children[n] = NULL;
+}
+/**
+  * Fixes pointers gaps if any
+  */
+static void fix_pointers_gaps(bt_node_t* node, int n)
+{
+	for(int i = 0; i < n; i++)
+	{
+		if(node->children[i] == NULL)
+		{
+			children_shift_left_i(node, i, n);
+		}
+	}
+	
+}
 

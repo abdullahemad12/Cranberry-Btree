@@ -670,7 +670,7 @@ void node_insert_entry_test(void)
 	
 	int* x = malloc(sizeof(int));
 	bt_entry_t* entry1 = bt_create_entry(31,x);
-	node_insert_entry(node, entry1, 21);
+	node_insert_entry(node, entry1, true, 21);
 	
 	bool found = false;
 	
@@ -727,7 +727,7 @@ void node_insert_entry_test1(void)
 	
 	int* x = malloc(sizeof(int));
 	bt_entry_t* entry1 = bt_create_entry(0,x);
-	node_insert_entry(node, entry1, 21);
+	node_insert_entry(node, entry1, true, 21);
 	
 	bool found = false;
 	
@@ -787,7 +787,7 @@ void node_insert_entry_test2(void)
 	
 	int* x = malloc(sizeof(int));
 	bt_entry_t* entry1 = bt_create_entry(70,x);
-	node_insert_entry(node, entry1, 21);
+	node_insert_entry(node, entry1, true, 21);
 	
 	bool found = false;
 	
@@ -833,7 +833,7 @@ void node_insert_entry_test3(void)
 	
 	int* x = malloc(sizeof(int));
 	bt_entry_t* entry1 = bt_create_entry(70,x);
-	node_insert_entry(node, entry1, 21);
+	node_insert_entry(node, entry1,true, 21);
 	
 	bool found = false;
 	
@@ -1151,9 +1151,68 @@ void bt_delete_leaf_case_test1(void)
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
+	object = bt_delete_helper(bt, bt->root, 10);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 60);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 73);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 300);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 100);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 80);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 85);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 71);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 200);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 50);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+		object = bt_delete_helper(bt, bt->root, 70);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+			object = bt_delete_helper(bt, bt->root, 72);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+				object = bt_delete_helper(bt, bt->root, 6);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 5);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	object = bt_delete_helper(bt, bt->root, 8);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
 	
 	
-	printTree(bt);
+	
+
 	for(int i = 0; i < 18; i++)
 	{
 			void* object  = bt_search(bt, keys[i]);
@@ -1193,6 +1252,8 @@ void bt_delete_test(void)
 	void* object = bt_delete_helper(bt, bt->root, 57);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
+	
+	
 	object = bt_delete_helper(bt, bt->root, 70);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
@@ -1268,7 +1329,7 @@ void bt_delete_test(void)
 	
 	
 	
-	printTree(bt);
+
 	for(int i = 0; i < 18; i++)
 	{
 			void* object  = bt_search(bt, keys[i]);

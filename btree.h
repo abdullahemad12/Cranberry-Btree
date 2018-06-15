@@ -74,3 +74,62 @@ typedef struct btree
 	int max_key;
 	unsigned int n;
 }btree_t;
+
+
+
+/*interface*/
+
+
+
+/*
+ * int -> bptree_t* 
+ * Given the maximum number of entries in a node
+ * returns a pointer to an empty B-tree
+ */
+btree_t* bt_create(int n);
+
+
+
+/**
+  * btree_t*, int, void* -> void
+  * EFFECTS: inserts an object in the btree in respect with the search key
+  * MODIFIES: btree_t* bt
+  * RETURNS: void
+  *
+  * btree_t* bt: Tree structs that will hold the object
+  * int key: search key (choosen by the user)
+  * void* object: pointer to the object to be inserted
+  */
+void bt_insert(btree_t* bt, int key, void* object);
+
+
+
+/**
+  * btree_t*, int -> void*
+  * EFFECTS: search for an object given the search key
+  * RETURN: pointer to the object or NULL if the object was 
+  *		    not found
+  */
+void* bt_search(btree_t* bt, int key);
+
+
+
+/**
+  * btree_t*, int -> void*
+  * EFFECTS: Given a key, removes an object from the tree
+  * MODIFIES: btree_t*
+  * RETURNS: returns the object or NULL if no such a key was found
+  */
+void* bt_delete(btree_t* bt, int key);
+
+
+/**
+  * btree_t*, (void) destroy_object(void*) -> void
+  * MODIFIES: btree_t* bt
+  * EFFECTS: Frees all the memory associated with the B tree
+  * 
+  * (void) destroy_object(void*): a pointer to a function that will be invoked on every object 
+  * 				  i.e: object_destroy(object). In case the pointer is NULL, nothing is done 
+  *						on the object and it becomes the user's responsibility to free it
+  */
+ void bt_destroy(btree_t* bt, void (* destroy_object)(void*));
