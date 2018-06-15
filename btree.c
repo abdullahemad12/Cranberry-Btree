@@ -659,7 +659,7 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key)
 		int last_ent_ind = get_last_entry_index(child1, bt->n);
 		bt_entry_t* entry_cpy = cpy_entry(child1->entry[last_ent_ind]);
 		/*recursively delete that entry*/
-		bt_delete_helper(bt, bt->root, entry_cpy->key);
+		bt_delete_helper(bt, node, entry_cpy->key);
 		/*remove the target entry*/
 		void* object =  bt_delete_entry_helper(node, key, bt->n);
 		/*insert replacement*/
@@ -670,7 +670,7 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key)
 	{
 		/*does the same*/
 		bt_entry_t* entry_cpy = cpy_entry(child2->entry[0]);
-		bt_delete_helper(bt, bt->root, entry_cpy->key);
+		bt_delete_helper(bt, node, entry_cpy->key);
 		void* object =  bt_delete_entry_helper(node, key, bt->n);
 		node_insert_entry(node, entry_cpy, false, bt->n);
 		return object;

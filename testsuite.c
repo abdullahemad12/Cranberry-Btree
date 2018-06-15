@@ -10,9 +10,67 @@ bool treecmp(bt_node_t* root1, bt_node_t* root2, int n);
 static void bubblesort(int keys[], int n);
 static bt_node_t* get_node_by_key(bt_node_t* root, int key, int n);
 static void debug_log(bt_node_t* x, int n);
+int get_leaf_key (bt_node_t* node);
+void validate_tree(bt_node_t* node, int n);
 
 bt_node_t* node21 = NULL;
 bt_node_t* children_original21[22];
+
+void comp_test(void)
+{	
+	btree_t* bt = bt_create(3);
+
+	int m = 80;
+
+	int keys[] = {7, 38, 79, 77, 87, 98, 68, 96, 76, 27, 23, 63, 22, 52, 49, 24, 80, 61, 69, 100, 5, 16, 26, 25, 9, 75, 86, 4, 36, 57, 81, 1, 41, 43, 39, 48, 70, 85, 18, 56, 29, 82, 45, 46, 37, 99, 60, 90, 83, 2, 64, 14, 78, 66, 3, 21, 97, 6, 71, 84, 40, 65, 55, 15, 72, 33, 67, 62, 89, 53, 8, 51, 50, 34, 94, 12, 31, 88, 44, 17, 47, 28, 19, 74, 32, 59, 92, 73, 11, 95, 91, 42, 35, 13, 10, 54, 30, 58, 93, 20};
+
+	
+	for(int i = 0; i < m; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt,keys[i] , z);
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+	
+
+	for(int  i = 0; i < m; i++)
+	{
+		int key = get_leaf_key(bt->root);
+		void* object = bt_delete(bt, key);
+		CU_ASSERT_PTR_NOT_NULL(object);
+		CU_ASSERT_PTR_NULL(bt_search(bt, key));
+		free(object);
+	}
+	
+	bt_destroy(bt, free);
+	
+}
+void validate_tree_insertions_test(void)
+{
+	btree_t* bt = bt_create(3);
+
+	int m = 100000;
+
+	int keys[m];
+	srand(time(NULL));
+	
+	for(int i = 0; i < m; i++)
+	{
+		int r = rand() % m;
+		keys[i] = r;
+	}
+	
+	for(int i = 0; i < m; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt,keys[i] , z);
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+	
+	validate_tree(bt->root, bt->n);
+	
+	bt_destroy(bt, free);
+}
 
 void get_entry_index_test(void)
 {
@@ -1222,6 +1280,17 @@ void bt_delete_leaf_case_test1(void)
 	bt_destroy(bt, free);
 }
 
+int get_leaf_key (bt_node_t* node)
+{
+	if(is_leaf(node->children[0]))
+	{
+		int r = rand() % node->len;
+		return node->entry[r]->key;
+	}
+	 int r = rand() % node->len+1;
+	 return get_leaf_key(node->children[r]);
+}
+
 
 void bt_delete_test(void)
 {
@@ -1494,6 +1563,50 @@ void debug_log(bt_node_t* x, int n)
 }
 
 
+
+void validate_node(bt_node_t* node, int n)
+{
+	int n_entries = 0;
+	int n_children = 0;
+	bool end = false;
+	bool messed = false;
+	for(int i = 0; i < n; i++)
+	{
+		n_entries += node->entry[i] != NULL ? 1 : 0;
+		messed =  node->entry[i] != NULL && end ? true : false;
+		end = node->entry[i] == NULL;
+	}
+	CU_ASSERT(!messed);
+	CU_ASSERT_EQUAL(n_entries, node->len);
+	if(node->children[0] == NULL)
+	{
+		return;
+	}
+	end = false;
+	messed = false;
+	for(int i = 0; i < n + 1; i++)
+	{
+		n_children += node->children[i] != NULL ? 1 : 0;
+		messed =  node->children[i] != NULL && end ? true : false;
+		end = node->children[i] == NULL;
+	}
+	CU_ASSERT(!messed);
+	CU_ASSERT_EQUAL(n_children, node->len+1);
+}
+
+void validate_tree(bt_node_t* node, int n)
+{
+	if(node == NULL)
+	{
+		return;
+	}
+	
+	validate_node(node, n);
+	for(int i = 0; i < n+1; i++)
+	{
+		validate_tree(node->children[i], n);
+	}
+}
 
 /*****************************
  * before and after functions*

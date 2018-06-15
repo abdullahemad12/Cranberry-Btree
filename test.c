@@ -18,6 +18,8 @@ struct test {
 
 static struct test tests[] = 
 {	
+	{"validate_tree_insertions_test", validate_tree_insertions_test},
+	//{"comp_test", comp_test},
 	{"creation_test", bt_create_test},
 	{"creation_test1",bt_create_test1},
 	{"node_creation_test",bt_create_node_test},
