@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 #include <stdbool.h>
 #include "btree.h"
 
@@ -38,7 +39,7 @@ static int get_entry_index(bt_node_t* node, int key);
 static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key);
 static void fix_pointers_gaps(bt_node_t* node, int n);
 static void node_shift_right_without_children(bt_node_t* node, int i,  int n);
-
+static void* bt_delete_helper(btree_t* bt, bt_node_t* node, int key);
 
 /*
  * int -> bptree_t* 
@@ -867,7 +868,7 @@ static int ceil_fn(double n)
 	return n_tmp < n ? n_tmp+1 : n_tmp;
 }
 
-int calculate_depth(bt_node_t* node)
+static int calculate_depth(bt_node_t* node)
 {
 	if(node == NULL)
 	{
@@ -880,10 +881,6 @@ void printTree(btree_t* bt)
 	printf("\n\n");
 	for(int i = 0, n = calculate_depth(bt->root); i < n; i++)
 	{
-			for(int j = 0; j < n * (n - i); j++)
-			{
-				printf("\t\t");
-			}
 			print_level(bt->root, bt->n, i, 0);
 			printf("\n\n");
 	}
@@ -895,7 +892,7 @@ static bool print_level(bt_node_t* root, int n, int level, int currentLevel)
 {
 
 
-
+	min(1,2);
 	if(level == currentLevel)
 	{
 		if(root == NULL)

@@ -133,3 +133,9 @@ void* bt_delete(btree_t* bt, int key);
   *						on the object and it becomes the user's responsibility to free it
   */
  void bt_destroy(btree_t* bt, void (* destroy_object)(void*));
+ 
+ /**
+   * btree_t* -> void
+   * EFFECTS: prints the nodes of the tree to the screen for visualization
+   */
+ void printTree(btree_t* bt);
