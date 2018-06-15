@@ -51,6 +51,7 @@ static struct test tests[] =
 	{"bt_delete_leaf_case_test1", bt_delete_leaf_case_test1},
 	{"node_shift_left_test", node_shift_left_test},
 	{"merge_leaf_nodes_test", merge_leaf_nodes_test},
+	{"get_entry_index_test", get_entry_index_test},
 	{NULL, NULL}
 
 };

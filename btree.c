@@ -35,6 +35,9 @@ static void node_entry_set_null(bt_node_t* node, int entry_index, int n);
 static void children_shift_left(bt_node_t* nodes[], int n);
 static void children_shift_right(bt_node_t* nodes[], int n);
 static bt_entry_t* cpy_entry(bt_entry_t* entry_original);
+static int get_entry_index(bt_node_t* node, int key);
+static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key);
+
 
 /*
  * int -> bptree_t* 
@@ -572,22 +575,63 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* node, int key)
 		if(object != NULL)
 			return bt_delete_int_case(bt, node, key);
 	}
-	
 	return bt_delete_helper(bt, node->children[next_node_index], key);
 	
 }
 
 /**
-  * btree_t*, bt_node_t*, int -> void*
+  * btree_t*, bt_node_t**, int -> void*
   * REQUIRES: node to be an intermediate node
   * EFFECTS: Removes the given node and rebalances the tree
   * MODIFIES: btree_t* bt
   */
-static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key)
+static void* bt_delete_int_case(btree_t* bt, bt_node_t** node_ptr, int key)
 {
+	bt_node_t* node = *(node_ptr);
 	/*case 3a)*/
+	int entry_ind = get_entry_index(node, key);
+	bt_node_t* child1 = node->children[entry_ind];
+	bt_node_t* child2 = node->children[entry_ind+1];
+	/*is_leaf(child1) ==> is_leaf(child2)*/
+	int min_n = is_leaf(child1->children[0]) ? bt->n / 2 : ceil_fn(((double) bt->n) / 2.0) - 1;
 	
-	return NULL;
+	/*tries to borrow from the children if it can */
+	if(child1->len > bt->n)
+	{
+		int last_ent_ind = get_last_entry_index(child1, bt->n);
+		bt_entry_t* entry_cpy = cpy_entry(child1->entry[last_ent_ind]);
+		/*recursively delete that entry*/
+		bt_delete_helper(bt, bt->root, entry_cpy->key);
+		/*remove the target entry*/
+		void* object =  bt_delete_entry_helper(node, key, bt->n);
+		/*insert replacement*/
+		node_insert_entry(node, entry_cpy, bt->n);
+		return object;
+	}
+	else if(child2->len > bt->n)
+	{
+		/*does the same*/
+		bt_entry_t* entry_cpy = cpy_entry(child2->entry[0]);
+		bt_delete_helper(bt, bt->root, entry_cpy->key);
+		void* object =  bt_delete_entry_helper(node, key, bt->n);
+		node_insert_entry(node, entry_cpy, bt->n);
+		return object;
+	}
+	/*merge with the children*/
+	else
+	{
+		node_insert_entry(child1, node->entry[entry_ind], bt->n);
+		bt_node_t* new_node = merge_leaf_nodes(child1, child2, bt->n);
+		node_entry_set_null(node, entry_ind, bt->n);
+		node->children[entry_ind+1] = new_node;
+		if(bt->root == node && node->len == 0)
+		{
+			bt_destroy_node(node, bt->n, NULL);
+			bt->root = new_node;
+			*(node_ptr) = bt->root;
+		}
+		return 	bt_delete_helper(bt, bt->root, key);
+	}
 }
 
 /**
@@ -895,3 +939,21 @@ static bt_entry_t* cpy_entry(bt_entry_t* entry_original)
 {
 	return bt_create_entry(entry_original->key, entry_original->object);
 }
+
+/**
+  * bt_node_t*, int -> int
+  * EFFECTS: gets the index of an entry in an array of entries
+  * RETURNS: the index of the entry if found, -1 otherwise
+  */
+static int get_entry_index(bt_node_t* node, int key)
+{
+	for(int i = 0; i < node->len; i++)
+	{
+		if(node->entry[i]->key == key)
+		{
+			return i;
+		}
+	}
+	return -1;
+}  
+

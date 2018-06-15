@@ -14,6 +14,45 @@ static void debug_log(bt_node_t* x, int n);
 bt_node_t* node21 = NULL;
 bt_node_t* children_original21[22];
 
+void get_entry_index_test(void)
+{
+
+	
+	
+	bt_node_t* node  = bt_create_node(11);
+	
+	for(int i = 0; i < 10; i++)
+	{
+		int* x = malloc(sizeof(int));
+		node->entry[i] = bt_create_entry(i,x);
+		node->len++;
+	}
+	
+
+	int index = get_entry_index(node, 5);
+	CU_ASSERT_EQUAL(index, 5);
+	
+	index = get_entry_index(node, 5);
+	CU_ASSERT_EQUAL(index, 6);
+	
+	
+	index = get_entry_index(node, 9);
+	CU_ASSERT_EQUAL(index, 9);
+	
+
+	index = get_entry_index(node, 0);
+	CU_ASSERT_EQUAL(index, 0)
+	
+	index = get_entry_index(node, 10);
+	CU_ASSERT_EQUAL(index, -1)
+	
+	bt_destroy_node(node, 10, free);
+	
+}
+
+
+
+
 /*
  * Creation test
  */
@@ -1184,18 +1223,11 @@ void bt_delete_leaf_case_test1(void)
 	
 	
 	
-	//CU_ASSERT_PTR_NULL(bt_search(bt, 57));
-	//CU_ASSERT_PTR_NULL(bt_search(bt, 70));
-	//CU_ASSERT_PTR_NULL(bt_search(bt, 73));
-	//	CU_ASSERT_PTR_NULL(bt_search(bt, 71));
-	//CU_ASSERT_PTR_NULL(bt_search(bt, 72));
-	//CU_ASSERT_PTR_NULL(bt_search(bt, 6));
-	
 	printTree(bt);
 	for(int i = 0; i < 18; i++)
 	{
 			void* object  = bt_search(bt, keys[i]);
-			CU_ASSERT_PTR_NOT_NULL(object);
+			CU_ASSERT_PTR_NULL(object);
 	}
 	
 	bt_destroy(bt, free);
@@ -1353,6 +1385,8 @@ void debug_log(bt_node_t* x, int n)
 	printf("\n");
 	
 }
+
+
 
 /*****************************
  * before and after functions*
