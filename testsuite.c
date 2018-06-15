@@ -1137,6 +1137,51 @@ void bt_delete_leaf_case_test1(void)
 		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
 	}
 
+
+
+	void* object = bt_delete_helper(bt, bt->root, 57);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 45);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	object = bt_delete_helper(bt, bt->root, 9);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	
+	
+	
+	printTree(bt);
+	for(int i = 0; i < 18; i++)
+	{
+			void* object  = bt_search(bt, keys[i]);
+			CU_ASSERT_PTR_NULL(object);
+	}
+	
+	bt_destroy(bt, free);
+}
+
+
+void bt_delete_test(void)
+{
+	
+	btree_t* bt = bt_create(3);
+
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt, keys[i], z);
+	}
+	
+	for(int i = 0; i < 18; i++)
+	{
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+
 	//bt_node_t* parent =  get_node_by_key(bt->root, 50, 3);
 	//bt_node_t* parent2 =  get_node_by_key(bt->root, 80, 3);
 	
@@ -1232,6 +1277,7 @@ void bt_delete_leaf_case_test1(void)
 	
 	bt_destroy(bt, free);
 }
+
 
 
 

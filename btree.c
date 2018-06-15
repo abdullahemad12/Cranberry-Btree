@@ -556,6 +556,7 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* node, int key)
 	bt_merge_children(bt, &node, node->children[next_node_index], next_node_index);
 	next_node_index = get_next_node_index(node, key, bt->n); //recalculate the index
 	
+	
 	if(is_leaf(node->children[0]))
 	{
 		void* object =  bt_delete_entry_helper(node, key, bt->n);
@@ -668,7 +669,6 @@ static void bt_merge_children(btree_t* bt, bt_node_t** parent_ptr, bt_node_t* no
 		node_insert_entry(node, parent->entry[node_ind], bt->n);
 		int ind = get_last_entry_index(node, bt->n);
 		node->children[ind+1] = sibling_child;
-		children_shift_left(node->children, bt->n);
 		
 		parent->entry[node_ind] = sibling_entry;
 		return;
