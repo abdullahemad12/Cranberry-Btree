@@ -36,8 +36,7 @@ int main(void)
 		int i = parse_input(input);
 		if(i != 0)
 			printf("invalid command. type ? for help\n");	
-		else
-			printTree(bt);
+
 	}
 	bt_destroy(bt, free);
 }
@@ -85,15 +84,17 @@ static int parse_input(char* str)
 		}
 		return 0;
 	}
+	else if (str[0] == 'p')
+	{
+		printTree(bt);
+	}
 	else if(str[0] == '?')
 	{
 		printf("type an operation character followed by a key number.\ni: insert\nd: delete\ns: search\nf: insert random numbers\n");
 		return 0;
 	}
-	else
-	{
+	
 		return -1;
-	}
 }
 
 /**
