@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "btree.h"
 
 
@@ -21,11 +22,12 @@ static void strdcpy(char* src, char* dst);
 btree_t* bt = NULL; 
 int main(void)
 {
+	srand(time(NULL));
 	bt = bt_create(4);
 	while(1)
 	{
 		char input[50];
-		int ret =  getLine ("Command: ", input, 50);
+		int ret =  getLine (">>", input, 50);
 		if(ret == TOO_LONG)
 		{
 			printf("input was too long. retry:\n");
@@ -73,9 +75,19 @@ static int parse_input(char* str)
 		}
 		return 0;
 	}
+	else if (str[0] == 'f')
+	{
+		for(int i = 0; i < key; i++)
+		{
+			int r = rand() % (key * 25);
+			int* z = malloc(sizeof(int));
+			bt_insert(bt, r ,z);
+		}
+		return 0;
+	}
 	else if(str[0] == '?')
 	{
-		printf("type an operation character followed by a key number.\ni: insert\nd: delete\ns: search\n");
+		printf("type an operation character followed by a key number.\ni: insert\nd: delete\ns: search\nf: insert random numbers\n");
 		return 0;
 	}
 	else

@@ -136,24 +136,24 @@ void merge_nodes_test(void)
 	bt_node_t* new_node = merge_nodes(bt, parent, child1, child2);
 	
 	CU_ASSERT_PTR_NOT_NULL_FATAL(new_node);
-	CU_ASSERT_EQUAL(new_node->entry[0]->key, 1);
-	CU_ASSERT_EQUAL(new_node->entry[1]->key, 5);
-	CU_ASSERT_EQUAL(new_node->entry[2]->key, 6);
-	CU_ASSERT_EQUAL(new_node->entry[3]->key, 8);
+	CU_ASSERT_EQUAL(new_node->children[0]->entry[0]->key, 1);
+	CU_ASSERT_EQUAL(new_node->children[0]->entry[1]->key, 5);
+	CU_ASSERT_EQUAL(new_node->children[0]->entry[2]->key, 6);
+	CU_ASSERT_EQUAL(new_node->children[0]->entry[3]->key, 8);
 	
-	CU_ASSERT_EQUAL(parent->entry[0]->key, 9);
-	CU_ASSERT_PTR_NULL(parent->entry[1]);
-	CU_ASSERT_PTR_NULL(parent->entry[2]);
-	CU_ASSERT_PTR_NULL(parent->entry[3]);
+	CU_ASSERT_EQUAL(new_node->entry[0]->key, 9);
+	CU_ASSERT_PTR_NULL(new_node->entry[1]);
+	CU_ASSERT_PTR_NULL(new_node->entry[2]);
+	CU_ASSERT_PTR_NULL(new_node->entry[3]);
 	
-	CU_ASSERT_EQUAL(parent->children[0], new_node);
+
 	CU_ASSERT_EQUAL(parent->children[1], child3);
 	CU_ASSERT_PTR_NULL(parent->children[2]);
 	CU_ASSERT_PTR_NULL(parent->children[3]);
 	CU_ASSERT_PTR_NULL(parent->children[4]);
 	
 	CU_ASSERT_EQUAL(parent->len, 1);
-	CU_ASSERT_EQUAL(new_node->len, 4);
+
 	
 	bt_destroy(bt, NULL);
 }
@@ -205,10 +205,10 @@ void merge_nodes_test1(void)
 	bt_node_t* new_node = merge_nodes(bt, parent, child2, child3);
 	
 	CU_ASSERT_PTR_NOT_NULL_FATAL(new_node);
-	CU_ASSERT_EQUAL(new_node->entry[0]->key, 6);
-	CU_ASSERT_EQUAL(new_node->entry[1]->key, 8);
-	CU_ASSERT_EQUAL(new_node->entry[2]->key, 9);
-	CU_ASSERT_EQUAL(new_node->entry[3]->key, 10);
+	CU_ASSERT_EQUAL(new_node->children[1]->entry[0]->key, 6);
+	CU_ASSERT_EQUAL(new_node->children[1]->entry[1]->key, 8);
+	CU_ASSERT_EQUAL(new_node->children[1]->entry[2]->key, 9);
+	CU_ASSERT_EQUAL(new_node->children[1]->entry[3]->key, 10);
 	
 	CU_ASSERT_EQUAL(parent->entry[0]->key, 5);
 	CU_ASSERT_EQUAL(parent->entry[1]->key, 14);
@@ -216,7 +216,7 @@ void merge_nodes_test1(void)
 	CU_ASSERT_PTR_NULL(parent->entry[3]);
 	
 	CU_ASSERT_EQUAL(parent->children[0], child1);
-	CU_ASSERT_EQUAL(parent->children[1], new_node);
+
 	CU_ASSERT_EQUAL(parent->children[2], child4);
 	CU_ASSERT_PTR_NULL(parent->children[3]);
 	CU_ASSERT_PTR_NULL(parent->children[4]);
@@ -235,7 +235,7 @@ void merge_nodes_test1(void)
 		CU_ASSERT_PTR_NULL(bt->root->children[i]);
 	}
 	CU_ASSERT_EQUAL(parent->len, 2);
-	CU_ASSERT_EQUAL(new_node->len, 4);
+
 	
 	
 	bt_destroy(bt, NULL);
@@ -288,10 +288,10 @@ void merge_nodes_test2(void)
 	bt_node_t* new_node = merge_nodes(bt, parent, child3, child4);
 	
 	CU_ASSERT_PTR_NOT_NULL_FATAL(new_node);
-	CU_ASSERT_EQUAL(new_node->entry[0]->key, 10);
-	CU_ASSERT_EQUAL(new_node->entry[1]->key, 14);
-	CU_ASSERT_EQUAL(new_node->entry[2]->key, 15);
-	CU_ASSERT_EQUAL(new_node->entry[3]->key, 16);
+	CU_ASSERT_EQUAL(new_node->children[2]->entry[0]->key, 10);
+	CU_ASSERT_EQUAL(new_node->children[2]->entry[1]->key, 14);
+	CU_ASSERT_EQUAL(new_node->children[2]->entry[2]->key, 15);
+	CU_ASSERT_EQUAL(new_node->children[2]->entry[3]->key, 16);
 	
 	CU_ASSERT_EQUAL(parent->entry[0]->key, 5);
 	CU_ASSERT_EQUAL(parent->entry[1]->key, 9);
@@ -300,12 +300,12 @@ void merge_nodes_test2(void)
 	
 	CU_ASSERT_EQUAL(parent->children[0], child1);
 	CU_ASSERT_EQUAL(parent->children[1], child2);
-	CU_ASSERT_EQUAL(parent->children[2], new_node);
+
 	CU_ASSERT_PTR_NULL(parent->children[3]);
 	CU_ASSERT_PTR_NULL(parent->children[4]);
 	
 	CU_ASSERT_EQUAL(parent->len, 2);
-	CU_ASSERT_EQUAL(new_node->len, 4);
+
 	
 	bt_destroy(bt, NULL);
 }
@@ -924,8 +924,8 @@ void delete_int_helper_test(void)
 	
 	
 	
-
-	delete_int_helper(bt, parent, 5);
+	bt_node_t* parent_ptr = parent;
+	delete_int_helper(bt, &parent_ptr, 5);
 
 	
 	CU_ASSERT_EQUAL(child1->entry[0]->key, 1);
@@ -985,8 +985,8 @@ void delete_int_helper_test1(void)
 	
 	
 	
-
-	delete_int_helper(bt, parent, 9);
+	bt_node_t* parent_ptr = parent;
+	delete_int_helper(bt, &parent_ptr, 9);
 
 	
 	CU_ASSERT_EQUAL(child3->entry[0]->key, 10);
@@ -1047,8 +1047,8 @@ void delete_int_helper_test2(void)
 	
 	
 	
-
-	delete_int_helper(bt, parent, 14);
+	bt_node_t* parent_ptr = parent;
+	delete_int_helper(bt, &parent_ptr, 14);
 
 	
 	CU_ASSERT_EQUAL(child4->entry[0]->key, 15);

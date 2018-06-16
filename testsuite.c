@@ -1115,16 +1115,14 @@ void split_full_root_test(void)
 
 void bt_delete_helper_test(void)
 {
-	int n = 10000;
-	int keys[n];
-	btree_t* bt = bt_create(15);
+	int n = 104;
+	int keys[] = {
+		 58, 67, 100, 56, 84, 99, 44, 22, 10, 85, 83, 61, 71, 45, 89, 81, 97, 34, 41, 98, 74, 37, 2, 40, 82, 79, 69, 36, 30, 20, 53, 60, 65, 21, 14, 19, 88, 59, 32, 96, 46, 28, 64, 93, 52, 91, 80, 48, 8, 47, 77, 43, 27, 86, 66, 63, 17, 62, 70, 73, 18, 7, 15, 55, 51, 16, 75, 13, 72, 1, 6, 31, 3, 78, 57, 90, 87, 25, 94, 92, 24, 9, 39, 42, 4, 5, 76, 50, 35, 29, 49, 38, 11, 54, 95, 33, 26, 12, 23, 400,300, 150, 450, 454
+	};
+	btree_t* bt = bt_create(10);
 	srand(time(NULL));   
-	
-	for(int i = 0; i < n; i++)
-	{
-		int r = rand() % 10000;
-		keys[i] = r;
-	}
+
+
 	
 	for(int i = 0; i < n; i++)
 	{
@@ -1132,10 +1130,20 @@ void bt_delete_helper_test(void)
 		bt_insert(bt, keys[i], z);
 	}
 
+
 	for(int i = 0; i < n; i++)
 	{
+		if(bt_search(bt, keys[i]) == NULL)
+		{
+			printf("%d\n\n", keys[i]);
+			printTree(bt);
+		}
 		CU_ASSERT_PTR_NOT_NULL_FATAL(bt_search(bt, keys[i]));
 		bt_delete_helper(bt, NULL, bt->root, keys[i]);
+		if(bt_search(bt, keys[i]) != NULL)
+		{
+			printf("dup: %d\n", keys[i]);
+		}
 		CU_ASSERT_PTR_NULL_FATAL(bt_search(bt, keys[i]));
 	}
 	bt_destroy(bt, free);
@@ -1447,6 +1455,33 @@ void merge_leaf_nodes_test(void)
 	CU_ASSERT_PTR_NULL(ret->entry[2]);
 
 	bt_destroy(bt, free);
+}
+
+
+void delete_test_root_entry(void)
+{
+	btree_t* bt = bt_create(5);
+	bt_node_t* parent = bt_create_node(5);
+	int z = 0;
+	parent->entry[0] = bt_create_entry(7, &z);
+	parent->len = 1;
+	bt->root = parent;
+	
+	bt_node_t* child1 = bt_create_node(5);
+	child1->entry[0] = bt_create_entry(4, &z);
+	child1->entry[1] = bt_create_entry(5, &z);
+	child1->len = 2;
+	parent->children[0] = child1;
+	
+	bt_node_t* child2 = bt_create_node(5);
+
+	child2->entry[0] = bt_create_entry(34, &z);
+	child2->entry[1] = bt_create_entry(45, &z);
+	child2->len = 2;
+	parent->children[1] = child2;
+
+ 	bt_delete(bt, 7);
+	bt_destroy(bt, NULL);
 }
 
 

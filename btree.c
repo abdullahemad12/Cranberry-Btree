@@ -50,7 +50,7 @@ static void delete_child(bt_node_t* parent, bt_node_t* child, int n);
 static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key);
 static int entry_move_up_clockwise(bt_node_t* parent, bt_node_t* left, int key , int n);
 static int entry_move_up_counter_clockwise(bt_node_t* parent, bt_node_t* left, int key , int n);
-static int delete_int_helper(btree_t* bt, bt_node_t* node, int key);
+static int delete_int_helper(btree_t* bt, bt_node_t** node_ptr, int key);
 
 /*
  * int -> bptree_t* 
@@ -669,15 +669,14 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key)
 	{
 		if(is_leaf(current_node->children[0]))
 		{
-			bt_delete_entry_helper(current_node, key, bt->n);
+			bt_delete_entry_helper(current_node, current_key, bt->n);
 			break;
 		}
 		else
 		{
-			current_key = delete_int_helper(bt, current_node, current_key);
+			/*this will change the value of the current node to the next node*/
+			current_key = delete_int_helper(bt, &current_node, current_key);
 			balance_node(bt, &current_node, current_key);
-			int next_node_index = get_next_node_index(current_node, current_key, bt->n);
-			current_node = current_node->children[next_node_index];
 		}
 	}
 	
@@ -685,14 +684,15 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key)
 }
 
 /**
-  * btree_t*, bt_node_t*, int key
+  * btree_t**, bt_node_t*, int key
   * EFFECTS: remove an entry with a given key from an intermediate node 
   *			 and replace it with a new entry from the children
   * REQUIRES: the node to be an intermediate i.e (have children)
   * MODIFIES: bt_node_t*
   */
-static int delete_int_helper(btree_t* bt, bt_node_t* node, int key)
+static int delete_int_helper(btree_t* bt, bt_node_t** node_ptr, int key)
 {
+	bt_node_t* node = *(node_ptr);
 	int index = get_entry_index(node,  key);
 	assert(index >= 0);
 	bt_node_t* left = node->children[index];
@@ -702,10 +702,12 @@ static int delete_int_helper(btree_t* bt, bt_node_t* node, int key)
 	
 	if(left->len > min_n)
 	{
+		*(node_ptr) = left;
 		return entry_move_up_clockwise(node, left, key , bt->n);
 	}
 	else if(right->len > min_n)
 	{
+		*(node_ptr) = right;
 		return entry_move_up_counter_clockwise(node, right, key , bt->n);
 	}
 	
@@ -754,6 +756,7 @@ static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key)
 	/*case 2b)*/
 	else if(right_sibling != NULL)
 	{
+		
 		*(parent_ptr) = merge_nodes(bt, parent, node, right_sibling);
 	}
 	else if(left_sibling != NULL)
@@ -927,13 +930,14 @@ static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, b
 		assert(bt->root == parent);
 		bt_destroy_node(parent, bt->n, NULL);
 		bt->root = new_node;
+		return new_node;
 	}
 	else
 	{
 		insert_child(parent, new_node, bt->n);
 	}
 	
-	return new_node;
+	return parent;
 }
 
 /**
