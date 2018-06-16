@@ -5,6 +5,7 @@
 #include <CUnit/Basic.h>
 #include "btree.c"
 #include "testsuite.c"
+#include "helpers_testsuite.c"
 
 /*prototypes*/
 static int init(void);
@@ -19,6 +20,8 @@ struct test {
 static struct test tests[] = 
 {	
 	{"validate_tree_insertions_test", validate_tree_insertions_test},
+	{"get_child_index_test", get_child_index_test},
+	{"insert_child_test", insert_child_test},
 	//{"comp_test", comp_test},
 	{"creation_test", bt_create_test},
 	{"creation_test1",bt_create_test1},
@@ -49,12 +52,18 @@ static struct test tests[] =
 	{"split_full_root_test", split_full_root_test},
 	{"bt_node_search_helper_test", bt_node_search_helper_test},
 	//{"bt_delete_helper_test", bt_delete_helper_test},
-	{"bt_delete_leaf_case_test", bt_delete_leaf_case_test},
-	{"bt_delete_leaf_case_test1", bt_delete_leaf_case_test1},
+	//{"bt_delete_leaf_case_test", bt_delete_leaf_case_test},
+	//{"bt_delete_leaf_case_test1", bt_delete_leaf_case_test1},
 	{"node_shift_left_test", node_shift_left_test},
 	{"merge_leaf_nodes_test", merge_leaf_nodes_test},
 	{"get_entry_index_test", get_entry_index_test},
-	{"bt_delete_test", bt_delete_test},
+	//{"bt_delete_test", bt_delete_test},
+	{"get_left_sibling_test", get_left_sibling_test},
+	{"get_right_sibling_test", get_right_sibling_test},
+	//{"merge_nodes_test", merge_nodes_test},
+	//{"merge_nodes_test1", merge_nodes_test1},
+	//{"merge_nodes_test2", merge_nodes_test2},
+	{"delete_child_test", delete_child_test},
 	{NULL, NULL}
 
 };
