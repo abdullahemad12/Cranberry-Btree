@@ -51,7 +51,7 @@ static struct test tests[] =
 	{"bt_insert_helper_test2", bt_insert_helper_test2},
 	{"split_full_root_test", split_full_root_test},
 	{"bt_node_search_helper_test", bt_node_search_helper_test},
-	//{"bt_delete_helper_test", bt_delete_helper_test},
+	{"bt_delete_helper_test", bt_delete_helper_test},
 	//{"bt_delete_leaf_case_test", bt_delete_leaf_case_test},
 	//{"bt_delete_leaf_case_test1", bt_delete_leaf_case_test1},
 	{"node_shift_left_test", node_shift_left_test},
@@ -70,6 +70,15 @@ static struct test tests[] =
 	{"entry_rotate_clockwise_test", entry_rotate_clockwise_test},
 	{"entry_rotate_clockwise_test1", entry_rotate_clockwise_test1},
 	{"entry_rotate_clockwise_test2", entry_rotate_clockwise_test2},
+	{"entry_move_up_clockwise_test", entry_move_up_clockwise_test},
+	{"entry_move_up_clockwise_test1", entry_move_up_clockwise_test1},
+	{"entry_move_up_clockwise_test2", entry_move_up_clockwise_test2},
+	{"entry_move_up_counter_clockwise_test", entry_move_up_counter_clockwise_test},
+	{"entry_move_up_counter_clockwise_test1", entry_move_up_counter_clockwise_test1},
+	{"entry_move_up_counter_clockwise_test2", entry_move_up_counter_clockwise_test2},
+	{"delete_int_helper_test", delete_int_helper_test},
+	{"delete_int_helper_test1", delete_int_helper_test1},
+	{"delete_int_helper_test2", delete_int_helper_test2},
 	{NULL, NULL}
 
 };
