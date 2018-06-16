@@ -27,7 +27,6 @@ static void* bt_search_helper(bt_node_t* node, int key, int n);
 static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry);
 static void destroy_bt_helper(bt_node_t* root, int n, void (* done)(void*));
 static bool is_root(btree_t* bt, bt_node_t* node);
-static void* bt_delete_leaf(btree_t* bt, bt_node_t* parent, bt_node_t* node, int key);
 static void* bt_delete_entry_helper(bt_node_t* node, int key, int n);
 static int get_last_entry_index(bt_node_t* node, int n);
 static int min(int x, int y);
@@ -46,7 +45,9 @@ static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, b
 static void entry_rotate_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t* right, int n);
 static void entry_rotate_counter_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t* right, int n);
 static int get_child_index(bt_node_t* node, bt_node_t* child);
-
+static void insert_child(bt_node_t* parent, bt_node_t* child, int n);
+static void delete_child(bt_node_t* parent, bt_node_t* child, int n);
+static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key);
 
 /*
  * int -> bptree_t* 
@@ -616,6 +617,7 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* parent,  bt_node_t* node, 
 		return NULL;
 	}
 
+	balance_node(bt, &node, key);
 	/*Not found yet*/
 	int next_node_index = get_next_node_index(node, key, bt->n);
 	void* object = bt_node_search_helper(node->entry, key, 0, node->len);	
@@ -627,7 +629,13 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* parent,  bt_node_t* node, 
 	/*is it a leaf*/	
 	if(is_leaf(node->children[0]))
 	{	
-		return bt_delete_leaf(bt, parent, node, key);
+		 void* object = bt_delete_entry_helper(node, key, bt->n);
+		 if(is_root(bt, node) && node->len == 0)
+		 {
+		 	bt_destroy_node(node, bt->n, NULL);
+			bt->root = NULL;
+		 }
+		return object;
 	}
 	else
 	{
@@ -637,6 +645,8 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* parent,  bt_node_t* node, 
 
 }
 
+
+
 /**
   * btree_t*, bt_node_t**, int -> void*
   * REQUIRES: node to be an intermediate node
@@ -645,38 +655,65 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* parent,  bt_node_t* node, 
   */
 static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key)
 {
-	return NULL;	
+
+	int index = get_entry_index(node,  key);
+	void object*  = node->entry[i]->object;
+	
+	
+	bt_node_t* current_node = node;
+	int current_key;
+	while(current_node != NULL)
+	{
+		if(is_leaf(current_node->children[0]))
+		{
+			bt_delete_entry_helper()
+		}
+		else
+		{
+			current_key = delete_int_helper
+			balance_node
+		}
+	}
+	
+	return object;	
 }
 
 /**
-  * btree_t*, bt_node_t*, bt_node_t*, int -> void*
+  * btree_t*, bt_node_t*, int key
+  * EFFECTS: remove an entry with a given key from an intermediate node 
+  *			 and replace it with a new entry from the children
+  * REQUIRES: the node to be an intermediate i.e (have children)
+  * MODIFIES: bt_node_t*
+  */
+static int delete_int_helper(btree_t* bt, bt_node_t*, int key)
+{
+	
+}
+
+/**
+  * btree_t*, bt_node_t**, int -> void*
   * REQUIRES: node to be an leaf node
   * EFFECTS: Removes the given node and rebalances the tree
   * MODIFIES: btree_t* bt, bt_node_t** parent, bt_node_t* node
-  * RETURNS: the new parent if any, otherwise the old one
   */
-static void* bt_delete_leaf(btree_t* bt, bt_node_t* parent, bt_node_t* node, int key)
+static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key)
 {
+	
+	bt_node_t* parent = *(parent_ptr);
 	/*nothing to split*/
-	if(node == NULL)
+	if(is_leaf(parent->children[0]))
 	{
-		return NULL;
+		return;
 	}
+	
+	int index = get_next_node_index(parent, key, bt->n);
+	bt_node_t* node = parent->children[index];
 	
 	int min_n = is_leaf(node->children[0]) ? bt->n / 2 : ceil_fn(((double) bt->n) / 2.0) - 1;
-
-	/*no need to merge*/
-	if(node->len > min_n || is_root(bt, node))
+	if(node->len > min_n)
 	{
-		void* object =  bt_delete_entry_helper(node, key, bt->n);
-		if(is_root(bt, node) && node->len == 0)
-		{
-			bt_destroy_node(node, bt->n, NULL);
-			bt->root = NULL;
-		}
-		return object;
+		return;
 	}
-	
 	bt_node_t* right_sibling = get_right_sibling(parent, node);
 	bt_node_t* left_sibling = get_left_sibling(parent, node);  
 	
@@ -684,34 +721,21 @@ static void* bt_delete_leaf(btree_t* bt, bt_node_t* parent, bt_node_t* node, int
 	if(right_sibling != NULL && right_sibling->len > min_n)
 	{
 		entry_rotate_counter_clockwise(parent, node, right_sibling, bt->n);
-		return bt_delete_entry_helper(node, key, bt->n);
-
 	}
 	else if (left_sibling != NULL && left_sibling->len > min_n)
 	{
-	
 		entry_rotate_clockwise(parent, left_sibling, node, bt->n);
-		return bt_delete_entry_helper(node, key, bt->n);
 	}
-	
-	
 	/*case 2b)*/
-	if(right_sibling != NULL)
+	else if(right_sibling != NULL)
 	{
-		void* object =  bt_delete_entry_helper(node, key, bt->n);
-		merge_nodes(bt, parent, node, right_sibling);
-		return object;
+		*(parent_ptr) = merge_nodes(bt, parent, node, right_sibling);
 	}
 	else if(left_sibling != NULL)
 	{
-		void* object = bt_delete_entry_helper(node, key, bt->n);
-		merge_nodes(bt, parent, left_sibling, node);
-		return object;
+		*(parent_ptr) = merge_nodes(bt, parent, left_sibling, node);
 	}
-	else
-	{
-		return NULL;
-	}
+
 
 }
 
@@ -865,9 +889,11 @@ static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, b
 	bt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
 	/*remove it from the parent first*/
 	bt_delete_entry_helper(parent, entry_cpy->key, bt->n);
-	
-		
 	node_insert_entry(left, entry_cpy, false, bt->n);
+	
+	/*now merge the nodes*/
+	delete_child(parent, left, bt->n);
+	delete_child(parent, right, bt->n);
 	bt_node_t* new_node = merge_leaf_nodes(left, right, bt->n);
 
 	/*was the root*/
@@ -876,6 +902,10 @@ static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, b
 		assert(bt->root == parent);
 		bt_destroy_node(parent, bt->n, NULL);
 		bt->root = new_node;
+	}
+	else
+	{
+		insert_child(parent, new_node, bt->n);
 	}
 	
 	return new_node;
@@ -889,7 +919,15 @@ static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, b
   */
 static void entry_rotate_counter_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t* right, int n)
 {
-
+	int index = get_child_index(parent, left);
+	
+	bt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
+	bt_delete_entry_helper(parent, entry_cpy->key, n);
+	node_insert_entry(left, entry_cpy, false, n);
+	
+	entry_cpy = cpy_entry(right->entry[0]);
+	bt_delete_entry_helper(right, entry_cpy->key, n);
+	node_insert_entry(parent, entry_cpy, false, n);
 }
 
 
@@ -901,7 +939,15 @@ static void entry_rotate_counter_clockwise(bt_node_t* parent, bt_node_t* left, b
   */
 static void entry_rotate_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t* right, int n)
 {
-
+	int index = get_child_index(parent, left);
+	bt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
+	bt_delete_entry_helper(parent, entry_cpy->key, n);
+	node_insert_entry(right, entry_cpy, false, n);
+	
+	index =  get_last_entry_index(left, n);
+	entry_cpy = cpy_entry(left->entry[index]);
+	bt_delete_entry_helper(left, entry_cpy->key, n);
+	node_insert_entry(parent, entry_cpy, false, n);
 }
 
 /*******************************
@@ -1112,6 +1158,10 @@ static void fix_pointers_gaps(bt_node_t* node, int n)
   */
 static void insert_child(bt_node_t* parent, bt_node_t* child, int n)
 {
+	if(child == NULL)
+	{
+		return;
+	}
 	for(int i = 0, n1 = n+1; i < n1; i++)
 	{
 		assert(parent->children[i] != child);
@@ -1137,6 +1187,10 @@ static void insert_child(bt_node_t* parent, bt_node_t* child, int n)
   */
 static void delete_child(bt_node_t* parent, bt_node_t* child, int n)
 {
+	if(child == NULL)
+	{
+		return;
+	}
 	for(int i = 0, n1 = n+1; i < n1; i++)
 	{
 		if(parent->children[i] == NULL)

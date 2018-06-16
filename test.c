@@ -57,13 +57,19 @@ static struct test tests[] =
 	{"node_shift_left_test", node_shift_left_test},
 	{"merge_leaf_nodes_test", merge_leaf_nodes_test},
 	{"get_entry_index_test", get_entry_index_test},
-	//{"bt_delete_test", bt_delete_test},
+	{"bt_delete_test", bt_delete_test},
 	{"get_left_sibling_test", get_left_sibling_test},
 	{"get_right_sibling_test", get_right_sibling_test},
-	//{"merge_nodes_test", merge_nodes_test},
-	//{"merge_nodes_test1", merge_nodes_test1},
-	//{"merge_nodes_test2", merge_nodes_test2},
+	{"merge_nodes_test", merge_nodes_test},
+	{"merge_nodes_test1", merge_nodes_test1},
+	{"merge_nodes_test2", merge_nodes_test2},
 	{"delete_child_test", delete_child_test},
+	{"entry_rotate_counter_clockwise_test", entry_rotate_counter_clockwise_test},
+	{"entry_rotate_counter_clockwise_test1", entry_rotate_counter_clockwise_test1},
+	{"entry_rotate_counter_clockwise_test2", entry_rotate_counter_clockwise_test2},
+	{"entry_rotate_clockwise_test", entry_rotate_clockwise_test},
+	{"entry_rotate_clockwise_test1", entry_rotate_clockwise_test1},
+	{"entry_rotate_clockwise_test2", entry_rotate_clockwise_test2},
 	{NULL, NULL}
 
 };
