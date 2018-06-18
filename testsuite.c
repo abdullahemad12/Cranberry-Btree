@@ -1115,21 +1115,20 @@ void split_full_root_test(void)
 
 void bt_delete_helper_test(void)
 {
-	int n = 50;
-	int m = 1000;
+	int n = 40;
+
 	int keys[n];
-	int dup[m]; /*to catch duplicate values*/
+
 	memset(keys, 0, n);
-	memset(dup, 0, m);
+
 	
 	
-	btree_t* bt = bt_create(20);
+	btree_t* bt = bt_create(3);
 	srand(time(NULL));   
 
 	for(int i = 0; i < n; i++)
 	{
-		int r = rand() % m;
-		dup[r]++;
+		int r = rand() % n;
 		keys[i] = r;
 	}
 	
@@ -1145,22 +1144,17 @@ void bt_delete_helper_test(void)
 	{
 		if(bt_search(bt, keys[i]) == NULL)
 		{
-			printf("%d\n\n", keys[i]);
+			printf("key: %d", keys[i]);
 			printTree(bt);
 		}
-		CU_ASSERT_PTR_NOT_NULL_FATAL(bt_search(bt, keys[i]));
-		bt_delete_helper(bt, NULL, bt->root, keys[i]);
-		dup[keys[i]]--;
-		/*assert that all instances were removed*/
-		if(dup[keys[i]] == 0)
+		void* object = bt_delete_helper(bt, NULL, bt->root, keys[i]);
+		if(object != NULL)
 		{
-			if(bt_search(bt, keys[i]) != NULL)
-			{
-				printf("dup: %d\n", keys[i]);
-			}
-			CU_ASSERT_PTR_NULL_FATAL(bt_search(bt, keys[i]));
+			free(object);	
 		}
 	}
+	printTree(bt);
+	CU_ASSERT_PTR_NULL(bt->root);
 	bt_destroy(bt, free);
 }
 

@@ -49,9 +49,8 @@ static int get_child_index(bt_node_t* node, bt_node_t* child);
 static void insert_child(bt_node_t* parent, bt_node_t* child, int n);
 static void delete_child(bt_node_t* parent, bt_node_t* child, int n);
 static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key);
-static int entry_move_up_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* left, int key , int n);
-static int entry_move_up_counter_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* left, int key , int n);
-static int delete_int_helper(btree_t* bt, bt_node_t** node_ptr, int key);
+static void entry_move_up_clockwise(btree_t* bt, bt_node_t* parent, bt_node_t* right, int key , int n);
+static void entry_move_up_counter_clockwise(btree_t* bt, bt_node_t* parent, bt_node_t* right, int key , int n);
 static bt_node_t* remove_last_child(bt_node_t* nodes[], int len);
 bt_entry_t* bt_delete_minimum(btree_t* bt, bt_node_t* node);
 bt_entry_t* bt_delete_maximum(btree_t* bt, bt_node_t* node);
@@ -664,60 +663,29 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key)
 {
 
 	int index = get_entry_index(node,  key);
+	assert(index >= 0);
 	void* object  = node->entry[index]->object;
 	
-	
-	bt_node_t* current_node = node;
-	int current_key = key;
-	while(current_node != NULL)
-	{
-		if(is_leaf(current_node->children[0]))
-		{
-			bt_delete_entry_helper(current_node, current_key, bt->n);
-			break;
-		}
-		else
-		{
-			/*this will change the value of the current node to the next node*/
-			current_key = delete_int_helper(bt, &current_node, current_key);
-			balance_node(bt, &current_node, current_key);
-		}
-	}
-	
-	return object;	
-}
 
-/**
-  * btree_t**, bt_node_t*, int key
-  * EFFECTS: remove an entry with a given key from an intermediate node 
-  *			 and replace it with a new entry from the children
-  * REQUIRES: the node to be an intermediate i.e (have children)
-  * MODIFIES: bt_node_t*
-  */
-static int delete_int_helper(btree_t* bt, bt_node_t** node_ptr, int key)
-{
-	bt_node_t* node = *(node_ptr);
-	int index = get_entry_index(node,  key);
-	assert(index >= 0);
 	bt_node_t* left = node->children[index];
 	bt_node_t* right = node->children[index+1];
 	assert(left != NULL && right != NULL);/*every entry must have a right and left children*/
 	int min_n = is_leaf(node->children[0]) ? bt->n / 2 : ceil_fn(((double) bt->n) / 2.0) - 1;
 	
-	if(left->len > min_n)
+	
+	if(right->len > min_n)
 	{
-		*(node_ptr) = left;
-		return entry_move_up_clockwise(bt, node, left, key , bt->n);
+		entry_move_up_counter_clockwise(bt, node, right, key , bt->n);
+		return object;
 	}
-	else if(right->len > min_n)
+	else if(left->len > min_n)
 	{
-		*(node_ptr) = right;
-		return entry_move_up_counter_clockwise(bt, node, right, key , bt->n);
+		entry_move_up_clockwise(bt, node, left, key , bt->n);
+		return object;
 	}
 	
-	return 0;
+	return NULL;	
 }
-
 
 
 
@@ -998,14 +966,13 @@ static void entry_rotate_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t
   * REQUIRES: the left node to have more than the minimum number of keys
   * RETURNS: the key of the last inserted entry
   */
-static int entry_move_up_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* left, int key , int n)
+static void entry_move_up_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* left, int key , int n)
 {
 
 	bt_entry_t* entry_cpy = bt_delete_maximum(bt, left);
 	bt_delete_entry_helper(parent, key, n);
 	node_insert_entry(parent, entry_cpy, false, n);
 
-	return entry_cpy->key;
 }
 
 
@@ -1017,11 +984,11 @@ static int entry_move_up_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* lef
   * REQUIRES: the right node to have more than the minimum number of keys
   * RETURNS: the key of the last inserted entry
   */
-static int entry_move_up_counter_clockwise(btree_t* bt, bt_node_t* parent, bt_node_t* right, int key , int n)
+static void entry_move_up_counter_clockwise(btree_t* bt, bt_node_t* parent, bt_node_t* right, int key , int n)
 {
 	bt_entry_t* entry_cpy = bt_delete_minimum(bt, right);
+	bt_delete_entry_helper(parent, key, n);
 	node_insert_entry(parent, entry_cpy, false, n);
-	return entry_cpy->key;
 }
 
 
@@ -1059,13 +1026,14 @@ bt_entry_t* bt_delete_minimum(btree_t* bt, bt_node_t* node)
 bt_entry_t* bt_delete_maximum(btree_t* bt, bt_node_t* node)
 {
 	/*the max will always be at the leafs*/
+	int index = get_last_entry_index(node, bt->n);
 	if(is_leaf(node->children[0]))
 	{
-		bt_entry_t* entry_cpy = cpy_entry(node->entry[node->len-1]);
-		bt_delete_entry_helper(node, node->entry[node->len-1]->key, bt->n);
+		bt_entry_t* entry_cpy = cpy_entry(node->entry[index]);
+		bt_delete_entry_helper(node, node->entry[index]->key, bt->n);
 		return entry_cpy;
 	}
-	int key = node->entry[node->len-1]->key + 3;
+	int key = node->entry[index]->key + 3;
  	balance_node(bt, &node, key);
  	int next_node_index = get_next_node_index(node, key, bt->n);
 	return bt_delete_maximum(bt, node->children[next_node_index]);
