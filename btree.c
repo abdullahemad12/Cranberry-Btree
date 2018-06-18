@@ -49,10 +49,12 @@ static int get_child_index(bt_node_t* node, bt_node_t* child);
 static void insert_child(bt_node_t* parent, bt_node_t* child, int n);
 static void delete_child(bt_node_t* parent, bt_node_t* child, int n);
 static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key);
-static int entry_move_up_clockwise(bt_node_t* parent, bt_node_t* left, int key , int n);
-static int entry_move_up_counter_clockwise(bt_node_t* parent, bt_node_t* left, int key , int n);
+static int entry_move_up_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* left, int key , int n);
+static int entry_move_up_counter_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* left, int key , int n);
 static int delete_int_helper(btree_t* bt, bt_node_t** node_ptr, int key);
 static bt_node_t* remove_last_child(bt_node_t* nodes[], int len);
+bt_entry_t* bt_delete_minimum(btree_t* bt, bt_node_t* node);
+bt_entry_t* bt_delete_maximum(btree_t* bt, bt_node_t* node);
 
 /*
  * int -> bptree_t* 
@@ -705,12 +707,12 @@ static int delete_int_helper(btree_t* bt, bt_node_t** node_ptr, int key)
 	if(left->len > min_n)
 	{
 		*(node_ptr) = left;
-		return entry_move_up_clockwise(node, left, key , bt->n);
+		return entry_move_up_clockwise(bt, node, left, key , bt->n);
 	}
 	else if(right->len > min_n)
 	{
 		*(node_ptr) = right;
-		return entry_move_up_counter_clockwise(node, right, key , bt->n);
+		return entry_move_up_counter_clockwise(bt, node, right, key , bt->n);
 	}
 	
 	return 0;
@@ -989,17 +991,17 @@ static void entry_rotate_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t
 }
 
 /**
-  * bt_node_t*, bt_node_t*, bt_node_t*, int, int -> void
+  * btree_t*, bt_node_t*, bt_node_t*, bt_node_t*, int, int -> void
   * EFFECTS: moves a copy of the last entry of the left node and inserts it into parent 
   * 		 after removing the entry with the given key from the parent
   * MODIFIES: bt_node_t* parent
   * REQUIRES: the left node to have more than the minimum number of keys
   * RETURNS: the key of the last inserted entry
   */
-static int entry_move_up_clockwise(bt_node_t* parent, bt_node_t* left, int key , int n)
+static int entry_move_up_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* left, int key , int n)
 {
-	int index =  get_last_entry_index(left, n);
-	bt_entry_t* entry_cpy = cpy_entry(left->entry[index]);
+
+	bt_entry_t* entry_cpy = bt_delete_maximum(bt, left);
 	bt_delete_entry_helper(parent, key, n);
 	node_insert_entry(parent, entry_cpy, false, n);
 
@@ -1008,21 +1010,69 @@ static int entry_move_up_clockwise(bt_node_t* parent, bt_node_t* left, int key ,
 
 
 /**
-  * bt_node_t*, bt_node_t*, bt_node_t*, int, int -> void
+  * btree_t*, bt_node_t*, bt_node_t*, bt_node_t*, int, int -> void
   * EFFECTS: moves a copy of the first entry of the right node and inserts it into parent 
   * 		 after removing the entry with the given key from the parent
   * MODIFIES: bt_node_t* parent
   * REQUIRES: the right node to have more than the minimum number of keys
   * RETURNS: the key of the last inserted entry
   */
-static int entry_move_up_counter_clockwise(bt_node_t* parent, bt_node_t* right, int key , int n)
+static int entry_move_up_counter_clockwise(btree_t* bt, bt_node_t* parent, bt_node_t* right, int key , int n)
 {
-	bt_entry_t* entry_cpy = cpy_entry(right->entry[0]);
-	bt_delete_entry_helper(parent, key, n);
+	bt_entry_t* entry_cpy = bt_delete_minimum(bt, right);
 	node_insert_entry(parent, entry_cpy, false, n);
 	return entry_cpy->key;
 }
 
+
+/**
+  * btree_t*, bt_node_t* -> bt_entry_t* 
+  * EFFECTS: deletes the minimum key in a Tree starting from the given node
+  * MODIFIES: bt
+  * RETURNS: entry with the minimum key
+  */
+bt_entry_t* bt_delete_minimum(btree_t* bt, bt_node_t* node)
+{
+	/*the min will always be at the leafs*/
+	if(is_leaf(node->children[0]))
+	{
+		bt_entry_t* entry_cpy = cpy_entry(node->entry[0]);
+		bt_delete_entry_helper(node, node->entry[0]->key, bt->n);
+		return entry_cpy;
+	}
+	/*since we don't know yet what the min key of the
+	tree is we will just pass in a key that is
+	smaller than the min key of this node*/
+	int key = node->entry[0]->key - 3;
+ 	balance_node(bt, &node, key);
+ 	int next_node_index = get_next_node_index(node, key, bt->n);
+	return bt_delete_minimum(bt, node->children[next_node_index]);
+
+}
+
+/**
+  * btree_t*, bt_node_t* -> bt_entry_t* 
+  * EFFECTS: deletes the maximum key in a Tree starting from the given node
+  * MODIFIES: bt
+  * RETURNS: entry with the maximum key
+  */
+bt_entry_t* bt_delete_maximum(btree_t* bt, bt_node_t* node)
+{
+	/*the max will always be at the leafs*/
+	if(is_leaf(node->children[0]))
+	{
+		bt_entry_t* entry_cpy = cpy_entry(node->entry[node->len-1]);
+		bt_delete_entry_helper(node, node->entry[node->len-1]->key, bt->n);
+		return entry_cpy;
+	}
+	int key = node->entry[node->len-1]->key + 3;
+ 	balance_node(bt, &node, key);
+ 	int next_node_index = get_next_node_index(node, key, bt->n);
+	return bt_delete_maximum(bt, node->children[next_node_index]);
+
+}
+
+  
 /*******************************
  *						       *
  *        helpers              *

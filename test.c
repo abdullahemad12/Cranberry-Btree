@@ -80,6 +80,14 @@ static struct test tests[] =
 	{"delete_int_helper_test", delete_int_helper_test},
 	{"delete_int_helper_test1", delete_int_helper_test1},
 	{"delete_int_helper_test2", delete_int_helper_test2},
+	{"bt_delete_minimum_test", bt_delete_minimum_test},
+	{"bt_delete_minimum_test1", bt_delete_minimum_test1},
+	{"bt_delete_minimum_test2", bt_delete_minimum_test2},
+	{"bt_delete_minimum_test3", bt_delete_minimum_test3},
+	{"bt_delete_maximum_test", bt_delete_maximum_test},
+	{"bt_delete_maximum_test1", bt_delete_maximum_test1},
+	{"bt_delete_maximum_test2", bt_delete_maximum_test2},
+	{"bt_delete_maximum_test3", bt_delete_maximum_test3},
 	{NULL, NULL}
 
 };

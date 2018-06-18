@@ -1112,7 +1112,7 @@ void entry_move_up_clockwise_test(void)
 	
 	
 
-	int next = entry_move_up_clockwise(parent, child1, 5 , 5);
+	int next = entry_move_up_clockwise(bt, parent, child1, 5 , 5);
 
 	CU_ASSERT_EQUAL(next, 4);
 	
@@ -1178,7 +1178,7 @@ void entry_move_up_clockwise_test1(void)
 	
 	
 
-	int next = entry_move_up_clockwise(parent, child2, 9 , 5);
+	int next = entry_move_up_clockwise(bt, parent, child2, 9 , 5);
 	CU_ASSERT_EQUAL(next, 8);
 	
 	CU_ASSERT_EQUAL(child2->entry[0]->key, 6);
@@ -1243,7 +1243,7 @@ btree_t* bt = bt_create(5);
 	
 	
 
-	int next = entry_move_up_clockwise(parent, child3, 14 , 5);
+	int next = entry_move_up_clockwise(bt, parent, child3, 14 , 5);
 	CU_ASSERT_EQUAL(next, 12);
 	
 	CU_ASSERT_EQUAL(child3->entry[0]->key, 10);
@@ -1308,7 +1308,7 @@ void entry_move_up_counter_clockwise_test(void)
 	
 	
 
-	int next =entry_move_up_counter_clockwise(parent, child2, 5 , 5);
+	int next =entry_move_up_counter_clockwise(bt, parent, child2, 5 , 5);
  	
 	CU_ASSERT_EQUAL(next, 6);	
 	CU_ASSERT_EQUAL(child2->entry[0]->key, 6);
@@ -1370,7 +1370,7 @@ void entry_move_up_counter_clockwise_test1(void)
 	
 	
 
-	int next = entry_move_up_counter_clockwise(parent, child3, 9 , 5);
+	int next = entry_move_up_counter_clockwise(bt, parent, child3, 9 , 5);
 	CU_ASSERT_EQUAL(next, 10);
 	
 	CU_ASSERT_EQUAL(child3->entry[0]->key, 10);
@@ -1435,7 +1435,7 @@ void entry_move_up_counter_clockwise_test2(void)
 	
 	
 
-	int next = entry_move_up_counter_clockwise(parent, child4, 14 , 5);
+	int next = entry_move_up_counter_clockwise(bt, parent, child4, 14 , 5);
 
 	CU_ASSERT_EQUAL(next, 15);
 	CU_ASSERT_EQUAL(child4->entry[0]->key, 15);
@@ -1507,3 +1507,310 @@ static void children_shift_left_test(void)
 
 	bt_destroy(bt, NULL);
 }
+
+void bt_delete_minimum_test(void)
+{
+	btree_t* bt = bt_create(3);
+
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt, keys[i], z);
+	}
+	
+	for(int i = 0; i < 18; i++)
+	{
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+	
+	bt_entry_t* entry = bt_delete_minimum(bt, bt->root->children[1]);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
+	CU_ASSERT_EQUAL(entry->key, 70);
+	
+	for(int i = 0; i < 18; i++)
+	{
+		void* object  = bt_search(bt, keys[i]);
+		if(keys[i] == 70)
+		{
+			CU_ASSERT_PTR_NULL(object);
+		}
+		else
+		{
+			CU_ASSERT_PTR_NOT_NULL(object);
+		}
+	}
+	
+
+	bt_destroy(bt, free);	
+}
+
+void bt_delete_minimum_test1(void)
+{
+	btree_t* bt = bt_create(3);
+
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt, keys[i], z);
+	}
+	
+	for(int i = 0; i < 18; i++)
+	{
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+
+	bt_entry_t* entry = bt_delete_minimum(bt, bt->root->children[0]);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
+	CU_ASSERT_EQUAL(entry->key, 5);
+
+	for(int i = 0; i < 18; i++)
+	{
+		void* object  = bt_search(bt, keys[i]);
+		if(keys[i] == 5)
+		{
+			CU_ASSERT_PTR_NULL(object);
+		}
+		else
+		{
+			CU_ASSERT_PTR_NOT_NULL(object);
+		}
+	}
+	
+
+	bt_destroy(bt, free);	
+}
+
+void bt_delete_minimum_test2(void)
+{
+	btree_t* bt = bt_create(3);
+
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt, keys[i], z);
+	}
+	
+	for(int i = 0; i < 18; i++)
+	{
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+
+	bt_entry_t* entry = bt_delete_minimum(bt, bt->root->children[1]->children[1]);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
+	CU_ASSERT_EQUAL(entry->key, 72);
+
+	for(int i = 0; i < 18; i++)
+	{
+		void* object  = bt_search(bt, keys[i]);
+		if(keys[i] == 72)
+		{
+			CU_ASSERT_PTR_NULL(object);
+		}
+		else
+		{
+			CU_ASSERT_PTR_NOT_NULL(object);
+		}
+	}
+	
+
+	bt_destroy(bt, free);	
+}
+
+
+void bt_delete_minimum_test3(void)
+{
+	btree_t* bt = bt_create(3);
+
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt, keys[i], z);
+	}
+	
+	for(int i = 0; i < 18; i++)
+	{
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+
+	bt_entry_t* entry = bt_delete_minimum(bt, bt->root);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
+	CU_ASSERT_EQUAL(entry->key, 5);
+
+	for(int i = 0; i < 18; i++)
+	{
+		void* object  = bt_search(bt, keys[i]);
+		if(keys[i] == 5)
+		{
+			CU_ASSERT_PTR_NULL(object);
+		}
+		else
+		{
+			CU_ASSERT_PTR_NOT_NULL(object);
+		}
+	}
+	
+
+	bt_destroy(bt, free);	
+}
+
+
+
+void bt_delete_maximum_test(void)
+{
+	btree_t* bt = bt_create(3);
+
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt, keys[i], z);
+	}
+	
+	for(int i = 0; i < 18; i++)
+	{
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+	
+	bt_entry_t* entry = bt_delete_maximum(bt, bt->root->children[1]);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
+	CU_ASSERT_EQUAL(entry->key, 300);
+	
+	for(int i = 0; i < 18; i++)
+	{
+		void* object  = bt_search(bt, keys[i]);
+		if(keys[i] == 300)
+		{
+			CU_ASSERT_PTR_NULL(object);
+		}
+		else
+		{
+			CU_ASSERT_PTR_NOT_NULL(object);
+		}
+	}
+	
+
+	bt_destroy(bt, free);	
+}
+
+void bt_delete_maximum_test1(void)
+{
+	btree_t* bt = bt_create(3);
+
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt, keys[i], z);
+	}
+	
+	for(int i = 0; i < 18; i++)
+	{
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+
+	bt_entry_t* entry = bt_delete_maximum(bt, bt->root->children[0]);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
+	CU_ASSERT_EQUAL(entry->key, 57);
+
+	for(int i = 0; i < 18; i++)
+	{
+		void* object  = bt_search(bt, keys[i]);
+		if(keys[i] == 57)
+		{
+			CU_ASSERT_PTR_NULL(object);
+		}
+		else
+		{
+			CU_ASSERT_PTR_NOT_NULL(object);
+		}
+	}
+	bt_destroy(bt, free);	
+}
+
+void bt_delete_maximum_test2(void)
+{
+	btree_t* bt = bt_create(3);
+
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt, keys[i], z);
+	}
+	
+	for(int i = 0; i < 18; i++)
+	{
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+
+	bt_entry_t* entry = bt_delete_maximum(bt, bt->root->children[1]->children[1]);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
+	CU_ASSERT_EQUAL(entry->key, 73);
+
+	for(int i = 0; i < 18; i++)
+	{
+		void* object  = bt_search(bt, keys[i]);
+		if(keys[i] == 73)
+		{
+			CU_ASSERT_PTR_NULL(object);
+		}
+		else
+		{
+			CU_ASSERT_PTR_NOT_NULL(object);
+		}
+	}
+	
+
+	bt_destroy(bt, free);	
+}
+
+
+void bt_delete_maximum_test3(void)
+{
+	btree_t* bt = bt_create(3);
+
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		bt_insert(bt, keys[i], z);
+	}
+	
+	for(int i = 0; i < 18; i++)
+	{
+		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+	}
+	
+	bt_entry_t* entry = bt_delete_maximum(bt, bt->root);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
+	CU_ASSERT_EQUAL(entry->key, 300);
+
+	for(int i = 0; i < 18; i++)
+	{
+		void* object  = bt_search(bt, keys[i]);
+		if(keys[i] == 300)
+		{
+			CU_ASSERT_PTR_NULL(object);
+		}
+		else
+		{
+			CU_ASSERT_PTR_NOT_NULL(object);
+		}
+	}
+	
+
+	bt_destroy(bt, free);	
+}
+

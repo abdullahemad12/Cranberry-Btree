@@ -1115,7 +1115,7 @@ void split_full_root_test(void)
 
 void bt_delete_helper_test(void)
 {
-	int n = 15;
+	int n = 50;
 	int m = 1000;
 	int keys[n];
 	int dup[m]; /*to catch duplicate values*/
@@ -1123,7 +1123,7 @@ void bt_delete_helper_test(void)
 	memset(dup, 0, m);
 	
 	
-	btree_t* bt = bt_create(3);
+	btree_t* bt = bt_create(20);
 	srand(time(NULL));   
 
 	for(int i = 0; i < n; i++)
