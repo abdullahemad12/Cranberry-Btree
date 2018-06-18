@@ -33,6 +33,7 @@ static int min(int x, int y);
 static bt_node_t* merge_leaf_nodes(bt_node_t* node1, bt_node_t* node2, int n);
 static void node_entry_set_null(bt_node_t* node, int entry_index, int n);
 static void children_shift_right(bt_node_t* nodes[], int n);
+static bt_node_t* children_shift_left(bt_node_t* nodes[], int n);
 static bt_entry_t* cpy_entry(bt_entry_t* entry_original);
 static int get_entry_index(bt_node_t* node, int key);
 static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key);
@@ -51,6 +52,7 @@ static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key);
 static int entry_move_up_clockwise(bt_node_t* parent, bt_node_t* left, int key , int n);
 static int entry_move_up_counter_clockwise(bt_node_t* parent, bt_node_t* left, int key , int n);
 static int delete_int_helper(btree_t* bt, bt_node_t** node_ptr, int key);
+static bt_node_t* remove_last_child(bt_node_t* nodes[], int len);
 
 /*
  * int -> bptree_t* 
@@ -953,10 +955,13 @@ static void entry_rotate_counter_clockwise(bt_node_t* parent, bt_node_t* left, b
 	bt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
 	bt_delete_entry_helper(parent, entry_cpy->key, n);
 	node_insert_entry(left, entry_cpy, false, n);
+
 	
 	entry_cpy = cpy_entry(right->entry[0]);
 	bt_delete_entry_helper(right, entry_cpy->key, n);
 	node_insert_entry(parent, entry_cpy, false, n);
+	bt_node_t* shifted = children_shift_left(right->children, n);
+	left->children[left->len] = shifted;
 }
 
 
@@ -972,6 +977,10 @@ static void entry_rotate_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t
 	bt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
 	bt_delete_entry_helper(parent, entry_cpy->key, n);
 	node_insert_entry(right, entry_cpy, false, n);
+	
+	bt_node_t* last_child = remove_last_child(left->children, left->len);
+	children_shift_right(right->children, n);
+	right->children[0] = last_child;
 	
 	index =  get_last_entry_index(left, n);
 	entry_cpy = cpy_entry(left->entry[index]);
@@ -993,6 +1002,7 @@ static int entry_move_up_clockwise(bt_node_t* parent, bt_node_t* left, int key ,
 	bt_entry_t* entry_cpy = cpy_entry(left->entry[index]);
 	bt_delete_entry_helper(parent, key, n);
 	node_insert_entry(parent, entry_cpy, false, n);
+
 	return entry_cpy->key;
 }
 
@@ -1268,4 +1278,35 @@ static void delete_child(bt_node_t* parent, bt_node_t* child, int n)
 		}
 	}
 }
+/**
+  * bt_node_t**, int -> bt_node_t*
+  * EFFECTS: shifts all the the children in the bt_node_t array on step to the left
+  * MODIFIES: bt_node_t**
+  * RETURNS: the leftmost element
+  */
+static bt_node_t* children_shift_left(bt_node_t* nodes[], int n)
+{
+	bt_node_t* ret = nodes[0];
+	for(int i = 0; i < n; i++)
+	{
+		nodes[i] = nodes[i+1]; 
+	}
+	nodes[n] = NULL;
+	return ret;
+}
 
+/**
+  * bt_node_t** -> bt_node_t*
+  * EFFECTS: removes the last from the children array
+  * MODIFIES: bt_node_t**
+  * RETURNS: the last child
+  */
+ static bt_node_t* remove_last_child(bt_node_t* nodes[], int len)
+ {
+ 
+ 	bt_node_t* last = nodes[len];
+ 	return last;
+ 
+ }
+ 
+ 

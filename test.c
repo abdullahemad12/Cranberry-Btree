@@ -19,6 +19,7 @@ struct test {
 
 static struct test tests[] = 
 {	
+	{"children_shift_left_test", children_shift_left_test},
 	{"delete_test_root_entry", delete_test_root_entry}, 
 	//{"validate_tree_insertions_test", validate_tree_insertions_test},
 	{"get_child_index_test", get_child_index_test},
