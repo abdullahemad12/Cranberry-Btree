@@ -12,6 +12,7 @@ static bt_node_t* get_node_by_key(bt_node_t* root, int key, int n);
 static void debug_log(bt_node_t* x, int n);
 int get_leaf_key (bt_node_t* node);
 void validate_tree(bt_node_t* node, int n);
+static bool contains(int arr[], int n, int key);
 
 bt_node_t* node21 = NULL;
 bt_node_t* children_original21[22];
@@ -1115,21 +1116,22 @@ void split_full_root_test(void)
 
 void bt_delete_helper_test(void)
 {
-	int n = 20;
+	int n = 3000;
 
-	int keys[n];
-
+	static int keys[3000];
 	memset(keys, 0, n);
-
 	
-	
-	btree_t* bt = bt_create(3);
+	btree_t* bt = bt_create(5);
 	srand(time(NULL)); 
 	  
 	FILE* file = fopen("keys.txt", "w");
 	for(int i = 0; i < n; i++)
 	{
-		int r = rand() % n;
+		int r = 0;;
+		while(contains(keys, n, r))
+		{
+			r = rand() % 10000;
+		}
 		keys[i] = r;
 		fprintf(file, "%d\n", r);
 	}
@@ -1652,6 +1654,21 @@ void validate_tree(bt_node_t* node, int n)
 	{
 		validate_tree(node->children[i], n);
 	}
+}
+/**
+  * returns true if the array contains the key
+  */
+static bool contains(int arr[], int n, int key)
+{
+	for(int i = 0; i < n; i++)
+	{
+		int cmp = arr[i];
+		if(cmp == key)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 /*****************************

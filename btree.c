@@ -1178,6 +1178,7 @@ static void node_entry_set_null(bt_node_t* node, int entry_index, int n)
   */
 static bt_entry_t* cpy_entry(bt_entry_t* entry_original)
 {
+	assert(entry_original != NULL);
 	return bt_create_entry(entry_original->key, entry_original->object);
 }
 
