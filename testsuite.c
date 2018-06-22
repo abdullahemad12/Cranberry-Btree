@@ -1116,9 +1116,9 @@ void split_full_root_test(void)
 
 void bt_delete_helper_test_helper(void)
 {
-	int n = 70;
+	int n = 80;
 
-	static int keys[70];
+	static int keys[80];
 	memset(keys, 0, n);
 	
 	btree_t* bt = bt_create(3);
