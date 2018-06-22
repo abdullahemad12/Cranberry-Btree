@@ -1114,14 +1114,14 @@ void split_full_root_test(void)
 
 
 
-void bt_delete_helper_test(void)
+void bt_delete_helper_test_helper(void)
 {
-	int n = 3000;
+	int n = 70;
 
-	static int keys[3000];
+	static int keys[70];
 	memset(keys, 0, n);
 	
-	btree_t* bt = bt_create(5);
+	btree_t* bt = bt_create(3);
 	srand(time(NULL)); 
 	  
 	FILE* file = fopen("keys.txt", "w");
@@ -1148,7 +1148,6 @@ void bt_delete_helper_test(void)
 	{
 		if(bt_search(bt, keys[i]) == NULL)
 		{
-			printf("key: %d", keys[i]);
 			printTree(bt);
 		}
 		void* object = bt_delete_helper(bt, NULL, bt->root, keys[i]);
@@ -1162,6 +1161,15 @@ void bt_delete_helper_test(void)
 	bt_destroy(bt, free);
 }
 
+
+void bt_delete_helper_test(void)
+{
+	for(int i = 0; i < 30000; i++)
+	{
+		bt_delete_helper_test_helper();
+	}
+	
+}
 
 void bt_delete_leaf_case_test(void)
 {

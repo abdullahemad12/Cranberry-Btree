@@ -55,6 +55,10 @@ static bt_node_t* remove_last_child(bt_node_t* nodes[], int len);
 bt_entry_t* bt_delete_minimum(btree_t* bt, bt_node_t* node);
 bt_entry_t* bt_delete_maximum(btree_t* bt, bt_node_t* node);
 
+
+
+
+
 /*
  * int -> bptree_t* 
  * Given the maximum number of entries in a node
@@ -635,6 +639,7 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* parent,  bt_node_t* node, 
 	/*Not found yet*/
 	int next_node_index = get_next_node_index(node, key, bt->n);
 	void* object = bt_node_search_helper(node->entry, key, 0, node->len);	
+	assert(next_node_index != -1);
 	if(object == NULL)
 	{
 		return bt_delete_helper(bt, node, node->children[next_node_index], key);
@@ -1262,6 +1267,11 @@ static void insert_child(bt_node_t* parent, bt_node_t* child, int n)
 	{
 		return;
 	}
+	if(is_leaf(parent->children[0]))
+	{
+		return;
+	}
+
 	for(int i = 0, n1 = n+1; i < n1; i++)
 	{
 		assert(parent->children[i] != child);
@@ -1270,6 +1280,8 @@ static void insert_child(bt_node_t* parent, bt_node_t* child, int n)
 				parent->children[i] = child; 
 				return;
 		}
+		assert(parent->children[i]->entry[0] != NULL);
+		assert(child->entry[child->len-1] != NULL);
 		if(parent->children[i]->entry[0]->key > child->entry[child->len-1]->key)
 		{
 			children_shift_right_i(parent->children, i, n);
@@ -1332,6 +1344,7 @@ static bt_node_t* children_shift_left(bt_node_t* nodes[], int n)
  {
  
  	bt_node_t* last = nodes[len];
+ 	nodes[len] = NULL;
  	return last;
  
  }
