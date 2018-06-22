@@ -1115,7 +1115,7 @@ void split_full_root_test(void)
 
 void bt_delete_helper_test(void)
 {
-	int n = 40;
+	int n = 20;
 
 	int keys[n];
 
@@ -1124,21 +1124,23 @@ void bt_delete_helper_test(void)
 	
 	
 	btree_t* bt = bt_create(3);
-	srand(time(NULL));   
-
+	srand(time(NULL)); 
+	  
+	FILE* file = fopen("keys.txt", "w");
 	for(int i = 0; i < n; i++)
 	{
 		int r = rand() % n;
 		keys[i] = r;
+		fprintf(file, "%d\n", r);
 	}
-	
+	fclose(file);
+
 	
 	for(int i = 0; i < n; i++)
 	{
 		int* z = malloc(sizeof(int));
 		bt_insert(bt, keys[i], z);
 	}
-
 
 	for(int i = 0; i < n; i++)
 	{

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 #include "btree.h"
 
 
@@ -18,6 +19,8 @@
 static int getLine (char *prmpt, char *buff, size_t sz);
 static int parse_input(char* str);
 static void strdcpy(char* src, char* dst);
+static void load_from_keys_dot_txt(void);
+static void delete_slow_motion(int sec);
 
 btree_t* bt = NULL; 
 int main(void)
@@ -84,9 +87,21 @@ static int parse_input(char* str)
 		}
 		return 0;
 	}
+	else if(str[0] == 'L')
+	{
+		load_from_keys_dot_txt();
+		return 0;
+	}
+	else if(str[0] == 'x')
+	{
+		/*keys is the number of seconds*/
+		delete_slow_motion(key);
+		return 0;
+	}
 	else if (str[0] == 'p')
 	{
 		printTree(bt);
+		return 0;
 	}
 	else if(str[0] == '?')
 	{
@@ -110,6 +125,44 @@ static void strdcpy(char* src, char* dst)
 	}
 	dst[ptr] = '\0';
 }
+
+/**
+  * Inserts the keys in keys.txt to the BTree
+  *
+  */
+static void load_from_keys_dot_txt(void)
+{
+	FILE* file = fopen("keys.txt", "r");
+	char buffer[100];
+	while(fgets(buffer, 100, file) != NULL)
+	{
+		int key = atoi(buffer);
+		int* z = malloc(sizeof(int));	
+		bt_insert(bt, key ,z);
+	}
+	fclose(file);
+} 
+
+
+/**
+  * Deletes the keys in keys.txt from the BTree
+  *
+  */
+static void delete_slow_motion(int sec)
+{
+	FILE* file = fopen("keys.txt", "r");
+	char buffer[100];
+	while(fgets(buffer, 100, file) != NULL)
+	{
+		int key = atoi(buffer);
+		free(bt_delete(bt, key));
+		printf("key deleted: %d\n\n", key);
+		printTree(bt);
+		sleep(sec);
+	}
+	fclose(file);
+}  
+ 
 
 /**
   * Author: paxdiablo

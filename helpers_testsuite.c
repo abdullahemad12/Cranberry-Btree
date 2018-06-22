@@ -1155,7 +1155,7 @@ void entry_move_up_counter_clockwise_test1(void)
 	bt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
-	child1->entry[0] = bt_create_entry(4, &z);
+	child1->entry[1] = bt_create_entry(4, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	

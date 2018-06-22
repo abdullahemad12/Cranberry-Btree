@@ -54,7 +54,6 @@ static struct test tests[] =
 	{"split_full_root_test", split_full_root_test},
 	//{"bt_node_search_helper_test", bt_node_search_helper_test},
 	{"bt_delete_helper_test", bt_delete_helper_test},
-	{"bt_delete_leaf_case_test", bt_delete_leaf_case_test},
 	{"node_shift_left_test", node_shift_left_test},
 	{"merge_leaf_nodes_test", merge_leaf_nodes_test},
 	{"get_entry_index_test", get_entry_index_test},

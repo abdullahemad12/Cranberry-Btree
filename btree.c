@@ -623,7 +623,15 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* parent,  bt_node_t* node, 
 		return NULL;
 	}
 
+	bt_node_t* old_root = bt->root;
 	balance_node(bt, &node, key);
+	
+	/*restarts execution if the root was altered*/
+	if(bt->root != old_root)
+	{
+		return bt_delete_helper(bt, NULL,  bt->root, key);
+	}
+	
 	/*Not found yet*/
 	int next_node_index = get_next_node_index(node, key, bt->n);
 	void* object = bt_node_search_helper(node->entry, key, 0, node->len);	
@@ -666,19 +674,19 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key)
 	assert(index >= 0);
 	void* object  = node->entry[index]->object;
 	
-
+	node->entry[index]->object = NULL;
 	bt_node_t* left = node->children[index];
 	bt_node_t* right = node->children[index+1];
 	assert(left != NULL && right != NULL);/*every entry must have a right and left children*/
-	int min_n = is_leaf(node->children[0]) ? bt->n / 2 : ceil_fn(((double) bt->n) / 2.0) - 1;
+
 	
 	
-	if(right->len > min_n)
+	if(right != NULL)
 	{
 		entry_move_up_counter_clockwise(bt, node, right, key , bt->n);
 		return object;
 	}
-	else if(left->len > min_n)
+	else if(left != NULL)
 	{
 		entry_move_up_clockwise(bt, node, left, key , bt->n);
 		return object;
