@@ -53,7 +53,7 @@ static struct test tests[] =
 	{"bt_insert_helper_test2", bt_insert_helper_test2},
 	{"split_full_root_test", split_full_root_test},
 	//{"bt_node_search_helper_test", bt_node_search_helper_test},
-	{"bt_delete_helper_test", bt_delete_helper_test},
+	{"bt_comp_test", bt_comp_test},
 	{"node_shift_left_test", node_shift_left_test},
 	{"merge_leaf_nodes_test", merge_leaf_nodes_test},
 	{"get_entry_index_test", get_entry_index_test},
