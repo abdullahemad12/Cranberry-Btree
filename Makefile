@@ -10,17 +10,17 @@ CC = clang
 CFLAGS = -ggdb3 -O0 -Qunused-arguments -std=c11 -Wall -Werror
 
 # name for executable
-EXE = bin/btree
+EXE = bin/cranbtree
 
 # space-separated list of header files
-HDRS = 
+HDRS = include/cranbtree.h
 
 # space-separated list of libraries, if any,
 # each of which should be prefixed with -l
 LIBS = -lcunit
 
 # space-separated list of source files
-SRCS = src/btree.c
+SRCS = src/cranbtree.c
 
 
 # Included folders
@@ -31,8 +31,13 @@ INCLUDES = include
 OBJS = $(SRCS:.c=.o)
 
 
-# default target
-default:
+
+###########################################
+#   Compile object files into a library   #
+###########################################
+
+# default target make
+default: compile createlib indexlib
 	
 # creates the object file
 compile:
@@ -40,13 +45,30 @@ compile:
 
 #creates the library
 createlib: 
-	ar rc cranbtree.a objfile1.o objfile2.o objfile3.o
+	ar rc libcranbtree.a cranbtree.o
 
+#create index on the library
+indexlib: 
+	ranlib libcranbtree.a
 
 # dependencies 
 $(OBJS): $(HDRS) Makefile
 
 
+
+###################################
+# Install in the correct locations#
+###################################
+install: 
+	mkdir -p /usr/local/include/cranberry && \
+	cp $(HDRS) /usr/local/include/cranberry/cranbtree.h && \
+	cp libcranbtree.a /usr/local/lib
+
+
+###############################
+#		Test and cli		  #
+#	   for developers		  #
+###############################
 
 
 #Creates binary for the test in /bin
