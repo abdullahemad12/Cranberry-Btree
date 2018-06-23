@@ -30,10 +30,15 @@ static void populate_with_random(int n);
 const char* help = "type an operation character followed by a key number.\ni: insert\nd: delete\ns: search\nf: insert random numbers\np: Print the current Tree\n";
 
 btree_t* bt = NULL; 
-int main(void)
+int main(int argc, char* argv[])
 {
+	int keys = 5;
+	if(argc > 1)
+	{
+		keys = atoi(argv[1]);
+	}
 	srand(time(NULL));
-	bt = bt_create(4);
+	bt = bt_create(keys);
 	while(1)
 	{
 		char input[50];
