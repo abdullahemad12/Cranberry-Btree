@@ -7,20 +7,20 @@
 
 void get_right_sibling_test(void)
 {
-	bt_node_t* parent = bt_create_node(4);
+	cbt_node_t* parent = bt_create_node(4);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
 	parent->len = 2;
 	
-	bt_node_t* child1 = bt_create_node(4);
+	cbt_node_t* child1 = bt_create_node(4);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(3, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(4);
+	cbt_node_t* child2 = bt_create_node(4);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(8, &z);
@@ -28,7 +28,7 @@ void get_right_sibling_test(void)
 	parent->children[1] = child2;
 	
 	
-	bt_node_t* child3 = bt_create_node(4);
+	cbt_node_t* child3 = bt_create_node(4);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(11, &z);
@@ -36,7 +36,7 @@ void get_right_sibling_test(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* sibling =  get_right_sibling(parent, child1);
+	cbt_node_t* sibling =  get_right_sibling(parent, child1);
 	CU_ASSERT_EQUAL(sibling, child2);
 	
 	sibling = get_right_sibling(parent, child2);
@@ -55,20 +55,20 @@ void get_right_sibling_test(void)
 
 void get_left_sibling_test(void)
 {
-	bt_node_t* parent = bt_create_node(4);
+	cbt_node_t* parent = bt_create_node(4);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
 	parent->len = 2;
 	
-	bt_node_t* child1 = bt_create_node(4);
+	cbt_node_t* child1 = bt_create_node(4);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(3, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(4);
+	cbt_node_t* child2 = bt_create_node(4);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(8, &z);
@@ -76,7 +76,7 @@ void get_left_sibling_test(void)
 	parent->children[1] = child2;
 	
 	
-	bt_node_t* child3 = bt_create_node(4);
+	cbt_node_t* child3 = bt_create_node(4);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(11, &z);
@@ -84,7 +84,7 @@ void get_left_sibling_test(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* sibling = get_left_sibling(parent, child1);
+	cbt_node_t* sibling = get_left_sibling(parent, child1);
 	CU_ASSERT_PTR_NULL(sibling);
 	
 	sibling = get_left_sibling(parent, child2);
@@ -103,22 +103,22 @@ void get_left_sibling_test(void)
 
 void merge_nodes_test(void)
 {
-	btree_t* bt = bt_create(5);
+	cranbtree_t* bt = cbt_create(5);
 	
 	
-	bt_node_t* parent = bt_create_node(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
 	parent->len = 2;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->len = 1;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(8, &z);
@@ -126,14 +126,14 @@ void merge_nodes_test(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(11, &z);
 	child3->len = 2;
 	parent->children[2] = child3;
 	
-	bt_node_t* new_node = merge_nodes(bt, parent, child1, child2);
+	cbt_node_t* new_node = merge_nodes(bt, parent, child1, child2);
 	
 	CU_ASSERT_PTR_NOT_NULL_FATAL(new_node);
 	CU_ASSERT_EQUAL(new_node->children[0]->entry[0]->key, 1);
@@ -155,16 +155,16 @@ void merge_nodes_test(void)
 	CU_ASSERT_EQUAL(parent->len, 1);
 
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 
 void merge_nodes_test1(void)
 {
-	btree_t* bt = bt_create(5);
+	cranbtree_t* bt = cbt_create(5);
 	
 	
-	bt_node_t* parent = bt_create_node(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int *z = malloc(sizeof(int));
 	parent->entry[0] = bt_create_entry(5, z);
 	parent->entry[1] = bt_create_entry(9, z);
@@ -172,13 +172,13 @@ void merge_nodes_test1(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, z);
 	child1->len = 1;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, z);
 	child2->entry[1] = bt_create_entry(8, z);
@@ -186,14 +186,14 @@ void merge_nodes_test1(void)
 	parent->children[1] = child2;
 
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, z);
 	child3->len = 1;
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, z);
 	child4->entry[1] = bt_create_entry(16, z);
@@ -202,7 +202,7 @@ void merge_nodes_test1(void)
 	
 		
 		
-	bt_node_t* new_node = merge_nodes(bt, parent, child2, child3);
+	cbt_node_t* new_node = merge_nodes(bt, parent, child2, child3);
 	
 	CU_ASSERT_PTR_NOT_NULL_FATAL(new_node);
 	CU_ASSERT_EQUAL(new_node->children[1]->entry[0]->key, 6);
@@ -238,30 +238,30 @@ void merge_nodes_test1(void)
 
 	
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 	free(z);
 }
 
 
 void merge_nodes_test2(void)
 {
-	btree_t* bt = bt_create(5);
+	cranbtree_t* bt = cbt_create(5);
 	
 	
-	bt_node_t* parent = bt_create_node(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
 	parent->entry[2] = bt_create_entry(14, &z);
 	parent->len = 3;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->len = 1;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(8, &z);
@@ -269,14 +269,14 @@ void merge_nodes_test2(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->len = 1;
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -285,7 +285,7 @@ void merge_nodes_test2(void)
 	
 	
 	
-	bt_node_t* new_node = merge_nodes(bt, parent, child3, child4);
+	cbt_node_t* new_node = merge_nodes(bt, parent, child3, child4);
 	
 	CU_ASSERT_PTR_NOT_NULL_FATAL(new_node);
 	CU_ASSERT_EQUAL(new_node->children[2]->entry[0]->key, 10);
@@ -307,13 +307,13 @@ void merge_nodes_test2(void)
 	CU_ASSERT_EQUAL(parent->len, 2);
 
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 void get_child_index_test(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -321,13 +321,13 @@ void get_child_index_test(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->len = 1;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(8, &z);
@@ -335,14 +335,14 @@ void get_child_index_test(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->len = 1;
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -363,13 +363,13 @@ void get_child_index_test(void)
 	(void) get_child_index;
 
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 void insert_child_test(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -377,13 +377,13 @@ void insert_child_test(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->len = 1;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(8, &z);
@@ -391,14 +391,14 @@ void insert_child_test(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->len = 1;
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -407,7 +407,7 @@ void insert_child_test(void)
 	
 	
 	
-	bt_node_t* child5 = bt_create_node(5);
+	cbt_node_t* child5 = bt_create_node(5);
 
 	child5->entry[0] = bt_create_entry(11, &z);
 	child5->entry[1] = bt_create_entry(12, &z);
@@ -422,15 +422,15 @@ void insert_child_test(void)
 	CU_ASSERT_EQUAL(parent->children[3], child5);
 	CU_ASSERT_EQUAL(parent->children[4], child4);
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 
 }
 
 
 void delete_child_test(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -438,13 +438,13 @@ void delete_child_test(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->len = 1;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(8, &z);
@@ -452,14 +452,14 @@ void delete_child_test(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->len = 1;
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -468,7 +468,7 @@ void delete_child_test(void)
 	
 	
 	
-	bt_node_t* child5 = bt_create_node(5);
+	cbt_node_t* child5 = bt_create_node(5);
 
 	child5->entry[0] = bt_create_entry(11, &z);
 	child5->entry[1] = bt_create_entry(12, &z);
@@ -506,7 +506,7 @@ void delete_child_test(void)
 	CU_ASSERT_EQUAL(parent->children[3], NULL);
 	CU_ASSERT_EQUAL(parent->children[4], NULL);
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 	
 	bt_destroy_node(child2, 5, NULL);
 	bt_destroy_node(child1, 5, NULL);
@@ -517,8 +517,8 @@ void delete_child_test(void)
 
 void entry_rotate_counter_clockwise_test(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -526,13 +526,13 @@ void entry_rotate_counter_clockwise_test(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->len = 1;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(8, &z);
@@ -540,14 +540,14 @@ void entry_rotate_counter_clockwise_test(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->len = 1;
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -570,13 +570,13 @@ void entry_rotate_counter_clockwise_test(void)
 	CU_ASSERT_EQUAL(child2->entry[0]->key, 8);
 	CU_ASSERT_PTR_NULL(child2->entry[1]);
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 void entry_rotate_counter_clockwise_test1(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -584,13 +584,13 @@ void entry_rotate_counter_clockwise_test1(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->len = 1;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(8, &z);
@@ -598,14 +598,14 @@ void entry_rotate_counter_clockwise_test1(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->len = 1;
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -630,14 +630,14 @@ void entry_rotate_counter_clockwise_test1(void)
 	CU_ASSERT_EQUAL(child4->entry[0]->key, 16);
 	CU_ASSERT_PTR_NULL(child4->entry[1]);
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 
 void entry_rotate_counter_clockwise_test2(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -645,20 +645,20 @@ void entry_rotate_counter_clockwise_test2(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->len = 1;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->len = 2;
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(12, &z);
@@ -666,7 +666,7 @@ void entry_rotate_counter_clockwise_test2(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -691,14 +691,14 @@ void entry_rotate_counter_clockwise_test2(void)
 	CU_ASSERT_EQUAL(child3->entry[0]->key, 12);
 	CU_ASSERT_PTR_NULL(child3->entry[1]);
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 
 void entry_rotate_clockwise_test(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -706,21 +706,21 @@ void entry_rotate_clockwise_test(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(4, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->len = 1;
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(12, &z);
@@ -728,7 +728,7 @@ void entry_rotate_clockwise_test(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -753,13 +753,13 @@ void entry_rotate_clockwise_test(void)
 	CU_ASSERT_EQUAL(child2->entry[1]->key, 6);
 	CU_ASSERT_PTR_NULL(child2->entry[2]);
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 void entry_rotate_clockwise_test1(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -767,14 +767,14 @@ void entry_rotate_clockwise_test1(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(4, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(7, &z);
@@ -782,14 +782,14 @@ void entry_rotate_clockwise_test1(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->len = 1;
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -814,15 +814,15 @@ void entry_rotate_clockwise_test1(void)
 	CU_ASSERT_EQUAL(child3->entry[1]->key, 10);
 	CU_ASSERT_PTR_NULL(child3->entry[2]);
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 
 
 void entry_rotate_clockwise_test2(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -830,14 +830,14 @@ void entry_rotate_clockwise_test2(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(4, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(7, &z);
@@ -845,7 +845,7 @@ void entry_rotate_clockwise_test2(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(12, &z);
@@ -853,7 +853,7 @@ void entry_rotate_clockwise_test2(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->len = 1;
@@ -877,7 +877,7 @@ void entry_rotate_clockwise_test2(void)
 	CU_ASSERT_EQUAL(child4->entry[1]->key, 15);
 	CU_ASSERT_PTR_NULL(child3->entry[2]);
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 
@@ -885,8 +885,8 @@ void entry_rotate_clockwise_test2(void)
 void entry_move_up_clockwise_test(void)
 {
 			
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -894,7 +894,7 @@ void entry_move_up_clockwise_test(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(3, &z);
@@ -902,7 +902,7 @@ void entry_move_up_clockwise_test(void)
 	child1->len = 3;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(7, &z);
@@ -910,7 +910,7 @@ void entry_move_up_clockwise_test(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(12, &z);
@@ -918,7 +918,7 @@ void entry_move_up_clockwise_test(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->len = 1;
@@ -942,7 +942,7 @@ void entry_move_up_clockwise_test(void)
 	CU_ASSERT_EQUAL(parent->entry[2]->key, 14);
 	
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 
@@ -950,8 +950,8 @@ void entry_move_up_clockwise_test(void)
 void entry_move_up_clockwise_test1(void)
 {
 			
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -959,7 +959,7 @@ void entry_move_up_clockwise_test1(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(3, &z);
@@ -967,7 +967,7 @@ void entry_move_up_clockwise_test1(void)
 	child1->len = 3;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(7, &z);
@@ -976,7 +976,7 @@ void entry_move_up_clockwise_test1(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(12, &z);
@@ -984,7 +984,7 @@ void entry_move_up_clockwise_test1(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->len = 1;
@@ -1007,15 +1007,15 @@ void entry_move_up_clockwise_test1(void)
 	CU_ASSERT_EQUAL(parent->entry[2]->key, 14);
 	
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 
 void entry_move_up_clockwise_test2(void)
 {
 			
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -1023,14 +1023,14 @@ void entry_move_up_clockwise_test2(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(4, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(7, &z);
@@ -1038,7 +1038,7 @@ void entry_move_up_clockwise_test2(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(11, &z);
@@ -1047,7 +1047,7 @@ void entry_move_up_clockwise_test2(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -1072,7 +1072,7 @@ void entry_move_up_clockwise_test2(void)
 	CU_ASSERT_EQUAL(parent->entry[2]->key, 12);
 	
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 
@@ -1080,8 +1080,8 @@ void entry_move_up_clockwise_test2(void)
 
 void entry_move_up_counter_clockwise_test(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -1089,14 +1089,14 @@ void entry_move_up_counter_clockwise_test(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(4, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(7, &z);
@@ -1105,7 +1105,7 @@ void entry_move_up_counter_clockwise_test(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(11, &z);
@@ -1114,7 +1114,7 @@ void entry_move_up_counter_clockwise_test(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->len = 1;
@@ -1137,14 +1137,14 @@ void entry_move_up_counter_clockwise_test(void)
 	CU_ASSERT_EQUAL(parent->entry[2]->key, 14);
 
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 
 }
 
 void entry_move_up_counter_clockwise_test1(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -1152,14 +1152,14 @@ void entry_move_up_counter_clockwise_test1(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(4, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(7, &z);
@@ -1167,7 +1167,7 @@ void entry_move_up_counter_clockwise_test1(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(11, &z);
@@ -1176,7 +1176,7 @@ void entry_move_up_counter_clockwise_test1(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->len = 1;
@@ -1199,15 +1199,15 @@ void entry_move_up_counter_clockwise_test1(void)
 	CU_ASSERT_EQUAL(parent->entry[2]->key, 14);
 	
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 
 }
 
 
 void entry_move_up_counter_clockwise_test2(void)
 {
-	btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+	cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -1215,14 +1215,14 @@ void entry_move_up_counter_clockwise_test2(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(4, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(7, &z);
@@ -1230,7 +1230,7 @@ void entry_move_up_counter_clockwise_test2(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(11, &z);
@@ -1239,7 +1239,7 @@ void entry_move_up_counter_clockwise_test2(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -1264,13 +1264,13 @@ void entry_move_up_counter_clockwise_test2(void)
 	CU_ASSERT_EQUAL(parent->entry[2]->key, 15);
 	
 	
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 
 }
 static void children_shift_left_test(void)
 {
-		btree_t* bt = bt_create(5);
-	bt_node_t* parent = bt_create_node(5);
+		cranbtree_t* bt = cbt_create(5);
+	cbt_node_t* parent = bt_create_node(5);
 	int z = 0;
 	parent->entry[0] = bt_create_entry(5, &z);
 	parent->entry[1] = bt_create_entry(9, &z);
@@ -1278,14 +1278,14 @@ static void children_shift_left_test(void)
 	parent->len = 3;
 	bt->root = parent;
 	
-	bt_node_t* child1 = bt_create_node(5);
+	cbt_node_t* child1 = bt_create_node(5);
 
 	child1->entry[0] = bt_create_entry(1, &z);
 	child1->entry[1] = bt_create_entry(4, &z);
 	child1->len = 2;
 	parent->children[0] = child1;
 	
-	bt_node_t* child2 = bt_create_node(5);
+	cbt_node_t* child2 = bt_create_node(5);
 
 	child2->entry[0] = bt_create_entry(6, &z);
 	child2->entry[1] = bt_create_entry(7, &z);
@@ -1293,7 +1293,7 @@ static void children_shift_left_test(void)
 	parent->children[1] = child2;
 	bt->root = parent;
 	
-	bt_node_t* child3 = bt_create_node(5);
+	cbt_node_t* child3 = bt_create_node(5);
 
 	child3->entry[0] = bt_create_entry(10, &z);
 	child3->entry[1] = bt_create_entry(11, &z);
@@ -1302,7 +1302,7 @@ static void children_shift_left_test(void)
 	parent->children[2] = child3;
 	
 	
-	bt_node_t* child4 = bt_create_node(5);
+	cbt_node_t* child4 = bt_create_node(5);
 
 	child4->entry[0] = bt_create_entry(15, &z);
 	child4->entry[1] = bt_create_entry(16, &z);
@@ -1311,7 +1311,7 @@ static void children_shift_left_test(void)
 	parent->children[3] = child4;
 	
 	
-	bt_node_t* removed_node = children_shift_left(parent->children, 5);
+	cbt_node_t* removed_node = children_shift_left(parent->children, 5);
 	
 	CU_ASSERT_EQUAL(removed_node, child1);
 	CU_ASSERT_EQUAL(parent->children[0], child2);
@@ -1320,33 +1320,33 @@ static void children_shift_left_test(void)
 	CU_ASSERT_PTR_NULL(parent->children[3]);
 	CU_ASSERT_PTR_NULL(parent->children[4]);
 	bt_destroy_node(removed_node, 5, NULL);
-	bt_destroy(bt, NULL);
+	cbt_destroy(bt, NULL);
 }
 
 void bt_delete_minimum_test(void)
 {
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 
 	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
 
 	for(int i = 0; i < 18; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
+		cbt_insert(bt, keys[i], z);
 	}
 	
 	for(int i = 0; i < 18; i++)
 	{
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
 	}
 	
-	bt_entry_t* entry = bt_delete_minimum(bt, bt->root->children[1]);
+	cbt_entry_t* entry = bt_delete_minimum(bt, bt->root->children[1]);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
 	CU_ASSERT_EQUAL(entry->key, 70);
 	
 	for(int i = 0; i < 18; i++)
 	{
-		void* object  = bt_search(bt, keys[i]);
+		void* object  = cbt_search(bt, keys[i]);
 		if(keys[i] == 70)
 		{
 			CU_ASSERT_PTR_NULL(object);
@@ -1358,33 +1358,33 @@ void bt_delete_minimum_test(void)
 	}
 	
 	bt_destroy_entry(entry, free);
-	bt_destroy(bt, free);	
+	cbt_destroy(bt, free);	
 }
 
 void bt_delete_minimum_test1(void)
 {
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 
 	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
 
 	for(int i = 0; i < 18; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
+		cbt_insert(bt, keys[i], z);
 	}
 	
 	for(int i = 0; i < 18; i++)
 	{
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
 	}
 
-	bt_entry_t* entry = bt_delete_minimum(bt, bt->root->children[0]);
+	cbt_entry_t* entry = bt_delete_minimum(bt, bt->root->children[0]);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
 	CU_ASSERT_EQUAL(entry->key, 5);
 
 	for(int i = 0; i < 18; i++)
 	{
-		void* object  = bt_search(bt, keys[i]);
+		void* object  = cbt_search(bt, keys[i]);
 		if(keys[i] == 5)
 		{
 			CU_ASSERT_PTR_NULL(object);
@@ -1396,33 +1396,33 @@ void bt_delete_minimum_test1(void)
 	}
 	
 	bt_destroy_entry(entry, free);
-	bt_destroy(bt, free);	
+	cbt_destroy(bt, free);	
 }
 
 void bt_delete_minimum_test2(void)
 {
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 
 	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
 
 	for(int i = 0; i < 18; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
+		cbt_insert(bt, keys[i], z);
 	}
 	
 	for(int i = 0; i < 18; i++)
 	{
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
 	}
 
-	bt_entry_t* entry = bt_delete_minimum(bt, bt->root->children[1]->children[1]);
+	cbt_entry_t* entry = bt_delete_minimum(bt, bt->root->children[1]->children[1]);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
 	CU_ASSERT_EQUAL(entry->key, 72);
 
 	for(int i = 0; i < 18; i++)
 	{
-		void* object  = bt_search(bt, keys[i]);
+		void* object  = cbt_search(bt, keys[i]);
 		if(keys[i] == 72)
 		{
 			CU_ASSERT_PTR_NULL(object);
@@ -1434,34 +1434,34 @@ void bt_delete_minimum_test2(void)
 	}
 	
 	bt_destroy_entry(entry, free);
-	bt_destroy(bt, free);	
+	cbt_destroy(bt, free);	
 }
 
 
 void bt_delete_minimum_test3(void)
 {
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 
 	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
 
 	for(int i = 0; i < 18; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
+		cbt_insert(bt, keys[i], z);
 	}
 	
 	for(int i = 0; i < 18; i++)
 	{
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
 	}
 
-	bt_entry_t* entry = bt_delete_minimum(bt, bt->root);
+	cbt_entry_t* entry = bt_delete_minimum(bt, bt->root);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
 	CU_ASSERT_EQUAL(entry->key, 5);
 
 	for(int i = 0; i < 18; i++)
 	{
-		void* object  = bt_search(bt, keys[i]);
+		void* object  = cbt_search(bt, keys[i]);
 		if(keys[i] == 5)
 		{
 			CU_ASSERT_PTR_NULL(object);
@@ -1473,35 +1473,35 @@ void bt_delete_minimum_test3(void)
 	}
 	
 	bt_destroy_entry(entry, free);
-	bt_destroy(bt, free);	
+	cbt_destroy(bt, free);	
 }
 
 
 
 void bt_delete_maximum_test(void)
 {
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 
 	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
 
 	for(int i = 0; i < 18; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
+		cbt_insert(bt, keys[i], z);
 	}
 	
 	for(int i = 0; i < 18; i++)
 	{
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
 	}
 	
-	bt_entry_t* entry = bt_delete_maximum(bt, bt->root->children[1]);
+	cbt_entry_t* entry = bt_delete_maximum(bt, bt->root->children[1]);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
 	CU_ASSERT_EQUAL(entry->key, 300);
 	
 	for(int i = 0; i < 18; i++)
 	{
-		void* object  = bt_search(bt, keys[i]);
+		void* object  = cbt_search(bt, keys[i]);
 		if(keys[i] == 300)
 		{
 			CU_ASSERT_PTR_NULL(object);
@@ -1513,33 +1513,33 @@ void bt_delete_maximum_test(void)
 	}
 	bt_destroy_entry(entry, free);
 
-	bt_destroy(bt, free);	
+	cbt_destroy(bt, free);	
 }
 
 void bt_delete_maximum_test1(void)
 {
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 
 	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
 
 	for(int i = 0; i < 18; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
+		cbt_insert(bt, keys[i], z);
 	}
 	
 	for(int i = 0; i < 18; i++)
 	{
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
 	}
 
-	bt_entry_t* entry = bt_delete_maximum(bt, bt->root->children[0]);
+	cbt_entry_t* entry = bt_delete_maximum(bt, bt->root->children[0]);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
 	CU_ASSERT_EQUAL(entry->key, 57);
 
 	for(int i = 0; i < 18; i++)
 	{
-		void* object  = bt_search(bt, keys[i]);
+		void* object  = cbt_search(bt, keys[i]);
 		if(keys[i] == 57)
 		{
 			CU_ASSERT_PTR_NULL(object);
@@ -1550,33 +1550,33 @@ void bt_delete_maximum_test1(void)
 		}
 	}
 	bt_destroy_entry(entry, free);
-	bt_destroy(bt, free);	
+	cbt_destroy(bt, free);	
 }
 
 void bt_delete_maximum_test2(void)
 {
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 
 	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
 
 	for(int i = 0; i < 18; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
+		cbt_insert(bt, keys[i], z);
 	}
 	
 	for(int i = 0; i < 18; i++)
 	{
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
 	}
 
-	bt_entry_t* entry = bt_delete_maximum(bt, bt->root->children[1]->children[1]);
+	cbt_entry_t* entry = bt_delete_maximum(bt, bt->root->children[1]->children[1]);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
 	CU_ASSERT_EQUAL(entry->key, 73);
 
 	for(int i = 0; i < 18; i++)
 	{
-		void* object  = bt_search(bt, keys[i]);
+		void* object  = cbt_search(bt, keys[i]);
 		if(keys[i] == 73)
 		{
 			CU_ASSERT_PTR_NULL(object);
@@ -1588,34 +1588,34 @@ void bt_delete_maximum_test2(void)
 	}
 	
 	bt_destroy_entry(entry, free);
-	bt_destroy(bt, free);	
+	cbt_destroy(bt, free);	
 }
 
 
 void bt_delete_maximum_test3(void)
 {
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 
 	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
 
 	for(int i = 0; i < 18; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
+		cbt_insert(bt, keys[i], z);
 	}
 	
 	for(int i = 0; i < 18; i++)
 	{
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
 	}
 	
-	bt_entry_t* entry = bt_delete_maximum(bt, bt->root);
+	cbt_entry_t* entry = bt_delete_maximum(bt, bt->root);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(entry);
 	CU_ASSERT_EQUAL(entry->key, 300);
 
 	for(int i = 0; i < 18; i++)
 	{
-		void* object  = bt_search(bt, keys[i]);
+		void* object  = cbt_search(bt, keys[i]);
 		if(keys[i] == 300)
 		{
 			CU_ASSERT_PTR_NULL(object);
@@ -1627,6 +1627,6 @@ void bt_delete_maximum_test3(void)
 	}
 	
 	bt_destroy_entry(entry, free);
-	bt_destroy(bt, free);	
+	cbt_destroy(bt, free);	
 }
 

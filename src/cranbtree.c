@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdbool.h>
-#include <btree.h>
+#include <cranbtree.h>
 
 /*library includes*/
 #include "lib/insert.c"
@@ -14,7 +14,7 @@
 
 
 /*prototypes*/
-static void destroy_bt_helper(bt_node_t* root, int n, void (* done)(void*));
+static void destroy_bt_helper(cbt_node_t* root, int n, void (* done)(void*));
 
 
 /*
@@ -22,7 +22,7 @@ static void destroy_bt_helper(bt_node_t* root, int n, void (* done)(void*));
  * Given the maximum number of entries in a node
  * returns a pointer to an empty B-tree
  */
-btree_t* bt_create(int n)
+cranbtree_t* cbt_create(int n)
 {
 	if(n < 2)
 	{ 
@@ -34,7 +34,7 @@ btree_t* bt_create(int n)
 		n++;
 	}
 	
-	btree_t* bt = malloc(sizeof(btree_t));
+	cranbtree_t* bt = malloc(sizeof(cranbtree_t));
 	if(bt == NULL)
 	{
 		return NULL;
@@ -46,44 +46,44 @@ btree_t* bt_create(int n)
 	return bt;
 }
 /**
-  * btree_t*, int, void* -> void
+  * cranbtree_t*, int, void* -> void
   * EFFECTS: inserts an object in the btree in respect with the search key
-  * MODIFIES: btree_t* bt
+  * MODIFIES: cranbtree_t* bt
   * RETURNS: void
   *
-  * btree_t* bt: Tree structs that will hold the object
+  * cranbtree_t* bt: Tree structs that will hold the object
   * int key: search key (choosen by the user)
   * void* object: pointer to the object to be inserted
   */
-void bt_insert(btree_t* bt, int key, void* object)
+void cbt_insert(cranbtree_t* bt, int key, void* object)
 {
 	assert(bt != NULL);
 	assert(object != NULL);
 	
-	bt_entry_t* entry = bt_create_entry(key, object);
+	cbt_entry_t* entry = bt_create_entry(key, object);
 	bt_insert_helper(bt, bt->root, entry);
 }
 
 
 /**
-  * btree_t*, int -> void*
+  * cranbtree_t*, int -> void*
   * EFFECTS: search for an object given the search key
   * RETURN: pointer to the object or NULL if the object was 
   *		    not found
   */
-void* bt_search(btree_t* bt, int key)
+void* cbt_search(cranbtree_t* bt, int key)
 {
 	assert(bt != NULL);
 	return bt_search_helper(bt->root, key, bt->n);
 }
 
 /**
-  * btree_t*, int -> void*
+  * cranbtree_t*, int -> void*
   * EFFECTS: Given a key, removes an object from the tree
-  * MODIFIES: btree_t*
+  * MODIFIES: cranbtree_t*
   * RETURNS: returns the object or NULL if no such a key was found
   */
-void* bt_delete(btree_t* bt, int key)
+void* cbt_delete(cranbtree_t* bt, int key)
 {
 	assert(bt != NULL);
 	return bt_delete_helper(bt, NULL, bt->root, key);
@@ -91,22 +91,22 @@ void* bt_delete(btree_t* bt, int key)
 
 
 /**
-  * btree_t*, (void) destroy_object(void*) -> void
-  * MODIFIES: btree_t* bt
+  * cranbtree_t*, (void) destroy_object(void*) -> void
+  * MODIFIES: cranbtree_t* bt
   * EFFECTS: Frees all the memory associated with the B tree
   * 
   * (void) destroy_object(void*): a pointer to a function that will be invoked on every object 
   * 				  i.e: object_destroy(object). In case the pointer is NULL, nothing is done 
   *						on the object and it becomes the user's responsibility to free it
   */
-void bt_destroy(btree_t* bt, void (* destroy_object)(void*))
+void cbt_destroy(cranbtree_t* bt, void (* destroy_object)(void*))
 {
 	destroy_bt_helper(bt->root, bt->n, destroy_object);
 	free(bt);
 }
  
  
-void printTree(btree_t* bt)
+void printTree(cranbtree_t* bt)
 {
 	printf("\n\n");
 	for(int i = 0, n = calculate_depth(bt->root); i < n; i++)
@@ -125,7 +125,7 @@ void printTree(btree_t* bt)
  *******************************************/
 
 
-static void destroy_bt_helper(bt_node_t* root, int n, void (* done)(void*))
+static void destroy_bt_helper(cbt_node_t* root, int n, void (* done)(void*))
 {
 	if(root == NULL)
 	{

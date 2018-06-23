@@ -4,34 +4,34 @@
 
 #include "lib.h"
 
-static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key);
-static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key);
-static void* bt_delete_entry_helper(bt_node_t* node, int key, int n);
-static bt_node_t* merge_leaf_nodes(bt_node_t* node1, bt_node_t* node2, int n);
-static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, bt_node_t* right);
-static void entry_rotate_counter_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t* right, int n);
-static void entry_rotate_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t* right, int n);
-static void entry_move_up_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* left, int key , int n);
-static void entry_move_up_counter_clockwise(btree_t* bt, bt_node_t* parent, bt_node_t* right, int key , int n);
-bt_entry_t* bt_delete_minimum(btree_t* bt, bt_node_t* node);
-bt_entry_t* bt_delete_maximum(btree_t* bt, bt_node_t* node);
+static void balance_node(cranbtree_t* bt, cbt_node_t** parent_ptr, int key);
+static void* bt_delete_int_case(cranbtree_t* bt, cbt_node_t* node, int key);
+static void* bt_delete_entry_helper(cbt_node_t* node, int key, int n);
+static cbt_node_t* merge_leaf_nodes(cbt_node_t* node1, cbt_node_t* node2, int n);
+static cbt_node_t* merge_nodes(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right);
+static void entry_rotate_counter_clockwise(cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right, int n);
+static void entry_rotate_clockwise(cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right, int n);
+static void entry_move_up_clockwise(cranbtree_t* bt,cbt_node_t* parent, cbt_node_t* left, int key , int n);
+static void entry_move_up_counter_clockwise(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* right, int key , int n);
+cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node);
+cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node);
 
 
 /**
-  * btree_t* , bt_node_t* , int -> void*
+  * cranbtree_t* , cbt_node_t* , int -> void*
   * EFFECTS: Deletes an entry in respecte to the given search key
   * 		 does nothing if no such entry exist
-  * MODIFIES: btree_t* bt
+  * MODIFIES: cranbtree_t* bt
   * RETURNS: the object associated with the entry, or NULL if no such entry was found
   */
-static void* bt_delete_helper(btree_t* bt, bt_node_t* parent,  bt_node_t* node, int key)
+static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* parent,  cbt_node_t* node, int key)
 {
 	if(node == NULL)
 	{
 		return NULL;
 	}
 
-	bt_node_t* old_root = bt->root;
+	cbt_node_t* old_root = bt->root;
 	balance_node(bt, &node, key);
 	
 	/*restarts execution if the root was altered*/
@@ -73,15 +73,15 @@ static void* bt_delete_helper(btree_t* bt, bt_node_t* parent,  bt_node_t* node, 
 
 
 /**
-  * btree_t*, bt_node_t**, int -> void*
+  * cranbtree_t*, cbt_node_t**, int -> void*
   * REQUIRES: node to be an leaf node
   * EFFECTS: Removes the given node and rebalances the tree
-  * MODIFIES: btree_t* bt, bt_node_t** parent, bt_node_t* node
+  * MODIFIES: cranbtree_t* bt, cbt_node_t** parent, cbt_node_t* node
   */
-static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key)
+static void balance_node(cranbtree_t* bt, cbt_node_t** parent_ptr, int key)
 {
 	
-	bt_node_t* parent = *(parent_ptr);
+	cbt_node_t* parent = *(parent_ptr);
 	/*nothing to split*/
 	if(is_leaf(parent->children[0]))
 	{
@@ -89,15 +89,15 @@ static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key)
 	}
 	
 	int index = get_next_node_index(parent, key, bt->n);
-	bt_node_t* node = parent->children[index];
+	cbt_node_t* node = parent->children[index];
 	
 	int min_n = is_leaf(node->children[0]) ? bt->n / 2 : ceil_fn(((double) bt->n) / 2.0) - 1;
 	if(node->len > min_n)
 	{
 		return;
 	}
-	bt_node_t* right_sibling = get_right_sibling(parent, node);
-	bt_node_t* left_sibling = get_left_sibling(parent, node);  
+	cbt_node_t* right_sibling = get_right_sibling(parent, node);
+	cbt_node_t* left_sibling = get_left_sibling(parent, node);  
 	
 	/*case 2a)*/
 	if(right_sibling != NULL && right_sibling->len > min_n)
@@ -123,12 +123,12 @@ static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key)
 }
 
 /**
-  * btree_t*, bt_node_t**, int -> void*
+  * cranbtree_t*, cbt_node_t**, int -> void*
   * REQUIRES: node to be an intermediate node
   * EFFECTS: Removes the given node and rebalances the tree
-  * MODIFIES: btree_t* bt
+  * MODIFIES: cranbtree_t* bt
   */
-static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key)
+static void* bt_delete_int_case(cranbtree_t* bt, cbt_node_t* node, int key)
 {
 
 	int index = get_entry_index(node,  key);
@@ -136,8 +136,8 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key)
 	void* object  = node->entry[index]->object;
 	
 	node->entry[index]->object = NULL;
-	bt_node_t* left = node->children[index];
-	bt_node_t* right = node->children[index+1];
+	cbt_node_t* left = node->children[index];
+	cbt_node_t* right = node->children[index+1];
 	assert(left != NULL && right != NULL);/*every entry must have a right and left children*/
 
 	
@@ -158,7 +158,7 @@ static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key)
 
 
 
-static void* bt_delete_entry_helper(bt_node_t* node, int key, int n)
+static void* bt_delete_entry_helper(cbt_node_t* node, int key, int n)
 {
 	for(int i = 0; i < n; i++)
 	{
@@ -181,15 +181,15 @@ static void* bt_delete_entry_helper(bt_node_t* node, int key, int n)
 
  
 /**
-  * bt_node_t* , bt_node_t*, int n -> bt_node_t*
+  * cbt_node_t* , cbt_node_t*, int n -> cbt_node_t*
   * REQUIRES: entries 0 < len <= min_n and len1 + len2 <= n
   * EFFECTS: merges two leaf nodes entries into one node
   */ 
-static bt_node_t* merge_leaf_nodes(bt_node_t* node1, bt_node_t* node2, int n)
+static cbt_node_t* merge_leaf_nodes(cbt_node_t* node1, cbt_node_t* node2, int n)
 {
 	if(node1->entry[0]->key > node2->entry[0]->key)
 	{
-		bt_node_t* tmp = node1; 
+		cbt_node_t* tmp = node1; 
 		node1 = node2; 
 		node2 = tmp;
 	}
@@ -223,14 +223,14 @@ static bt_node_t* merge_leaf_nodes(bt_node_t* node1, bt_node_t* node2, int n)
 
 
 /**
-  * btree_t*, bt_node_t*, bt_node_t*, bt_node_t* -> bt_node_t*;
+  * cranbtree_t*, cbt_node_t*, cbt_node_t*, cbt_node_t* -> cbt_node_t*;
   * EFFECTS: Merges the two children and their parents respective entry into one node
   * REQUIRES: 1) the children contains minimum number of keys 
   *			  2) the left and right children be passed in the correct order
   * MODIFIES: bt_node_left child
   * RETURNS: pointer to the new node
   */
-static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, bt_node_t* right)
+static cbt_node_t* merge_nodes(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right)
 {
 	(void)get_last_entry_index;
 	(void)node_entry_set_null;
@@ -246,7 +246,7 @@ static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, b
 	int index = get_child_index(parent, left);
 	assert(index != -1);
 	
-	bt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
+	cbt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
 	/*remove it from the parent first*/
 	bt_delete_entry_helper(parent, entry_cpy->key, bt->n);
 	node_insert_entry(left, entry_cpy, false, bt->n);
@@ -254,7 +254,7 @@ static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, b
 	/*now merge the nodes*/
 	delete_child(parent, left, bt->n);
 	delete_child(parent, right, bt->n);
-	bt_node_t* new_node = merge_leaf_nodes(left, right, bt->n);
+	cbt_node_t* new_node = merge_leaf_nodes(left, right, bt->n);
 
 	/*was the root*/
 	if(parent->len == 0)
@@ -273,16 +273,16 @@ static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, b
 }
 
 /**
-  * bt_node_t*, bt_node_t*, bt_node_t*, int -> void
+  * cbt_node_t*, cbt_node_t*, cbt_node_t*, int -> void
   * REQUIRES: the right node to have more than the minimum number of keys
   * EFFECTS: borrows an entry from the right node to increase the entries of the left node
   * MODIFIES: parent, right_node, left_node
   */
-static void entry_rotate_counter_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t* right, int n)
+static void entry_rotate_counter_clockwise(cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right, int n)
 {
 	int index = get_child_index(parent, left);
 	
-	bt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
+	cbt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
 	bt_delete_entry_helper(parent, entry_cpy->key, n);
 	node_insert_entry(left, entry_cpy, false, n);
 
@@ -290,25 +290,25 @@ static void entry_rotate_counter_clockwise(bt_node_t* parent, bt_node_t* left, b
 	entry_cpy = cpy_entry(right->entry[0]);
 	bt_delete_entry_helper(right, entry_cpy->key, n);
 	node_insert_entry(parent, entry_cpy, false, n);
-	bt_node_t* shifted = children_shift_left(right->children, n);
+	cbt_node_t* shifted = children_shift_left(right->children, n);
 	left->children[left->len] = shifted;
 }
 
 
 /**
-  * bt_node_t*, bt_node_t*, bt_node_t* , int-> void
+  * cbt_node_t*, cbt_node_t*, cbt_node_t* , int-> void
   * REQUIRES: the left node to have more than the minimum number of keys
   * EFFECTS: borrows an entry from the left node to increase the entries of the right node
   * MODIFIES: parent, right_node, left_node
   */
-static void entry_rotate_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t* right, int n)
+static void entry_rotate_clockwise(cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right, int n)
 {
 	int index = get_child_index(parent, left);
-	bt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
+	cbt_entry_t* entry_cpy = cpy_entry(parent->entry[index]);
 	bt_delete_entry_helper(parent, entry_cpy->key, n);
 	node_insert_entry(right, entry_cpy, false, n);
 	
-	bt_node_t* last_child = remove_last_child(left->children, left->len);
+	cbt_node_t* last_child = remove_last_child(left->children, left->len);
 	children_shift_right(right->children, n);
 	right->children[0] = last_child;
 	
@@ -319,17 +319,17 @@ static void entry_rotate_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t
 }
 
 /**
-  * btree_t*, bt_node_t*, bt_node_t*, bt_node_t*, int, int -> void
+  * cranbtree_t*, cbt_node_t*, cbt_node_t*, cbt_node_t*, int, int -> void
   * EFFECTS: moves a copy of the last entry of the left node and inserts it into parent 
   * 		 after removing the entry with the given key from the parent
-  * MODIFIES: bt_node_t* parent
+  * MODIFIES: cbt_node_t* parent
   * REQUIRES: the left node to have more than the minimum number of keys
   * RETURNS: the key of the last inserted entry
   */
-static void entry_move_up_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* left, int key , int n)
+static void entry_move_up_clockwise(cranbtree_t* bt,cbt_node_t* parent, cbt_node_t* left, int key , int n)
 {
 
-	bt_entry_t* entry_cpy = bt_delete_maximum(bt, left);
+	cbt_entry_t* entry_cpy = bt_delete_maximum(bt, left);
 	bt_delete_entry_helper(parent, key, n);
 	node_insert_entry(parent, entry_cpy, false, n);
 
@@ -337,33 +337,33 @@ static void entry_move_up_clockwise(btree_t* bt,bt_node_t* parent, bt_node_t* le
 
 
 /**
-  * btree_t*, bt_node_t*, bt_node_t*, bt_node_t*, int, int -> void
+  * cranbtree_t*, cbt_node_t*, cbt_node_t*, cbt_node_t*, int, int -> void
   * EFFECTS: moves a copy of the first entry of the right node and inserts it into parent 
   * 		 after removing the entry with the given key from the parent
-  * MODIFIES: bt_node_t* parent
+  * MODIFIES: cbt_node_t* parent
   * REQUIRES: the right node to have more than the minimum number of keys
   * RETURNS: the key of the last inserted entry
   */
-static void entry_move_up_counter_clockwise(btree_t* bt, bt_node_t* parent, bt_node_t* right, int key , int n)
+static void entry_move_up_counter_clockwise(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* right, int key , int n)
 {
-	bt_entry_t* entry_cpy = bt_delete_minimum(bt, right);
+	cbt_entry_t* entry_cpy = bt_delete_minimum(bt, right);
 	bt_delete_entry_helper(parent, key, n);
 	node_insert_entry(parent, entry_cpy, false, n);
 }
 
 
 /**
-  * btree_t*, bt_node_t* -> bt_entry_t* 
+  * cranbtree_t*, cbt_node_t* -> cbt_entry_t* 
   * EFFECTS: deletes the minimum key in a Tree starting from the given node
   * MODIFIES: bt
   * RETURNS: entry with the minimum key
   */
-bt_entry_t* bt_delete_minimum(btree_t* bt, bt_node_t* node)
+cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node)
 {
 	/*the min will always be at the leafs*/
 	if(is_leaf(node->children[0]))
 	{
-		bt_entry_t* entry_cpy = cpy_entry(node->entry[0]);
+		cbt_entry_t* entry_cpy = cpy_entry(node->entry[0]);
 		bt_delete_entry_helper(node, node->entry[0]->key, bt->n);
 		return entry_cpy;
 	}
@@ -378,18 +378,18 @@ bt_entry_t* bt_delete_minimum(btree_t* bt, bt_node_t* node)
 }
 
 /**
-  * btree_t*, bt_node_t* -> bt_entry_t* 
+  * cranbtree_t*, cbt_node_t* -> cbt_entry_t* 
   * EFFECTS: deletes the maximum key in a Tree starting from the given node
   * MODIFIES: bt
   * RETURNS: entry with the maximum key
   */
-bt_entry_t* bt_delete_maximum(btree_t* bt, bt_node_t* node)
+cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node)
 {
 	/*the max will always be at the leafs*/
 	int index = get_last_entry_index(node, bt->n);
 	if(is_leaf(node->children[0]))
 	{
-		bt_entry_t* entry_cpy = cpy_entry(node->entry[index]);
+		cbt_entry_t* entry_cpy = cpy_entry(node->entry[index]);
 		bt_delete_entry_helper(node, node->entry[index]->key, bt->n);
 		return entry_cpy;
 	}

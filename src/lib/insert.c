@@ -4,18 +4,18 @@
 #include "lib.h"
 
 /**
-  * bt_node_t*, bt_entry_t* -> bt_node_t*
+  * cbt_node_t*, cbt_entry_t* -> cbt_node_t*
   * EFFECT: Given the root of the tree, inserts the given entery in the appropriate location in the leaf
   * MODIFIES: Tree
   * RETURNS: void
   *
-  * btree_t* bt: btree struct pointer
-  * bt_node_t* root: the root of the tree
-  * bt_entry_t* entry: entry to be inserted in the tree
+  * cranbtree_t* bt: btree struct pointer
+  * cbt_node_t* root: the root of the tree
+  * cbt_entry_t* entry: entry to be inserted in the tree
   * int n: the size of the entries array
   * int level: the current tree level. initially zero
   */
-static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry)
+static void bt_insert_helper(cranbtree_t* bt ,cbt_node_t* root, cbt_entry_t* entry)
 {	
 
 	assert(bt != NULL);
@@ -50,8 +50,8 @@ static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry)
 	}
 	else
 	{
-		bt_node_t* splitted_node = NULL;
-		bt_entry_t* median_entry = bt_split_child(root->children[child_index], &splitted_node, bt->n);
+		cbt_node_t* splitted_node = NULL;
+		cbt_entry_t* median_entry = bt_split_child(root->children[child_index], &splitted_node, bt->n);
 
 		/* a split happened*/
 		if(median_entry != NULL)
@@ -67,21 +67,21 @@ static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry)
 
 
 /*
- * bt_node_t*, int -> bt_node_t*
+ * cbt_node_t*, int -> cbt_node_t*
  *
  * EFFECTS: Creates a new root for the tree if the node needs to be splitted
- * MODIFIES: bt_node_t** root
+ * MODIFIES: cbt_node_t** root
  * RETURNS: the new node that was created in case of a split, otherwise returns the old node
  *
  */
- static bt_node_t* split_full_root(bt_node_t* old_root, int n)
+ static cbt_node_t* split_full_root(cbt_node_t* old_root, int n)
  {
-		bt_node_t* splitted_node = NULL;
-		bt_entry_t* root_entry = bt_split_child(old_root, &splitted_node, n);
+		cbt_node_t* splitted_node = NULL;
+		cbt_entry_t* root_entry = bt_split_child(old_root, &splitted_node, n);
 		/*creates new root and restarts execution*/
 		if(root_entry != NULL)
 		{
-			bt_node_t* new_root = bt_create_node(n);
+			cbt_node_t* new_root = bt_create_node(n);
 			assert(new_root != NULL);
 			node_insert_entry(new_root, root_entry, true, n);
 			new_root->children[0] = old_root;
@@ -97,12 +97,12 @@ static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry)
  
  
  /*
- * bt_node_t*, bt_node_t**, int -> bt_entry_t*
+ * cbt_node_t*, cbt_node_t**, int -> cbt_entry_t*
  * splits a given node into two and returns the entry that should be inserted in the parent node
  * return NULL if no split is needed. i.e: the node is not full
  * REQUIRES: node to be sorted
  */
-static bt_entry_t* bt_split_child(bt_node_t* node, bt_node_t** splitted_node, int n)
+static cbt_entry_t* bt_split_child(cbt_node_t* node, cbt_node_t** splitted_node, int n)
 {
 	/*the node does not need to be splitted*/
 	if(!is_full_node(node, n))
@@ -112,7 +112,7 @@ static bt_entry_t* bt_split_child(bt_node_t* node, bt_node_t** splitted_node, in
 
 	
 	/*splits the node*/
-	bt_node_t* new_node = bt_create_node(n);
+	cbt_node_t* new_node = bt_create_node(n);
 	int borrow_n = ceil_fn(((double) n) / 2.0);
 	int new_node_itr = 0;
 	
@@ -131,7 +131,7 @@ static bt_entry_t* bt_split_child(bt_node_t* node, bt_node_t** splitted_node, in
 	new_node->len = n / 2;
 	node->len = n / 2;
 	
-	bt_entry_t* entry = node->entry[borrow_n - 1];
+	cbt_entry_t* entry = node->entry[borrow_n - 1];
 	node->entry[borrow_n - 1] = NULL;
 	*(splitted_node) = new_node;
 	return entry;

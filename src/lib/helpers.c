@@ -6,7 +6,7 @@
 /*
  * Improves code readability
  */
-static bool is_root(btree_t* bt, bt_node_t* node)
+static bool is_root(cranbtree_t* bt, cbt_node_t* node)
 {
 	return bt->root == node;
 }
@@ -15,7 +15,7 @@ static bool is_root(btree_t* bt, bt_node_t* node)
 /*
  * Improves code readability
  */
-static bool is_leaf(bt_node_t* node)
+static bool is_leaf(cbt_node_t* node)
 {
 	return node == NULL;
 }
@@ -29,7 +29,7 @@ static int ceil_fn(double n)
 
 
 
-static int calculate_depth(bt_node_t* node)
+static int calculate_depth(cbt_node_t* node)
 {
 	if(node == NULL)
 	{
@@ -39,7 +39,7 @@ static int calculate_depth(bt_node_t* node)
 }
 
 
-static void print_node(bt_node_t* node, int n)
+static void print_node(cbt_node_t* node, int n)
 {
 
 	printf(" || ");
@@ -57,7 +57,7 @@ static void print_node(bt_node_t* node, int n)
 	printf(" || ");
 }
 
-static bool print_level(bt_node_t* root, int n, int level, int currentLevel)
+static bool print_level(cbt_node_t* root, int n, int level, int currentLevel)
 {
 
 

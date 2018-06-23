@@ -3,7 +3,7 @@
 #include <stdbool.h>
 #include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
-#include "../src/btree.c"
+#include "../src/cranbtree.c"
 #include "testsuite.c"
 #include "helpers_testsuite.c"
 #include "comprehensive.c"

@@ -9,7 +9,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <btree.h>
+#include <cranbtree.h>
 
 
 #define OK       0
@@ -29,7 +29,7 @@ static void populate_with_random(int n);
 
 const char* help = "type an operation character followed by a key number.\ni: insert\nd: delete\ns: search\nf: insert random numbers\np: Print the current Tree\n";
 
-btree_t* bt = NULL; 
+cranbtree_t* bt = NULL; 
 int main(int argc, char* argv[])
 {
 	int keys = 5;
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 		keys = atoi(argv[1]);
 	}
 	srand(time(NULL));
-	bt = bt_create(keys);
+	bt = cbt_create(keys);
 	while(1)
 	{
 		char input[50];
@@ -49,11 +49,13 @@ int main(int argc, char* argv[])
 			continue;
 		}
 		int i = parse_input(input);
+		if(i == 12)	
+			break;
 		if(i != 0)
-			printf("invalid command. type ? for help\n");	
-
+			printf("invalid command. type ? for help\n");
+		
 	}
-	bt_destroy(bt, free);
+	cbt_destroy(bt, free);
 }
 
 static int parse_input(char* str)
@@ -66,19 +68,19 @@ static int parse_input(char* str)
 		case 'i':
 		{ 
 			int* z = malloc(sizeof(int));
-			bt_insert(bt, key ,z);
+			cbt_insert(bt, key ,z);
 			return 0;
 		}
 		case 'd':
 		{
-			void* object = bt_delete(bt, key);
+			void* object = cbt_delete(bt, key);
 			if(object != NULL)
 				free(object);
 			return 0;
 		}
 		case 's':
 		{
-			void* object = bt_search(bt, key);
+			void* object = cbt_search(bt, key);
 			if(object != NULL)
 				printf("The key was found\n");
 			else
@@ -98,6 +100,8 @@ static int parse_input(char* str)
 		case 'p':
 			printTree(bt);
 			return 0;
+		case 'q': 
+			return 12;
 		case '?': 
 			printf("%s", help);
 			return 0;
@@ -112,7 +116,7 @@ static void populate_with_random(int n)
 	{
 		int r = rand() % (n * 25);
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, r ,z);
+		cbt_insert(bt, r ,z);
 	}
 }
 
@@ -142,7 +146,7 @@ static void load_from_keys_dot_txt(void)
 	{
 		int key = atoi(buffer);
 		int* z = malloc(sizeof(int));	
-		bt_insert(bt, key ,z);
+		cbt_insert(bt, key ,z);
 	}
 	fclose(file);
 } 
@@ -159,7 +163,7 @@ static void delete_slow_motion(int sec)
 	while(fgets(buffer, 100, file) != NULL)
 	{
 		int key = atoi(buffer);
-		free(bt_delete(bt, key));
+		free(cbt_delete(bt, key));
 		printf("key deleted: %d\n\n", key);
 		printTree(bt);
 		sleep(sec);

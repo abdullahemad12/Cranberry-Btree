@@ -4,7 +4,7 @@
 
 # include "lib.h"
 
-static void* bt_search_helper(bt_node_t* node, int key, int n)
+static void* bt_search_helper(cbt_node_t* node, int key, int n)
 {
 	if(node == NULL)
 	{
@@ -22,12 +22,12 @@ static void* bt_search_helper(bt_node_t* node, int key, int n)
 }
 
 /*
- * bt_entry_t*[], int key -> void* 
+ * cbt_entry_t*[], int key -> void* 
  * EFFECTS: looks for an entry in the entry list with the given search key
  * RETURNS: pointer to the object or NULL if it was not found
  *
  */
-static void* bt_node_search_helper(bt_entry_t* entries[], int key, int min, int max)
+static void* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max)
 {
 	if(min == max)
 	{

@@ -18,7 +18,7 @@ static void bt_comp_test_helper(void)
 	static int keys[100];
 	memset(keys, 0, n);
 	
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 	srand(time(NULL)); 
 	  
 	for(int i = 0; i < n; i++)
@@ -35,19 +35,19 @@ static void bt_comp_test_helper(void)
 	for(int i = 0; i < n; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
+		cbt_insert(bt, keys[i], z);
 	}
 
 	for(int i = 0; i < n; i++)
 	{
 
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
-		void* object = bt_delete_helper(bt, NULL, bt->root, keys[i]);
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
+		void* object = cbt_delete(bt, keys[i]);
 		free(object);	
-		CU_ASSERT_PTR_NULL(bt_search(bt, keys[i]));
+		CU_ASSERT_PTR_NULL(cbt_search(bt, keys[i]));
 	}
 	CU_ASSERT_PTR_NULL(bt->root);
-	bt_destroy(bt, free);
+	cbt_destroy(bt, free);
 }
 
 
@@ -73,7 +73,7 @@ static void bt_comp_test1(void)
 	static int keys[500000];
 	memset(keys, 0, n);
 	
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 	srand(time(NULL)); 
 	 
 	printf("\n"); 
@@ -93,21 +93,21 @@ static void bt_comp_test1(void)
 	for(int i = 0; i < n; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
+		cbt_insert(bt, keys[i], z);
 		printf("\r\tDone With: %d random Insertions ", i + 1);
 	}
 
 	for(int i = 0; i < n; i++)
 	{
 
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, keys[i]));
-		void* object = bt_delete_helper(bt, NULL, bt->root, keys[i]);
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
+		void* object = cbt_delete(bt, keys[i]);
 		free(object);	
-		CU_ASSERT_PTR_NULL(bt_search(bt, keys[i]));
+		CU_ASSERT_PTR_NULL(cbt_search(bt, keys[i]));
 		printf("\r\tDone With: %d random Deletions ", i + 1);
 	}
 	CU_ASSERT_PTR_NULL(bt->root);
-	bt_destroy(bt, free);
+	cbt_destroy(bt, free);
 }
 
 
@@ -117,26 +117,26 @@ static void bt_comp_test1(void)
 static void bt_comp_test2(void)
 {
 	int n = 10000000;
-	btree_t* bt = bt_create(3);
+	cranbtree_t* bt = cbt_create(3);
 	
 	printf("\n");
 	for(int i = 0; i < n; i++)
 	{
 		int* z = malloc(sizeof(int));
-		bt_insert(bt, i, z);
+		cbt_insert(bt, i, z);
 		printf("\r\tDone With: %d sequential Insertions ", i + 1);
 	}
 	for(int i = 0; i < n; i++)
 	{
 
-		CU_ASSERT_PTR_NOT_NULL(bt_search(bt, i));
-		void* object = bt_delete_helper(bt, NULL, bt->root, i);
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, i));
+		void* object = cbt_delete(bt, i);
 		free(object);	
-		CU_ASSERT_PTR_NULL(bt_search(bt, i));
+		CU_ASSERT_PTR_NULL(cbt_search(bt, i));
 		printf("\r\tDone With: %d sequential Deletions ", i + 1);
 	}
 	CU_ASSERT_PTR_NULL(bt->root);
-	bt_destroy(bt, free);
+	cbt_destroy(bt, free);
 }
 
 

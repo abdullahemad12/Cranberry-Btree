@@ -21,7 +21,7 @@ HDRS =
 LIBS = 
 
 # space-separated list of source files
-SRCS = cli.c ../src/btree.c
+SRCS = cli.c ../src/cranbtree.c
 
 # Included folders
 INCLUDES = ../include
