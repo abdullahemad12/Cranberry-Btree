@@ -23,58 +23,58 @@ This section contains description of the interface
 
 #### functions
 
-###### 1. cranbtree_t* cbt_create(int n);
+**1. cranbtree_t* cbt_create(int n);**
 
-**Description**: given a number n, Allocates memory for the metadata of the binary.
+Description: given a number n, Allocates memory for the metadata of the binary.
 
-**Parameters**: int n: specifies how many keys are allowed per node. It can be any number greater than 3. However, be alarmed that if your not expecting to store a lot of data it maybe wise to choose small n since having large n can with small trees will degrade the performance.
+Parameters: int n: specifies how many keys are allowed per node. It can be any number greater than 3. However, be alarmed that if your not expecting to store a lot of data it maybe wise to choose small n since having large n can with small trees will degrade the performance.
 
-**Return value:** returns a pointer to the Cranberry Tree struct.
+Return value: returns a pointer to the Cranberry Tree struct.
 
 
-###### 2. void cbt_insert(cranbtree_t* bt, int key, void* object);
+**2. void cbt_insert(cranbtree_t* bt, int key, void* object);**
 
-**Description**: inserts an object into the tree with a search key "key".
+Description: inserts an object into the tree with a search key "key".
 
-**parameter**: 
+parameter: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
 - int key: search key, that will be used later to retrieve the object.
 - void* object: pointer to the object stored in the tree.
 
 
-###### 3. void* cbt_search(cranbtree_t* bt, int key);
+**3. void* cbt_search(cranbtree_t* bt, int key);**
 
-**Description**: search for an object in the tree with a search key "key".
+Description: search for an object in the tree with a search key "key".
 
-**parameter**: 
+parameter: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
 - int key: search key, that will be used later to retrieve the object.
 
-**Return value:** returns a pointer to the object that was inserted by the user, or NULL if the key was not found. .
+Return value: returns a pointer to the object that was inserted by the user, or NULL if the key was not found. .
 
-###### 4. void* cbt_delete(cranbtree_t* bt, int key);
+**4. void* cbt_delete(cranbtree_t* bt, int key);**
 
-**Description**: deletes an object from the tree with a search key "key".
+Description: deletes an object from the tree with a search key "key".
 
-**parameter**: 
+parameter: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
 - int key: search key, that will be used later to retrieve the object.
 
-**Return value:** returns a pointer to the object that was inserted by the user, or NULL if the key was not found.
+Return value: returns a pointer to the object that was inserted by the user, or NULL if the key was not found.
 
-###### 5. void cbt_destroy(cranbtree_t* bt, void (* destroy_object)(void*));
+**5. void cbt_destroy(cranbtree_t* bt, void (* destroy_object)(void*));**
 
-**Description**: Destroys cranberry datastructre
+Description: Destroys cranberry datastructre
 
-**parameter**: 
+parameter: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
 - void (* destroy_object)(void*)): a pointer to a function that will be called on the object in the database to free it's memory, or destroy it. i.e pass `free`. 
 
-6. void printTree(cranbtree_t* bt);
+**6. void printTree(cranbtree_t* bt);**
 
-**Description**: Prints the tree to the screen. can be used for visualization and debugging.
+Description: Prints the tree to the screen. can be used for visualization and debugging.
 
-**parameters**: cranbtree_t* bt: pointer to the cranbtree structure.
+parameters: cranbtree_t* bt: pointer to the cranbtree structure.
 
 
 ## Installation: 
