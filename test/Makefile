@@ -11,7 +11,7 @@ CC = clang
 CFLAGS = -ggdb3 -O0 -Qunused-arguments -std=c11 -Wall -Werror
 
 # name for executable
-EXE = test
+EXE = ../bin/test
 
 # space-separated list of header files
 HDRS = 
@@ -29,10 +29,13 @@ INCLUDES = ../include
 # automatically generated list of object files
 OBJS = $(SRCS:.c=.o)
 
-
 # default target
-$(EXE):  Makefile
-	$(CC) $(CFLAGS) -o $@ $(SRCS) $(LIBS) -I $(INCLUDES)
+test: mkbin Makefile
+	$(CC) $(CFLAGS) -o $(EXE) $(SRCS) $(LIBS) -I $(INCLUDES)
+
+#creates the bin directory if it does not exist
+mkbin:
+	mkdir -p ../bin
 
 # dependencies 
 $(OBJS): $(HDRS) Makefile

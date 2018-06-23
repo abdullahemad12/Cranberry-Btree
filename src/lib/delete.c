@@ -2,7 +2,7 @@
  * Functions for the deletion
  */
 
-
+#include "lib.h"
 
 static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key);
 static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key);

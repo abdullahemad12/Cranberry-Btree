@@ -1,0 +1,52 @@
+
+/**
+  * Prototypes for the static functions
+  */
+static bt_node_t* bt_create_node(int n);
+static bt_entry_t* bt_create_entry(int key, void* object);
+static void bt_destroy_node(bt_node_t* node, int n, void (* done)(void*));
+static void* bt_destroy_entry(bt_entry_t* entry, void (* done)(void*));
+static int ceil_fn(double n);
+static bool is_full_node(bt_node_t* node, int n);
+static void print_node(bt_node_t* node, int n);
+static bool print_level(bt_node_t* root, int n, int level, int currentLevel);
+static int node_insert_entry(bt_node_t* node, bt_entry_t* entry, bool shift,  int n);
+static bt_entry_t* bt_split_child(bt_node_t* node, bt_node_t** splitted_node, int n);
+static int get_next_node_index(bt_node_t* node, int key, int n);
+static void node_shift_right(bt_node_t* node, int i,  int n);
+static void node_shift_left(bt_node_t* node, int i,  int n);
+static void node_shift_left_without_children(bt_node_t* node, int i,  int n);
+static bt_node_t* split_full_root(bt_node_t* old_root, int n);
+static bool is_leaf(bt_node_t* node);
+static void* bt_node_search_helper(bt_entry_t* entries[], int key, int min, int max);
+static void* bt_search_helper(bt_node_t* node, int key, int n);
+static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry);
+static void destroy_bt_helper(bt_node_t* root, int n, void (* done)(void*));
+static bool is_root(btree_t* bt, bt_node_t* node);
+static void* bt_delete_entry_helper(bt_node_t* node, int key, int n);
+static int get_last_entry_index(bt_node_t* node, int n);
+static int min(int x, int y);
+static bt_node_t* merge_leaf_nodes(bt_node_t* node1, bt_node_t* node2, int n);
+static void node_entry_set_null(bt_node_t* node, int entry_index, int n);
+static void children_shift_right(bt_node_t* nodes[], int n);
+static bt_node_t* children_shift_left(bt_node_t* nodes[], int n);
+static bt_entry_t* cpy_entry(bt_entry_t* entry_original);
+static int get_entry_index(bt_node_t* node, int key);
+static void* bt_delete_int_case(btree_t* bt, bt_node_t* node, int key);
+static void fix_pointers_gaps(bt_node_t* node, int n);
+static void node_shift_right_without_children(bt_node_t* node, int i,  int n);
+static void* bt_delete_helper(btree_t* bt, bt_node_t* parent,  bt_node_t* node, int key);
+static bt_node_t* get_right_sibling(bt_node_t* parent, bt_node_t* node);
+static bt_node_t* get_left_sibling(bt_node_t* parent, bt_node_t* node);
+static bt_node_t* merge_nodes(btree_t* bt, bt_node_t* parent, bt_node_t* left, bt_node_t* right);
+static void entry_rotate_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t* right, int n);
+static void entry_rotate_counter_clockwise(bt_node_t* parent, bt_node_t* left, bt_node_t* right, int n);
+static int get_child_index(bt_node_t* node, bt_node_t* child);
+static void insert_child(bt_node_t* parent, bt_node_t* child, int n);
+static void delete_child(bt_node_t* parent, bt_node_t* child, int n);
+static void balance_node(btree_t* bt, bt_node_t** parent_ptr, int key);
+static void entry_move_up_clockwise(btree_t* bt, bt_node_t* parent, bt_node_t* right, int key , int n);
+static void entry_move_up_counter_clockwise(btree_t* bt, bt_node_t* parent, bt_node_t* right, int key , int n);
+static bt_node_t* remove_last_child(bt_node_t* nodes[], int len);
+bt_entry_t* bt_delete_minimum(btree_t* bt, bt_node_t* node);
+bt_entry_t* bt_delete_maximum(btree_t* bt, bt_node_t* node);

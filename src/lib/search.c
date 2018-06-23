@@ -2,7 +2,7 @@
   * code for the search functionality
   */
 
-static void* bt_node_search_helper(bt_entry_t* entries[], int key, int min, int max);
+# include "lib.h"
 
 static void* bt_search_helper(bt_node_t* node, int key, int n)
 {

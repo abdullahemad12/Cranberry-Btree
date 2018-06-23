@@ -1,13 +1,7 @@
-#include "node.c"
-#include "entry.c"
-#include "helpers.c"
-
 /**
   * Code for handling the insertions in the B-Tree
   */
-  
-static bt_node_t* split_full_root(bt_node_t* old_root, int n);
-static bt_entry_t* bt_split_child(bt_node_t* node, bt_node_t** splitted_node, int n);
+#include "lib.h"
 
 /**
   * bt_node_t*, bt_entry_t* -> bt_node_t*

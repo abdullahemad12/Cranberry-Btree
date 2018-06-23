@@ -4,33 +4,7 @@
   */
 
 
-
-static int get_next_node_index(bt_node_t* node, int key, int n);
-static bool is_full_node(bt_node_t* node, int n);
-static void node_shift_right(bt_node_t* node, int i,  int n);
-static void node_shift_right_without_children(bt_node_t* node, int i,  int n);
-static void node_shift_left(bt_node_t* node, int i,  int n);
-static void node_shift_left_without_children(bt_node_t* node, int i,  int n);
-static bt_node_t* get_right_sibling(bt_node_t* parent, bt_node_t* node);
-static bt_node_t* get_left_sibling(bt_node_t* parent, bt_node_t* node);
-static int get_last_entry_index(bt_node_t* node, int n);
-static void bt_destroy_node(bt_node_t* node, int n, void (* done)(void*));
-static bt_entry_t* bt_create_entry(int key, void* object);
-static int node_insert_entry(bt_node_t* node, bt_entry_t* entry, bool shift,  int n);
-static void* bt_destroy_entry(bt_entry_t* entry, void (* done)(void*));
-static int get_entry_index(bt_node_t* node, int key);
-static bt_entry_t* cpy_entry(bt_entry_t* entry_original);
-static void node_entry_set_null(bt_node_t* node, int entry_index, int n);
-static void children_shift_right(bt_node_t* nodes[], int n);
-static int get_child_index(bt_node_t* node, bt_node_t* child);
-static void children_shift_left_i(bt_node_t* node, int i, int n);
-static void children_shift_right_i(bt_node_t* nodes[], int j, int n);
-static void fix_pointers_gaps(bt_node_t* node, int n);
-static void insert_child(bt_node_t* parent, bt_node_t* child, int n);
-static void delete_child(bt_node_t* parent, bt_node_t* child, int n);
-static bt_node_t* children_shift_left(bt_node_t* nodes[], int n);
-static bt_node_t* remove_last_child(bt_node_t* nodes[], int len);
-static bool is_leaf(bt_node_t* node);
+#include "lib.h"
 
  /**
   * int n -> bt_node_t*

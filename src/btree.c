@@ -9,6 +9,9 @@
 #include "lib/insert.c"
 #include "lib/search.c"
 #include "lib/delete.c"
+#include "lib/node.c"
+#include "lib/helpers.c"
+
 
 /*prototypes*/
 static void destroy_bt_helper(bt_node_t* root, int n, void (* done)(void*));
@@ -96,14 +99,14 @@ void* bt_delete(btree_t* bt, int key)
   * 				  i.e: object_destroy(object). In case the pointer is NULL, nothing is done 
   *						on the object and it becomes the user's responsibility to free it
   */
- void bt_destroy(btree_t* bt, void (* destroy_object)(void*))
- {
- 	destroy_bt_helper(bt->root, bt->n, destroy_object);
- 	free(bt);
- }
+void bt_destroy(btree_t* bt, void (* destroy_object)(void*))
+{
+	destroy_bt_helper(bt->root, bt->n, destroy_object);
+	free(bt);
+}
  
  
- void printTree(btree_t* bt)
+void printTree(btree_t* bt)
 {
 	printf("\n\n");
 	for(int i = 0, n = calculate_depth(bt->root); i < n; i++)
