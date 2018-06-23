@@ -25,7 +25,6 @@ static void destroy_bt_helper(bt_node_t* root, int n, void (* done)(void*));
 static bool is_root(btree_t* bt, bt_node_t* node);
 static void* bt_delete_entry_helper(bt_node_t* node, int key, int n);
 static int get_last_entry_index(bt_node_t* node, int n);
-static int min(int x, int y);
 static bt_node_t* merge_leaf_nodes(bt_node_t* node1, bt_node_t* node2, int n);
 static void node_entry_set_null(bt_node_t* node, int entry_index, int n);
 static void children_shift_right(bt_node_t* nodes[], int n);

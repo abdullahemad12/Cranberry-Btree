@@ -1410,7 +1410,6 @@ void merge_leaf_nodes_test(void)
 	
 	(void) node1;
 	(void) node2;
-	min(1, 2);
 	CU_ASSERT_PTR_NOT_NULL(ret);
 	CU_ASSERT_PTR_EQUAL(node1, ret);
 	CU_ASSERT_EQUAL(ret->entry[0]->key, 57);

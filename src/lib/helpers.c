@@ -91,11 +91,3 @@ static bool print_level(bt_node_t* root, int n, int level, int currentLevel)
 	
 }
 
-
-
-
-
-static int min(int x, int y)
-{
-	return x < y ? x : y;
-}

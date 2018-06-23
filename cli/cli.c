@@ -9,18 +9,25 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include "btree.h"
+#include <btree.h>
 
 
 #define OK       0
 #define NO_INPUT 1
 #define TOO_LONG 2
 
+/*prototypes*/
 static int getLine (char *prmpt, char *buff, size_t sz);
 static int parse_input(char* str);
 static void strdcpy(char* src, char* dst);
 static void load_from_keys_dot_txt(void);
 static void delete_slow_motion(int sec);
+static void populate_with_random(int n);
+
+
+/*global variables*/
+
+const char* help = "type an operation character followed by a key number.\ni: insert\nd: delete\ns: search\nf: insert random numbers\np: Print the current Tree\n";
 
 btree_t* bt = NULL; 
 int main(void)
@@ -49,67 +56,59 @@ static int parse_input(char* str)
 	char digits_str[strlen(str)];
 	strdcpy(str, digits_str);
 	int key = atoi(digits_str);
-	if(str[0] == 'i')
+	switch(str[0])
 	{
-		int* z = malloc(sizeof(int));
-		bt_insert(bt, key ,z);
-		return 0;
-	}
-	else if(str[0] == 'd')
-	{
-		void* object = bt_delete(bt, key);
-		if(object != NULL)
-		{
-			free(object);
-		}
-		return 0;
-	}
-	else if (str[0] == 's')
-	{
-		void* object = bt_search(bt, key);
-		if(object != NULL)
-		{
-			printf("The key was found\n");
-		}	
-		else
-		{
-			printf("Not Found \n");	
-		}
-		return 0;
-	}
-	else if (str[0] == 'f')
-	{
-		for(int i = 0; i < key; i++)
-		{
-			int r = rand() % (key * 25);
+		case 'i':
+		{ 
 			int* z = malloc(sizeof(int));
-			bt_insert(bt, r ,z);
+			bt_insert(bt, key ,z);
+			return 0;
 		}
-		return 0;
-	}
-	else if(str[0] == 'L')
-	{
-		load_from_keys_dot_txt();
-		return 0;
-	}
-	else if(str[0] == 'x')
-	{
-		/*keys is the number of seconds*/
-		delete_slow_motion(key);
-		return 0;
-	}
-	else if (str[0] == 'p')
-	{
-		printTree(bt);
-		return 0;
-	}
-	else if(str[0] == '?')
-	{
-		printf("type an operation character followed by a key number.\ni: insert\nd: delete\ns: search\nf: insert random numbers\n");
-		return 0;
+		case 'd':
+		{
+			void* object = bt_delete(bt, key);
+			if(object != NULL)
+				free(object);
+			return 0;
+		}
+		case 's':
+		{
+			void* object = bt_search(bt, key);
+			if(object != NULL)
+				printf("The key was found\n");
+			else
+				printf("Not Found \n");	
+			return 0;
+		}
+		case 'f': 
+			populate_with_random(key);
+			return 0;
+		case 'L':
+			load_from_keys_dot_txt();
+			return 0;
+		case 'x':
+			/*keys is the number of seconds*/
+			delete_slow_motion(key);
+			return 0;
+		case 'p':
+			printTree(bt);
+			return 0;
+		case '?': 
+			printf("%s", help);
+			return 0;
 	}
 	
-		return -1;
+	return -1;
+}
+
+static void populate_with_random(int n)
+{
+	for(int i = 0; i < n; i++)
+	{
+		int r = rand() % (n * 25);
+		int* z = malloc(sizeof(int));
+		bt_insert(bt, r ,z);
+	}
 }
 
 /**
