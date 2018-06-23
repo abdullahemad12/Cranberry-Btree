@@ -23,7 +23,7 @@ This section contains description of the interface
 
 #### functions
 
-1. cranbtree_t* cbt_create(int n);
+###### 1. cranbtree_t* cbt_create(int n);
 
 **Description**: given a number n, Allocates memory for the metadata of the binary.
 
@@ -32,7 +32,7 @@ This section contains description of the interface
 **Return value:** returns a pointer to the Cranberry Tree struct.
 
 
-2. void cbt_insert(cranbtree_t* bt, int key, void* object);
+###### 2. void cbt_insert(cranbtree_t* bt, int key, void* object);
 
 **Description**: inserts an object into the tree with a search key "key".
 
@@ -42,7 +42,7 @@ This section contains description of the interface
 - void* object: pointer to the object stored in the tree.
 
 
-3. void* cbt_search(cranbtree_t* bt, int key);
+###### 3. void* cbt_search(cranbtree_t* bt, int key);
 
 **Description**: search for an object in the tree with a search key "key".
 
@@ -52,7 +52,7 @@ This section contains description of the interface
 
 **Return value:** returns a pointer to the object that was inserted by the user, or NULL if the key was not found. .
 
-4. void* cbt_delete(cranbtree_t* bt, int key);
+###### 4. void* cbt_delete(cranbtree_t* bt, int key);
 
 **Description**: deletes an object from the tree with a search key "key".
 
@@ -62,7 +62,7 @@ This section contains description of the interface
 
 **Return value:** returns a pointer to the object that was inserted by the user, or NULL if the key was not found.
 
-5. void cbt_destroy(cranbtree_t* bt, void (* destroy_object)(void*));
+###### 5. void cbt_destroy(cranbtree_t* bt, void (* destroy_object)(void*));
 
 **Description**: Destroys cranberry datastructre
 
