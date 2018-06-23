@@ -1113,64 +1113,6 @@ void split_full_root_test(void)
 
 
 
-
-void bt_delete_helper_test_helper(void)
-{
-	int n = 80;
-
-	static int keys[80];
-	memset(keys, 0, n);
-	
-	btree_t* bt = bt_create(3);
-	srand(time(NULL)); 
-	  
-	FILE* file = fopen("keys.txt", "w");
-	for(int i = 0; i < n; i++)
-	{
-		int r = 0;;
-		while(contains(keys, n, r))
-		{
-			r = rand() % 10000;
-		}
-		keys[i] = r;
-		fprintf(file, "%d\n", r);
-	}
-	fclose(file);
-
-	
-	for(int i = 0; i < n; i++)
-	{
-		int* z = malloc(sizeof(int));
-		bt_insert(bt, keys[i], z);
-	}
-
-	for(int i = 0; i < n; i++)
-	{
-		if(bt_search(bt, keys[i]) == NULL)
-		{
-			printTree(bt);
-		}
-		void* object = bt_delete_helper(bt, NULL, bt->root, keys[i]);
-		if(object != NULL)
-		{
-			free(object);	
-		}
-	}
-	printTree(bt);
-	CU_ASSERT_PTR_NULL(bt->root);
-	bt_destroy(bt, free);
-}
-
-
-void bt_delete_helper_test(void)
-{
-	for(int i = 0; i < 30000; i++)
-	{
-		bt_delete_helper_test_helper();
-	}
-	
-}
-
 void bt_delete_leaf_case_test(void)
 {
 	

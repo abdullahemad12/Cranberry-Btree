@@ -29,6 +29,8 @@
  * SUCH DAMAGE.
  */
 
+#ifndef _BTREE_H_
+#define _BTREE_H_
 
 /*
  * Struct for the B-tree node's entries;
@@ -139,3 +141,6 @@ void* bt_delete(btree_t* bt, int key);
    * EFFECTS: prints the nodes of the tree to the screen for visualization
    */
  void printTree(btree_t* bt);
+ 
+ 
+ #endif /* _BTREE_H_ */

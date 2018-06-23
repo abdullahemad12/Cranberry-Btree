@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdbool.h>
-#include "btree.h"
+#include <btree.h>
 
 /*protoypes*/
 static bt_node_t* bt_create_node(int n);
