@@ -1,3 +1,9 @@
+/** Cranberry Tree Copyright (C) 2018  Abdullah Emad
+  * This program comes with ABSOLUTELY NO WARRANTY. 
+  * This is free software, and you are welcome to redistribute it
+  * under certain conditions.
+  */
+
 /**
   * This contains Helpers
   */
