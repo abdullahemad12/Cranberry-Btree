@@ -23,7 +23,7 @@ This section contains description of the interface
 
 #### functions
 
-1. cranbtree_t* cbt_create(int n);
+<b>1. cranbtree_t* cbt_create(int n);</b>
 
 Description: given a number n, Allocates memory for the metadata of the binary.
 
@@ -32,7 +32,7 @@ Parameters: int n: specifies how many keys are allowed per node. It can be any n
 Return value: returns a pointer to the Cranberry Tree struct.
 
 
-2. void cbt_insert(cranbtree_t* bt, int key, void* object);
+<b>2. void cbt_insert(cranbtree_t* bt, int key, void* object);</b>
 
 Description: inserts an object into the tree with a search key "key".
 
@@ -42,7 +42,7 @@ parameter:
 - void* object: pointer to the object stored in the tree.
 
 
-3. void* cbt_search(cranbtree_t* bt, int key);
+<b>3. void* cbt_search(cranbtree_t* bt, int key);</b>
 
 Description: search for an object in the tree with a search key "key".
 
@@ -52,7 +52,7 @@ parameter:
 
 Return value: returns a pointer to the object that was inserted by the user, or NULL if the key was not found. .
 
-4. void* cbt_delete(cranbtree_t* bt, int key);
+<b>4. void* cbt_delete(cranbtree_t* bt, int key);</b>
 
 Description: deletes an object from the tree with a search key "key".
 
@@ -62,7 +62,7 @@ parameter:
 
 Return value: returns a pointer to the object that was inserted by the user, or NULL if the key was not found.
 
-5. void cbt_destroy(cranbtree_t* bt, void (* destroy_object)(void*));
+<b>5. void cbt_destroy(cranbtree_t* bt, void (* destroy_object)(void*));</b>
 
 Description: Destroys cranberry datastructre
 
@@ -70,7 +70,7 @@ parameter:
 - cranbtree_t* bt: pointer to the cranbtree structure.
 - void (* destroy_object)(void*)): a pointer to a function that will be called on the object in the database to free it's memory, or destroy it. i.e pass `free`. 
 
-6. void printTree(cranbtree_t* bt);
+<b>6. void printTree(cranbtree_t* bt);</b>
 
 Description: Prints the tree to the screen. can be used for visualization and debugging.
 
@@ -116,7 +116,7 @@ int main(void)
 	int z = 0; 
 	cbt_insert(bt, 3, &z); // inserts with key = 3
 	printTree(bt);
-	cbt_destroy(bt, 3);	
+	cbt_delete(bt, 3);	
 	cbt_destroy(bt, NULL);
 
 }
