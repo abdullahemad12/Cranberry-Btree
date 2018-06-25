@@ -1,6 +1,6 @@
 <h1><img src ="docs/cranberries_white_small.png" alt = "cranberries" width="12%">Cranberry Tree</h1>
 
-A balanced binary search tree written in C with an easy to use interface.According to [wikipedia](https://en.wikipedia.org/wiki/B-tree), a B-tree is a self-balancing tree data structure that keeps data sorted and allows searches, sequential access, insertions, and deletions in logarithmic time. 
+A balanced binary search tree written in C with simple interface.According to [wikipedia](https://en.wikipedia.org/wiki/B-tree), a B-tree is a self-balancing tree data structure that keeps data sorted and allows searches, sequential access, insertions, and deletions in logarithmic time. 
 
 
 ## Supported operations: 
@@ -121,6 +121,9 @@ int main(void)
 
 }
 ```
+
+## Contribution
+if you are planning to contribute, it is highly recommended that you read through the docs and go through the [CONTRIBUTING.md](#) guidlines
 
 ## Contact Me: 
 
