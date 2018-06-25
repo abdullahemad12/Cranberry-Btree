@@ -4,9 +4,8 @@ This document covers the structure of the code and the algorthims used to perfor
 # Index 
 
 1. [Data structure and interface.](datastruct_and_int.md)
-2. [Creation and deletion.](#)
-3. [Insertions.](#)
-4. [Search.](#)
-5. [Deletion.](#)
+2. [Insertions.](#)
+3. [Search.](#)
+4. [Deletion.](#)
 
 
