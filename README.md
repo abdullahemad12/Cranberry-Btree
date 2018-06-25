@@ -1,4 +1,4 @@
-![cranberries](docs/cranberries.png "cranberries")
+<img src ="docs/cranberries.png" alt = "cranberries">
 
 
 # Cranberry Tree
