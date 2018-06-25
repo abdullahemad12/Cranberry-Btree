@@ -128,6 +128,10 @@ void bt_insert(btree_t* bt, int key, void* object)
 	
 	bt_entry_t* entry = bt_create_entry(key, object);
 	bt_insert_helper(bt, bt->root, entry);
+	/*updates the min and max if needed*/
+	bt->max_key = bt->max_key < key ? key : bt->max_key;
+	bt->min_key = bt->min_key > key ? key : bt->min_key;
+	bt->length++;
 }
 
 
@@ -152,7 +156,16 @@ void* bt_search(btree_t* bt, int key)
 void* bt_delete(btree_t* bt, int key)
 {
 	assert(bt != NULL);
-	return bt_delete_helper(bt, NULL, bt->root, key);
+	void* object = bt_delete_helper(bt, NULL, bt->root, key);
+	
+	if(object != NULL)
+	{
+		bt->max_key = bt->max_key < key ? cbt_calculate_max_key : bt->max_key;
+		bt->min_key = bt->min_key > key ? cbt_calculate_min_key : bt->min_key;
+		bt->length--;
+	}
+	
+	return object;
 }
 
 
@@ -311,6 +324,8 @@ static void bt_insert_helper(btree_t* bt ,bt_node_t* root, bt_entry_t* entry)
 		assert(root != NULL);
 		node_insert_entry(root, entry, true, bt->n);
 		bt->root = root;
+		bt->max_key = entry->key;
+		bt->min_key = entry->key;
 		return;
 	}
 	/* we are at the root level*/

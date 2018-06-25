@@ -13,6 +13,7 @@
   */
 static void bt_comp_test_helper(void)
 {
+	
 	int n = 100;
 
 	static int keys[100];
@@ -116,6 +117,7 @@ static void bt_comp_test1(void)
   */
 static void bt_comp_test2(void)
 {
+	
 	int n = 10000000;
 	cranbtree_t* bt = cbt_create(3);
 	

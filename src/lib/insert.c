@@ -50,6 +50,8 @@ static void bt_insert_helper(cranbtree_t* bt ,cbt_node_t* root, cbt_entry_t* ent
 		assert(root != NULL);
 		node_insert_entry(root, entry, true, bt->n);
 		bt->root = root;
+		bt->max_key = entry->key;
+		bt->min_key = entry->key;
 		return;
 	}
 	/* we are at the root level*/

@@ -49,6 +49,7 @@ typedef struct cranbtree
 	cbt_node_t* root;
 	unsigned int length;
 	int max_key;
+	int min_key;
 	unsigned int n;
 }cranbtree_t;
 

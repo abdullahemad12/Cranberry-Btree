@@ -34,6 +34,7 @@
 #include "lib/search.c"
 #include "lib/delete.c"
 #include "lib/node.c"
+#include "lib/statistics.c"
 #include "lib/helpers.c"
 
 
@@ -86,6 +87,11 @@ void cbt_insert(cranbtree_t* bt, int key, void* object)
 	
 	cbt_entry_t* entry = bt_create_entry(key, object);
 	bt_insert_helper(bt, bt->root, entry);
+	
+	/*updates the min and max if needed*/
+	bt->max_key = bt->max_key < key ? key : bt->max_key;
+	bt->min_key = bt->min_key > key ? key : bt->min_key;
+	bt->length++;
 }
 
 
@@ -110,7 +116,16 @@ void* cbt_search(cranbtree_t* bt, int key)
 void* cbt_delete(cranbtree_t* bt, int key)
 {
 	assert(bt != NULL);
-	return bt_delete_helper(bt, NULL, bt->root, key);
+	void* object = bt_delete_helper(bt, NULL, bt->root, key);
+	
+	if(object != NULL)
+	{
+		bt->max_key = bt->max_key == key ? cbt_calculate_max_key(bt->root) : bt->max_key;
+		bt->min_key = bt->min_key == key ? cbt_calculate_min_key(bt->root) : bt->min_key;
+		bt->length--;
+	}
+	
+	return object;
 }
 
 

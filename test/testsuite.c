@@ -1263,6 +1263,7 @@ int get_leaf_key (cbt_node_t* node)
 }
 
 
+
 void bt_delete_test(void)
 {
 	
@@ -1379,8 +1380,107 @@ void bt_delete_test(void)
 	cbt_destroy(bt, free);
 }
 
+void bt_delete_test2(void)
+{
+	cranbtree_t* bt = cbt_create(3);
+	cranbtree_t* bt1 = cbt_create(3);
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		cbt_insert(bt, keys[i], z);
+	}
+	
+	for(int i = 0; i < 18; i++)
+	{
+		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
+	}
+	
+	/*tries to delete a key that doesnot exist*/
+	void* object = cbt_delete(bt, 500);
+	CU_ASSERT_PTR_NULL(object);
+	
+	/*deletes from an empty tree*/
+	object = cbt_delete(bt1, 200);
+	CU_ASSERT_PTR_NULL(object);
+	
+	cbt_destroy(bt, free);
+}
 
 
+void cbt_calculate_min_key_test(void)
+{
+	cranbtree_t* bt = cbt_create(3);
+	
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		cbt_insert(bt, keys[i], z);
+	}
+	
+	
+	int min =  cbt_calculate_min_key(bt->root);
+	CU_ASSERT_EQUAL(min, 5);
+	CU_ASSERT_EQUAL(bt->min_key, 5);
+	
+	free(cbt_delete(bt, 5));
+	
+	min =  cbt_calculate_min_key(bt->root);
+	CU_ASSERT_EQUAL(min, 6);
+	CU_ASSERT_EQUAL(bt->min_key, 6);
+	
+	
+	
+	int* z = malloc(sizeof(int));
+	cbt_insert(bt, 3, z);
+	
+	
+	min =  cbt_calculate_min_key(bt->root);
+	CU_ASSERT_EQUAL(min, 3);
+	CU_ASSERT_EQUAL(bt->min_key, 3);
+	
+	cbt_destroy(bt, free);
+}
+ 
+ 
+void cbt_calculate_max_key_test(void)
+{
+	cranbtree_t* bt = cbt_create(3);
+	
+	int keys[] = {9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10};
+
+	for(int i = 0; i < 18; i++)
+	{
+		int* z = malloc(sizeof(int));
+		cbt_insert(bt, keys[i], z);
+	}
+	
+	
+	int min =  cbt_calculate_min_key(bt->root);
+	CU_ASSERT_EQUAL(min, 5);
+	CU_ASSERT_EQUAL(bt->min_key, 5);
+	
+	free(cbt_delete(bt, 5));
+	
+	min =  cbt_calculate_min_key(bt->root);
+	CU_ASSERT_EQUAL(min, 6);
+	CU_ASSERT_EQUAL(bt->min_key, 6);
+	
+	
+	
+	int* z = malloc(sizeof(int));
+	cbt_insert(bt, 3, z);
+	
+	
+	min =  cbt_calculate_min_key(bt->root);
+	CU_ASSERT_EQUAL(min, 3);
+	CU_ASSERT_EQUAL(bt->min_key, 3);
+	
+	cbt_destroy(bt, free);
+}
 
 void merge_leaf_nodes_test(void)
 {
@@ -1688,6 +1788,7 @@ int init_suite(void)
    
 	return 0;
 }
+
 
 /* The suite cleanup function.
  * Returns zero on success, non-zero otherwise.
