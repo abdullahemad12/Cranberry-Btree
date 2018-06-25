@@ -1,4 +1,4 @@
-<img src ="docs/cranberries.png" alt = "cranberries">
+<img src ="docs/cranberries.png" alt = "cranberries" style="width:10%">
 
 
 # Cranberry Tree
