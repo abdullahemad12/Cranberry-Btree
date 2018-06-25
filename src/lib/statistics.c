@@ -58,5 +58,16 @@ int cbt_calculate_min_key(cbt_node_t* root)
   */
 int cbt_calculate_max_key(cbt_node_t* root)
 {
-	return 0;
+
+	if(root == NULL)
+	{
+		return 0;
+	}
+
+	if(is_leaf(root->children[0]))
+	{
+		return root->entry[root->len-1]->key;
+	}
+
+	return cbt_calculate_max_key(root->children[root->len]);	
 }

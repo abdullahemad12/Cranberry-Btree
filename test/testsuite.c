@@ -1459,25 +1459,25 @@ void cbt_calculate_max_key_test(void)
 	}
 	
 	
-	int min =  cbt_calculate_min_key(bt->root);
-	CU_ASSERT_EQUAL(min, 5);
-	CU_ASSERT_EQUAL(bt->min_key, 5);
+	int max =  cbt_calculate_max_key(bt->root);
+	CU_ASSERT_EQUAL(max, 300);
+	CU_ASSERT_EQUAL(bt->max_key, 300);
 	
-	free(cbt_delete(bt, 5));
+	free(cbt_delete(bt, 300));
 	
-	min =  cbt_calculate_min_key(bt->root);
-	CU_ASSERT_EQUAL(min, 6);
-	CU_ASSERT_EQUAL(bt->min_key, 6);
+	max =  cbt_calculate_max_key(bt->root);
+	CU_ASSERT_EQUAL(max, 200);
+	CU_ASSERT_EQUAL(bt->max_key, 200);
 	
 	
 	
 	int* z = malloc(sizeof(int));
-	cbt_insert(bt, 3, z);
+	cbt_insert(bt, 400, z);
 	
 	
-	min =  cbt_calculate_min_key(bt->root);
-	CU_ASSERT_EQUAL(min, 3);
-	CU_ASSERT_EQUAL(bt->min_key, 3);
+	max =  cbt_calculate_max_key(bt->root);
+	CU_ASSERT_EQUAL(max, 400);
+	CU_ASSERT_EQUAL(bt->max_key, 400);
 	
 	cbt_destroy(bt, free);
 }
