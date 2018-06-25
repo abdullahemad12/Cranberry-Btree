@@ -1,3 +1,6 @@
+![cranberries](docs/cranberries.png "cranberries")
+
+
 # Cranberry Tree
 
 A balanced binary search tree written in C with an easy to use interface.According to [wikipedia](https://en.wikipedia.org/wiki/B-tree), a B-tree is a self-balancing tree data structure that keeps data sorted and allows searches, sequential access, insertions, and deletions in logarithmic time. 
