@@ -2,6 +2,8 @@
 
 [![first-timers-only](https://img.shields.io/badge/first--timers--only-friendly-blue.svg?style=flat-square)](https://www.firsttimersonly.com/)
 
+[![Join the chat at https://gitter.im/Cranberry-Tree](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Cranberry-Tree)
+
 A balanced binary search tree written in C with simple interface.According to [wikipedia](https://en.wikipedia.org/wiki/B-tree), a B-tree is a self-balancing tree data structure that keeps data sorted and allows searches, sequential access, insertions, and deletions in logarithmic time. 
 
 
