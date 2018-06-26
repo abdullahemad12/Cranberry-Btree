@@ -130,7 +130,7 @@ int main(void)
 ```
 
 ## Contribution
-if you are planning to contribute, it is highly recommended that you read through the docs and go through the [CONTRIBUTING.md](#) guidlines
+if you are planning to contribute, it is highly recommended that you read through the docs and go through the [CONTRIBUTING.md](CONTRIBUTING.md) guidlines
 
 ## Contact Me: 
 
