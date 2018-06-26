@@ -134,7 +134,7 @@ void* cbt_delete(cranbtree_t* bt, int key)
   * EFFECTS: gets the maximum key in the Tree
   * RETURNS: the maximum key 
   */
-int bt_get_max_key(cranbtree_t* cbt)
+int cbt_get_max_key(cranbtree_t* cbt)
 {
 	return 0;
 }
@@ -145,12 +145,21 @@ int bt_get_max_key(cranbtree_t* cbt)
   * EFFECTS: gets the minimum key in the Tree
   * RETURNS: the minimum key 
   */
-int bt_get_min_key(cranbtree_t* cbt)
+int cbt_get_min_key(cranbtree_t* cbt)
 {
 	return 0;
 }
 
 
+/**
+  * cranbtree_t* -> int
+  * EFFECTS: gets the length of the B-tree
+  * RETURNS: the length of the B-tree
+  */
+int cbt_get_length(cranbtree_t* c)
+{
+	return 0;
+}
 
 /**
   * cranbtree_t*, (void) destroy_object(void*) -> void
