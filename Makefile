@@ -62,8 +62,12 @@ $(OBJS): $(HDRS) Makefile
 install: 
 	mkdir -p /usr/local/include/cranberry && \
 	cp $(HDRS) /usr/local/include/cranberry/cranbtree.h && \
-	cp libcranbtree.a /usr/local/lib
+	cp libcranbtree.a /usr/local/lib/libcranbtree.a
 
+uninstall: 
+	rm -f /usr/local/include/cranberry/cranbtree.h && \
+	rm -f /usr/local/lib/libcranbtree.a && \
+	rmdir --ignore-fail-on-non-empty /usr/local/include/cranberry
 
 ###############################
 #		Test and cli		  #
