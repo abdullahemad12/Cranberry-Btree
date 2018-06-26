@@ -93,6 +93,10 @@ This section will guide you on how to install the library in your computers depe
 
 where -lcranbtree tells the compiler where to find the code for the library 
 
+**Uninstall**
+To uninstall the library run the following command in the terminal: 
+`sudo make uninstall`
+
 #### portable library: 
 1. Clone this repository or download it as zip and extract it.
 2. open up the terminal and `cd` into the project's directory.
