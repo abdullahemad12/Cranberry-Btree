@@ -85,7 +85,7 @@ cli: mkbin
 
 #creates the bin directory if it does not exist
 mkbin:
-	mkdir -p ../bin
+	mkdir -p bin
 
 
 # housekeeping
