@@ -161,8 +161,8 @@ void* cbt_delete(cranbtree_t* bt, int key)
 	
 	if(object != NULL)
 	{
-		bt->max_key = bt->max_key < key ? cbt_calculate_max_key : bt->max_key;
-		bt->min_key = bt->min_key > key ? cbt_calculate_min_key : bt->min_key;
+		bt->max_key = bt->max_key == key ? cbt_calculate_max_key(bt->root) : bt->max_key;
+		bt->min_key = bt->min_key == key ? cbt_calculate_min_key(bt->root) : bt->min_key;
 		bt->length--;
 	}
 	
@@ -174,7 +174,7 @@ void* cbt_delete(cranbtree_t* bt, int key)
   * EFFECTS: gets the maximum key in the Tree
   * RETURNS: the maximum key 
   */
-int bt_get_max_key(cranbtree_t* cbt)
+int cbt_get_max_key(cranbtree_t* cbt)
 {
 	return cbt->max_key;
 }
@@ -185,7 +185,7 @@ int bt_get_max_key(cranbtree_t* cbt)
   * EFFECTS: gets the minimum key in the Tree
   * RETURNS: the minimum key 
   */
-int bt_get_min_key(cranbtree_t* cbt)
+int cbt_get_min_key(cranbtree_t* cbt)
 {
 	return cbt->min_key;
 }
@@ -1123,7 +1123,7 @@ cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node)
   * REQUIRES: The tree should not be empty
   * RETURNS: the minimum key in the tree
   */
-int bt_calculate_min_key(cbt_node_t* root)
+int cbt_calculate_min_key(cbt_node_t* root)
 {
 	if(root == NULL)
 	{
@@ -1145,7 +1145,7 @@ int bt_calculate_min_key(cbt_node_t* root)
   * REQUIRES: The tree should not be empty
   * RETURNS: the maximum key in the tree
   */
-int bt_calculate_max_key(cbt_node_t* root)
+int cbt_calculate_max_key(cbt_node_t* root)
 {
 
 	if(root == NULL)
