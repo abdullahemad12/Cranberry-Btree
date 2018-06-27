@@ -96,6 +96,18 @@ void cbt_insert(cranbtree_t* bt, int key, void* object)
 
 
 /**
+  * cranbtree_t*, void* -> int
+  * REQUIRES: the object to be already inserted in the tree
+  * EFFECTS: Figures out the key of a given object in the tree
+  * RETURNS: the key of the object, or -1 if the object was not found
+  *
+  */
+int cbt_key_search(cranbtree_t* cbt, void* object)
+{
+	return 0;
+}
+
+/**
   * cranbtree_t*, int -> void*
   * EFFECTS: search for an object given the search key
   * RETURN: pointer to the object or NULL if the object was 
