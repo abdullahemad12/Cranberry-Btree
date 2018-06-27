@@ -34,7 +34,7 @@
   * REQUIRES: The tree should not be empty
   * RETURNS: the minimum key in the tree
   */
-int cbt_calculate_min_key(cbt_node_t* root)
+static int cbt_calculate_min_key(cbt_node_t* root)
 {
 	if(root == NULL)
 	{
@@ -56,7 +56,7 @@ int cbt_calculate_min_key(cbt_node_t* root)
   * REQUIRES: The tree should not be empty
   * RETURNS: the maximum key in the tree
   */
-int cbt_calculate_max_key(cbt_node_t* root)
+static int cbt_calculate_max_key(cbt_node_t* root)
 {
 
 	if(root == NULL)

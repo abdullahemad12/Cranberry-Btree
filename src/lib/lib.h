@@ -70,5 +70,8 @@ static void balance_node(cranbtree_t* bt, cbt_node_t** parent_ptr, int key);
 static void entry_move_up_clockwise(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* right, int key , int n);
 static void entry_move_up_counter_clockwise(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* right, int key , int n);
 static cbt_node_t* remove_last_child(cbt_node_t* nodes[], int len);
-cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node);
-cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node);
+static cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node);
+static cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node);
+static int cbt_calculate_min_key(cbt_node_t* root);
+static int cbt_calculate_max_key(cbt_node_t* root);
+

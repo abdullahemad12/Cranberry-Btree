@@ -48,23 +48,22 @@ static cbt_node_t* bt_create_node(int n)
 		return NULL;
 	}
 	size_t entry_size = sizeof(cbt_entry_t*) * n;
-	node->entry = malloc(entry_size);
+	node->entry = calloc(1, entry_size);
 	if(node->entry == NULL)
 	{
 		free(node);
 		return NULL;
 	}
-	memset(node->entry, 0, sizeof(cbt_entry_t*) * n);
+
 	
 	size_t children_size =  sizeof(cbt_node_t*) * (n+1);
-	node->children = malloc(children_size);
+	node->children = calloc(1, children_size);
 	if(node->children == NULL)
 	{
 		free(node->entry);
 		free(node);
 		return NULL;
 	}
-	memset(node->children, 0, children_size);
 	node->len = 0;
 	return node;
 }

@@ -29,17 +29,6 @@
 
 #include "lib.h"
 
-static void balance_node(cranbtree_t* bt, cbt_node_t** parent_ptr, int key);
-static void* bt_delete_int_case(cranbtree_t* bt, cbt_node_t* node, int key);
-static void* bt_delete_entry_helper(cbt_node_t* node, int key, int n);
-static cbt_node_t* merge_leaf_nodes(cbt_node_t* node1, cbt_node_t* node2, int n);
-static cbt_node_t* merge_nodes(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right);
-static void entry_rotate_counter_clockwise(cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right, int n);
-static void entry_rotate_clockwise(cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right, int n);
-static void entry_move_up_clockwise(cranbtree_t* bt,cbt_node_t* parent, cbt_node_t* left, int key , int n);
-static void entry_move_up_counter_clockwise(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* right, int key , int n);
-cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node);
-cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node);
 
 
 /**
@@ -383,7 +372,7 @@ static void entry_move_up_counter_clockwise(cranbtree_t* bt, cbt_node_t* parent,
   * MODIFIES: bt
   * RETURNS: entry with the minimum key
   */
-cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node)
+static cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node)
 {
 	/*the min will always be at the leafs*/
 	if(is_leaf(node->children[0]))
@@ -408,7 +397,7 @@ cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node)
   * MODIFIES: bt
   * RETURNS: entry with the maximum key
   */
-cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node)
+static cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node)
 {
 	/*the max will always be at the leafs*/
 	int index = get_last_entry_index(node, bt->n);

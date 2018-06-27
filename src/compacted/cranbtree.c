@@ -27,7 +27,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdbool.h>
-#include <btree.h>
+#include <cranbtree.h>
 
 /*protoypes*/
 static cbt_node_t* bt_create_node(int n);
@@ -78,8 +78,8 @@ static void entry_move_up_counter_clockwise(cranbtree_t* bt, cbt_node_t* parent,
 static cbt_node_t* remove_last_child(cbt_node_t* nodes[], int len);
 cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node);
 cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node);
-int cbt_calculate_min_key(ccbt_node_t* root);
-int cbt_calculate_max_key(ccbt_node_t* root);
+static int cbt_calculate_min_key(cbt_node_t* root);
+static int cbt_calculate_max_key(cbt_node_t* root);
 
 
 
@@ -1123,7 +1123,7 @@ cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node)
   * REQUIRES: The tree should not be empty
   * RETURNS: the minimum key in the tree
   */
-int cbt_calculate_min_key(cbt_node_t* root)
+static int cbt_calculate_min_key(cbt_node_t* root)
 {
 	if(root == NULL)
 	{
@@ -1145,7 +1145,7 @@ int cbt_calculate_min_key(cbt_node_t* root)
   * REQUIRES: The tree should not be empty
   * RETURNS: the maximum key in the tree
   */
-int cbt_calculate_max_key(cbt_node_t* root)
+static int cbt_calculate_max_key(cbt_node_t* root)
 {
 
 	if(root == NULL)
