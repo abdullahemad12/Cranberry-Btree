@@ -57,7 +57,7 @@ static int get_entry_index(cbt_node_t* node, int key);
 static void* bt_delete_int_case(cranbtree_t* bt, cbt_node_t* node, int key);
 static void fix_pointers_gaps(cbt_node_t* node, int n);
 static void node_shift_right_without_children(cbt_node_t* node, int i,  int n);
-static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* parent,  cbt_node_t* node, int key);
+static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* node, int key);
 static cbt_node_t* get_right_sibling(cbt_node_t* parent, cbt_node_t* node);
 static cbt_node_t* get_left_sibling(cbt_node_t* parent, cbt_node_t* node);
 static cbt_node_t* merge_nodes(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right);

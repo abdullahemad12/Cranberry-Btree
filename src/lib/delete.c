@@ -38,7 +38,7 @@
   * MODIFIES: cranbtree_t* bt
   * RETURNS: the object associated with the entry, or NULL if no such entry was found
   */
-static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* parent,  cbt_node_t* node, int key)
+static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* node, int key)
 {
 	if(node == NULL)
 	{

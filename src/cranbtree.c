@@ -128,7 +128,7 @@ void* cbt_search(cranbtree_t* bt, int key)
 void* cbt_delete(cranbtree_t* bt, int key)
 {
 	assert(bt != NULL);
-	void* object = bt_delete_helper(bt, NULL, bt->root, key);
+	void* object = bt_delete_helper(bt, bt->root, key);
 	
 	if(object != NULL)
 	{
