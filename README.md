@@ -1,4 +1,4 @@
-<h1><img src ="docs/cranberries_white_small.png" alt = "cranberries" width="12%">Cranberry Tree</h1>
+<h1><img src ="docs/Art/cranberries_white_small.png" alt = "cranberries" width="12%">Cranberry Tree</h1>
 
 [![first-timers-only](https://img.shields.io/badge/first--timers--only-friendly-blue.svg?style=flat-square)](https://www.firsttimersonly.com/)
 [![Join the chat at https://gitter.im/Cranberry-Tree](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Cranberry-Tree)

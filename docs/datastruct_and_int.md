@@ -54,4 +54,4 @@ This struct represents and entry in a node. It has the following attributes:
 
 
 ## Tree
-<img src = "tree.png">
+<img src = "Art/tree.png">
