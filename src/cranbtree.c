@@ -117,6 +117,21 @@ void* cbt_update(cranbtree_t* bt, int key, void* object)
 	return old_object;
 }
 
+/**
+  * cranbtree_t*, int, void* -> void
+  * MODIFIES: cranbtree_t* 
+  * EFFECTS: Updates the object of the entry that has the specified key with the new pointer only if it 
+  * exists. 
+  * PARAMETERS: 
+  * - cranbtree_t* cbt, pointer to the BTree struct
+  * - int key: the key of the entry to be updated
+  * - void* object: pointer to the object
+  * RETURNS: pointer to the old object, or NULL if it does not exist
+  */
+void* cbt_update_if_exists(cranbtree_t* bt, int key, void* object)
+{
+	return NULL;
+}
 
 /**
   * cranbtree_t*, void* -> int
