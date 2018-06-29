@@ -1547,6 +1547,72 @@ void delete_test_root_entry(void)
 }
 
 
+void cbt_update_test(void)
+{
+	int n = 10000;
+	cranbtree_t* bt = cbt_create(3);
+	
+	printf("\n");
+	for(int i = 0; i < n; i++)
+	{
+		int* z = malloc(sizeof(int));
+		cbt_insert(bt, i, z);
+		printf("\r\tDone With: %d sequential Insertions ", i + 1);
+	}
+	
+	int* z = malloc(sizeof(int));
+	void* oldz = cbt_update(bt, 100, z);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(oldz);
+	free(oldz);
+	
+	int* newz = cbt_search(bt, 100);
+	CU_ASSERT_EQUAL(z, newz);
+	
+	z = malloc(sizeof(int));
+	oldz = cbt_update(bt, 0, z);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(oldz);
+	free(oldz);
+	
+	newz = cbt_search(bt, 0);
+	CU_ASSERT_EQUAL(z, newz);
+	
+
+	z = malloc(sizeof(int));
+	oldz = cbt_update(bt, 9999, z);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(oldz);
+	free(oldz);
+	
+	newz = cbt_search(bt, 9999);
+	CU_ASSERT_EQUAL(z, newz);	
+	
+	
+	cbt_destroy(bt, free);
+}
+
+void cbt_update_test1(void)
+{
+	int n = 10000;
+	cranbtree_t* bt = cbt_create(3);
+	
+	printf("\n");
+	for(int i = 0; i < n; i++)
+	{
+		int* z = malloc(sizeof(int));
+		cbt_insert(bt, i, z);
+		printf("\r\tDone With: %d sequential Insertions ", i + 1);
+	}
+	
+	int* z = malloc(sizeof(int));
+	void* oldz = cbt_update(bt, 1000000, z);
+	CU_ASSERT_PTR_NULL_FATAL(oldz);
+	
+	int* newz = cbt_search(bt, 1000000);
+	CU_ASSERT_EQUAL(z, newz);
+	
+	
+	cbt_destroy(bt, free);
+}
+
 bool treecmp(cbt_node_t* root1, cbt_node_t* root2, int n)
 {
 	debug_log(root1, n);

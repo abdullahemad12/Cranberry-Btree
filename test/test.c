@@ -86,6 +86,8 @@ static struct test utests[] =
 	{"bt_delete_test2", bt_delete_test2},
 	{"cbt_calculate_min_key_test", cbt_calculate_min_key_test},
 	{"cbt_calculate_max_key_test", cbt_calculate_max_key_test},
+	{"cbt_update_test", cbt_update_test},
+	{"cbt_update_test1", cbt_update_test1},
 	{NULL, NULL}
 
 };

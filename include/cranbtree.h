@@ -103,12 +103,13 @@ void cbt_insert(cranbtree_t* bt, int key, void* object);
   * MODIFIES: cranbtree_t* 
   * EFFECTS: Updates the object of the entry that has the specified key with the new pointer. If 
   * 		 no such entry was found a new entry is inserted.
+  * RETURNS: pointer to the old object, NULL if it was not found
   * PARAMETERS: 
   * - cranbtree_t* cbt, pointer to the BTree struct
   * - int key: the key of the entry to be updated
   * - void* object: pointer to the object
   */
-void cbt_update(cranbtree_t* bt, int key, void* object);
+void* cbt_update(cranbtree_t* bt, int key, void* object);
 
 
 /**
