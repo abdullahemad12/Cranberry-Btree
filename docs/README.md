@@ -7,6 +7,6 @@ This document covers the structure of the code and the algorthims used to perfor
 1. [Data structure and interface.](datastruct_and_int.md)
 2. [Insertions.](insertions.md)
 3. [Search.](search.md)
-4. [Deletion.](#)
+4. [Deletion.](delete.md)
 
 
