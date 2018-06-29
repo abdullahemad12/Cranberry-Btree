@@ -44,6 +44,19 @@ parameter:
 - int key: search key, that will be used later to retrieve the object.
 - void* object: pointer to the object stored in the tree.
 
+<b>2. void* cbt_update(cranbtree_t* bt, int key, void* object);</b>
+
+Description: updates an existing entry in the tree with a new object given the key of the entry. If no entry with such a key was found,
+a new entry is inserted. 
+
+parameters: 
+- cranbtree_t* bt: pointer to the cranbtree structure.
+- int key: search key that identify the entry.
+- void* object: pointer to the new object to replace the old one in the tree.
+
+Return value: returns the pointer of the old object that was removed, or NULL if no such object was found.
+
+NOTE: Do not use this function for insertions if you care about the performance. 
 
 <b>3. void* cbt_search(cranbtree_t* bt, int key);</b>
 
