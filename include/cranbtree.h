@@ -48,7 +48,7 @@ typedef struct cbt_node
 {
 	cbt_entry_t** entry;
 	struct cbt_node** children;
-	int len;
+	unsigned int len;
 }cbt_node_t;
 
 
@@ -98,6 +98,17 @@ cranbtree_t* cbt_create(int n);
   */
 void cbt_insert(cranbtree_t* bt, int key, void* object);
 
+/**
+  * cranbtree_t*, int, void* -> void
+  * MODIFIES: cranbtree_t* 
+  * EFFECTS: Updates the object of the entry that has the specified key with the new pointer. If 
+  * 		 no such entry was found a new entry is inserted.
+  * PARAMETERS: 
+  * - cranbtree_t* cbt, pointer to the BTree struct
+  * - int key: the key of the entry to be updated
+  * - void* object: pointer to the object
+  */
+void cbt_update(cranbtree_t* bt, int key, void* object);
 
 
 /**
@@ -169,7 +180,7 @@ void cbt_destroy(cranbtree_t* bt, void (* destroy_object)(void*));
    */
 void printTree(cranbtree_t* bt);
  
- 
+
  
 
  #endif /* _BTREE_H_ */

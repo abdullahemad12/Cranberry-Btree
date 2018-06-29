@@ -1168,74 +1168,74 @@ void cbt_delete_leaf_case_test1(void)
 
 
 
-	void* object = bt_delete_helper(bt, NULL, bt->root, 57);
+	void* object = bt_delete_helper(bt, bt->root, 57);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 45);
+	object = bt_delete_helper(bt, bt->root, 45);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 9);
+	object = bt_delete_helper(bt, bt->root, 9);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 10);
+	object = bt_delete_helper(bt, bt->root, 10);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 60);
+	object = bt_delete_helper(bt, bt->root, 60);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 73);
+	object = bt_delete_helper(bt, bt->root, 73);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 300);
+	object = bt_delete_helper(bt, bt->root, 300);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 100);
+	object = bt_delete_helper(bt, bt->root, 100);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 80);
+	object = bt_delete_helper(bt, bt->root, 80);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 85);
+	object = bt_delete_helper(bt, bt->root, 85);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 71);
+	object = bt_delete_helper(bt, bt->root, 71);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 200);
+	object = bt_delete_helper(bt, bt->root, 200);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 50);
+	object = bt_delete_helper(bt, bt->root, 50);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-		object = bt_delete_helper(bt, NULL, bt->root, 70);
+		object = bt_delete_helper(bt, bt->root, 70);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-			object = bt_delete_helper(bt, NULL, bt->root, 72);
+			object = bt_delete_helper(bt, bt->root, 72);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-				object = bt_delete_helper(bt, NULL, bt->root, 6);
+				object = bt_delete_helper(bt, bt->root, 6);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL, bt->root, 5);
+	object = bt_delete_helper(bt, bt->root, 5);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
-	object = bt_delete_helper(bt, NULL, bt->root, 8);
+	object = bt_delete_helper(bt, bt->root, 8);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
@@ -1290,80 +1290,80 @@ void bt_delete_test(void)
 
 
 
-	void* object = bt_delete_helper(bt, NULL,bt->root, 57);
+	void* object = bt_delete_helper(bt,bt->root, 57);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 70);
+	object = bt_delete_helper(bt,bt->root, 70);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 73);
+	object = bt_delete_helper(bt,bt->root, 73);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 71);
+	object = bt_delete_helper(bt,bt->root, 71);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 72);
+	object = bt_delete_helper(bt,bt->root, 72);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 6);
+	object = bt_delete_helper(bt,bt->root, 6);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 5);
+	object = bt_delete_helper(bt,bt->root, 5);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 8);
+	object = bt_delete_helper(bt,bt->root, 8);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 200);
+	object = bt_delete_helper(bt,bt->root, 200);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 300);
-	CU_ASSERT_PTR_NOT_NULL(object);
-	free(object);
-
-		object = bt_delete_helper(bt, NULL,bt->root, 100);
+	object = bt_delete_helper(bt,bt->root, 300);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 
-	
-	object = bt_delete_helper(bt, NULL,bt->root, 10);
+		object = bt_delete_helper(bt,bt->root, 100);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
-	object = bt_delete_helper(bt, NULL,bt->root, 9);
+
+	
+	object = bt_delete_helper(bt,bt->root, 10);
+	CU_ASSERT_PTR_NOT_NULL(object);
+	free(object);
+	object = bt_delete_helper(bt,bt->root, 9);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-		object = bt_delete_helper(bt, NULL,bt->root, 80);
+		object = bt_delete_helper(bt,bt->root, 80);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-		object = bt_delete_helper(bt, NULL,bt->root, 45);
+		object = bt_delete_helper(bt,bt->root, 45);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
 		
-		object = bt_delete_helper(bt, NULL,bt->root, 60);
+		object = bt_delete_helper(bt,bt->root, 60);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 50);
+	object = bt_delete_helper(bt,bt->root, 50);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	
 
 	
-	object = bt_delete_helper(bt, NULL,bt->root, 85);
+	object = bt_delete_helper(bt,bt->root, 85);
 	CU_ASSERT_PTR_NOT_NULL(object);
 	free(object);
 	

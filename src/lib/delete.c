@@ -51,7 +51,7 @@ static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* node, int key)
 	/*restarts execution if the root was altered*/
 	if(bt->root != old_root)
 	{
-		return bt_delete_helper(bt, NULL,  bt->root, key);
+		return bt_delete_helper(bt, bt->root, key);
 	}
 	
 	/*Not found yet*/
@@ -60,7 +60,7 @@ static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* node, int key)
 	assert(next_node_index != -1);
 	if(object == NULL)
 	{
-		return bt_delete_helper(bt, node, node->children[next_node_index], key);
+		return bt_delete_helper(bt, node->children[next_node_index], key);
 	}	
 	
 	/*is it a leaf*/	
