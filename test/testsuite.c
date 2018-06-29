@@ -1552,12 +1552,10 @@ void cbt_update_test(void)
 	int n = 10000;
 	cranbtree_t* bt = cbt_create(3);
 	
-	printf("\n");
 	for(int i = 0; i < n; i++)
 	{
 		int* z = malloc(sizeof(int));
 		cbt_insert(bt, i, z);
-		printf("\r\tDone With: %d sequential Insertions ", i + 1);
 	}
 	
 	int* z = malloc(sizeof(int));
@@ -1594,12 +1592,10 @@ void cbt_update_test1(void)
 	int n = 10000;
 	cranbtree_t* bt = cbt_create(3);
 	
-	printf("\n");
 	for(int i = 0; i < n; i++)
 	{
 		int* z = malloc(sizeof(int));
 		cbt_insert(bt, i, z);
-		printf("\r\tDone With: %d sequential Insertions ", i + 1);
 	}
 	
 	int* z = malloc(sizeof(int));
