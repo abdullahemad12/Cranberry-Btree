@@ -36,7 +36,7 @@ As a quick reference let us take a look at the counter clock wise rotation algor
 4. Remove the first entry from the right node (doing any necessary shift or operation to preserve the shape of the node).
 5. Move over the first children of the right node to the last children pointer of the target node.
 
-<img src = "Art/rotation.jpg" alt = "rotation">
+<img src = "Art/rotation.jpeg" alt = "rotation">
 
 #### Merging: 
 This is the case when both of the neighbouring nodes do not have a enogh entries. In this case we might choose to to merge the target node with one of the neighbouring nodes. The merge is simple: 
