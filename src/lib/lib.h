@@ -41,7 +41,7 @@ static void node_shift_left(cbt_node_t* node, int i,  int n);
 static void node_shift_left_without_children(cbt_node_t* node, int i,  int n);
 static cbt_node_t* split_full_root(cbt_node_t* old_root, int n);
 static bool is_leaf(cbt_node_t* node);
-static void* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max);
+static cbt_entry_t* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max);
 static void* bt_search_helper(cbt_node_t* node, int key, int n);
 static void bt_insert_helper(cranbtree_t* bt ,cbt_node_t* root, cbt_entry_t* entry);
 static void destroy_bt_helper(cbt_node_t* root, int n, void (* done)(void*));
@@ -74,4 +74,4 @@ static cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node);
 static cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node);
 static int cbt_calculate_min_key(cbt_node_t* root);
 static int cbt_calculate_max_key(cbt_node_t* root);
-
+static void* cbt_update_helper(cbt_node_t* node, int key, void* new_object, int n);

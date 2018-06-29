@@ -35,13 +35,15 @@ static void* bt_search_helper(cbt_node_t* node, int key, int n)
 		return NULL;
 	}
 	
-	void* object = bt_node_search_helper(node->entry, key, 0, node->len);
-	if(object == NULL)
+	cbt_entry_t* entry = bt_node_search_helper(node->entry, key, 0, node->len);
+
+	
+	if(entry == NULL)
 	{
 		int i = get_next_node_index(node,  key,  n);
 		return bt_search_helper(node->children[i], key, n);
 	}
-	
+	void* object = entry->object;
 	return object;
 }
 
@@ -51,7 +53,7 @@ static void* bt_search_helper(cbt_node_t* node, int key, int n)
  * RETURNS: pointer to the object or NULL if it was not found
  *
  */
-static void* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max)
+static cbt_entry_t* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max)
 {
 	if(min == max)
 	{
@@ -60,7 +62,7 @@ static void* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int
 	int avg = (max + min) / 2;
 	if(key == entries[avg]->key)
 	{
-		return entries[avg]->object;
+		return entries[avg];
 	}
 	else if(key > entries[avg]->key)
 	{

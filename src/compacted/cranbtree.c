@@ -46,7 +46,7 @@ static void node_shift_left(cbt_node_t* node, int i,  int n);
 static void node_shift_left_without_children(cbt_node_t* node, int i,  int n);
 static cbt_node_t* split_full_root(cbt_node_t* old_root, int n);
 static bool is_leaf(cbt_node_t* node);
-static void* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max);
+static cbt_entry_t* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max);
 static void* bt_search_helper(cbt_node_t* node, int key, int n);
 static void bt_insert_helper(cranbtree_t* bt ,cbt_node_t* root, cbt_entry_t* entry);
 static void destroy_bt_helper(cbt_node_t* root, int n, void (* done)(void*));
@@ -80,6 +80,7 @@ cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node);
 cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node);
 static int cbt_calculate_min_key(cbt_node_t* root);
 static int cbt_calculate_max_key(cbt_node_t* root);
+static void* cbt_update_helper(cbt_node_t* node, int key, void* new_object, int n);
 
 
 
@@ -133,6 +134,28 @@ void cbt_insert(cranbtree_t* bt, int key, void* object)
 	bt->max_key = bt->max_key < key ? key : bt->max_key;
 	bt->min_key = bt->min_key > key ? key : bt->min_key;
 	bt->length++;
+}
+
+
+/**
+  * cranbtree_t*, int, void* -> void
+  * MODIFIES: cranbtree_t* 
+  * EFFECTS: Updates the object of the entry that has the specified key with the new pointer. If 
+  * 		 no such entry was found a new entry is inserted.
+  * RETURNS: pointer to the old object, NULL if it was not found
+  * PARAMETERS: 
+  * - cranbtree_t* cbt, pointer to the BTree struct
+  * - int key: the key of the entry to be updated
+  * - void* object: pointer to the object
+  */
+void* cbt_update(cranbtree_t* bt, int key, void* object)
+{
+	void* old_object = cbt_update_helper(bt->root, key, object, bt->n);
+	if(old_object == NULL)
+	{
+		cbt_insert(bt, key, object);
+	}
+	return old_object;
 }
 
 
@@ -637,13 +660,15 @@ static void* bt_search_helper(cbt_node_t* node, int key, int n)
 		return NULL;
 	}
 	
-	void* object = bt_node_search_helper(node->entry, key, 0, node->len);
-	if(object == NULL)
+	cbt_entry_t* entryobj = bt_node_search_helper(node->entry, key, 0, node->len);
+
+	if(entryobj == NULL)
 	{
 		int i = get_next_node_index(node,  key,  n);
 		return bt_search_helper(node->children[i], key, n);
 	}
-	
+		
+	void* object = entryobj->object;
 	return object;
 }
 
@@ -653,7 +678,7 @@ static void* bt_search_helper(cbt_node_t* node, int key, int n)
  * RETURNS: pointer to the object or NULL if it was not found
  *
  */
-static void* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max)
+static cbt_entry_t* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max)
 {
 	if(min == max)
 	{
@@ -662,7 +687,7 @@ static void* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int
 	int avg = (max + min) / 2;
 	if(key == entries[avg]->key)
 	{
-		return entries[avg]->object;
+		return entries[avg];
 	}
 	else if(key > entries[avg]->key)
 	{
@@ -700,7 +725,13 @@ static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* parent,  cbt_node_t* 
 	
 	/*Not found yet*/
 	int next_node_index = get_next_node_index(node, key, bt->n);
-	void* object = bt_node_search_helper(node->entry, key, 0, node->len);	
+	cbt_entry_t* entryobj = bt_node_search_helper(node->entry, key, 0, node->len);
+	void* object = NULL;
+	if(entryobj != NULL)
+	{
+	 	object = entryobj->object;
+	}
+
 	assert(next_node_index != -1);
 	if(object == NULL)
 	{
@@ -1135,7 +1166,7 @@ static int cbt_calculate_min_key(cbt_node_t* root)
 		return root->entry[0]->key;
 	}
 
-	return bt_calculate_min_key(root->children[0]);	
+	return cbt_calculate_min_key(root->children[0]);	
 }
 
 
@@ -1158,9 +1189,35 @@ static int cbt_calculate_max_key(cbt_node_t* root)
 		return root->entry[root->len-1]->key;
 	}
 
-	return bt_calculate_max_key(root->children[root->len]);	
+	return cbt_calculate_max_key(root->children[root->len]);	
 }
 
+  
+/**
+  * cbt_node_t*, int, void*, int -> void* 
+  * EFFECTS: Updates the pointer of a certain entry with the specified key if it exists
+  * MODIFIES: cbt_node_t* 
+  * RETURNS: Pointer to the old node or NULL if the entry was not found
+  *
+  */
+static void* cbt_update_helper(cbt_node_t* node, int key, void* new_object, int n)
+{
+	if(node == NULL)
+	{
+		return NULL;
+	}
+	
+	cbt_entry_t* entry =  bt_node_search_helper(node->entry, key, 0, node->len);
+	if(entry == NULL)
+	{
+		int index = get_next_node_index(node, key, n);
+		return cbt_update_helper(node->children[index], key, new_object, n);
+	}
+	
+	void* old_object = entry->object;
+	entry->object = new_object;
+	return old_object;
+}  
   
 /*******************************
  *						       *

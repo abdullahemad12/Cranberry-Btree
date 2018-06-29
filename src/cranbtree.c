@@ -36,6 +36,7 @@
 #include "lib/node.c"
 #include "lib/statistics.c"
 #include "lib/helpers.c"
+#include "lib/update.c"
 
 
 /*prototypes*/
@@ -108,7 +109,12 @@ void cbt_insert(cranbtree_t* bt, int key, void* object)
   */
 void* cbt_update(cranbtree_t* bt, int key, void* object)
 {
-	return NULL;
+	void* old_object = cbt_update_helper(bt->root, key, object, bt->n);
+	if(old_object == NULL)
+	{
+		cbt_insert(bt, key, object);
+	}
+	return old_object;
 }
 
 

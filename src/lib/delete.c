@@ -56,7 +56,13 @@ static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* node, int key)
 	
 	/*Not found yet*/
 	int next_node_index = get_next_node_index(node, key, bt->n);
-	void* object = bt_node_search_helper(node->entry, key, 0, node->len);	
+	cbt_entry_t* objentry = bt_node_search_helper(node->entry, key, 0, node->len);
+	void* object = NULL;
+	if(objentry != NULL)
+	{
+		object = objentry->object;
+	}
+	
 	assert(next_node_index != -1);
 	if(object == NULL)
 	{
