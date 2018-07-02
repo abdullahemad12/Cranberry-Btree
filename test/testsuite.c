@@ -1755,6 +1755,7 @@ void validate_node(cbt_node_t* node, int n)
 
 void validate_tree(cbt_node_t* node, int n)
 {
+	(void) contains;
 	if(node == NULL)
 	{
 		return;

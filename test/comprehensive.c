@@ -8,6 +8,8 @@
 #include <time.h>
 #include <stdlib.h>
 
+
+void pickNRandomNumber(int arr[], int n);
 /**
   * Tries 32768 different random insertions
   */
@@ -22,15 +24,7 @@ static void bt_comp_test_helper(void)
 	cranbtree_t* bt = cbt_create(3);
 	srand(time(NULL)); 
 	  
-	for(int i = 0; i < n; i++)
-	{
-		int r = 0;
-		while(contains(keys, n, r))
-		{
-			r = rand() % 10000000;
-		}
-		keys[i] = r;
-	}
+	pickNRandomNumber(keys, n);
 
 
 	for(int i = 0; i < n; i++)
@@ -78,16 +72,7 @@ static void bt_comp_test1(void)
 	srand(time(NULL)); 
 	 
 	printf("\n"); 
-	for(int i = 0; i < n; i++)
-	{
-		int r = 0;
-		while(contains(keys, i, r))
-		{
-			r = rand() % 1000000000;
-		}
-		keys[i] = r;
-	 	printf("\r\tPicked: %d random numbers ", i + 1);
-	}
+	pickNRandomNumber(keys, n);
 
 
 	
@@ -141,4 +126,27 @@ static void bt_comp_test2(void)
 	cbt_destroy(bt, free);
 }
 
+/**
+  * int[], int -> void
+  * EFFECTS: Given an array of length N fills it with Random numbers from 1 to n
+  * MODIFIES: arr
+  */
+void pickNRandomNumber(int arr[], int n)
+{
+	for(int i = 0; i < n; i++)
+	{
+		arr[i] = i;
+	}
+	srand(time(NULL)); 
+	int r = 0;	
+	for(int i = 0; i < n; i++)
+	{
+		printf("\r\tPicked: %d random numbers ", i + 1);
+		r = rand() % n;
+		int swap = arr[r];
+		arr[r] = arr[i];
+		arr[i] = swap;	
+	}
+
+}
 
