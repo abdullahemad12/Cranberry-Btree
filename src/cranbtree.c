@@ -206,7 +206,7 @@ int cbt_get_min_key(cranbtree_t* cbt)
   * EFFECTS: gets the length of the B-tree
   * RETURNS: the length of the B-tree
   */
-int cbt_get_length(cranbtree_t* c)
+int cbt_get_length(cranbtree_t* cbt)
 {
 	return 0;
 }
