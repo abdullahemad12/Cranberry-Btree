@@ -70,6 +70,7 @@ cranbtree_t* cbt_create(int n)
 	bt->min_key = -1;
 	bt->max_key = -1;
 	bt->n = n;
+	bt->is_cloned = false;
 	return bt;
 }
 
