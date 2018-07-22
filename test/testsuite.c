@@ -1498,15 +1498,69 @@ void cbt_clone_test2(void)
 {
 	cranbtree_t* bt = cbt_create(3);
 	
-	cranbtree_t clone = cbt_clone(bt);
+	cranbtree_t* clone = cbt_clone(bt);
 	
-	CU_ASSERT_PTR_NOT_NULL(clone);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(clone);
 	CU_ASSERT_PTR_NULL(clone->root);
 	CU_ASSERT_EQUAL(clone->length, 0);
-	CU_ASSERT_EQUAL(clone->n, bt->n)
+	CU_ASSERT_EQUAL(clone->n, bt->n);
+	CU_ASSERT_EQUAL(clone->max_key, -1);
+	CU_ASSERT_EQUAL(clone->min_key, -1);
+
+	cbt_destroy(clone, free);
 	cbt_destroy(bt, free);
 }
 
+/**
+  * one node
+  */
+void cbt_clone_test3(void)
+{
+	cranbtree_t* bt = cbt_create(5);
+	for(int i = 0; i < 4; i++)
+	{
+		int* z = malloc(sizeof(int));
+		cbt_insert(bt, i, z);
+	}
+	cranbtree_t* clone = cbt_clone(bt);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(clone);	
+	
+	CU_ASSERT_EQUAL(clone->length, bt->length);
+	CU_ASSERT_EQUAL(clone->n, bt->n);
+	CU_ASSERT_EQUAL(clone->max_key, bt->max_key);
+	CU_ASSERT_EQUAL(clone->min_key, bt->min_key);
+	CU_ASSERT(clone->is_cloned);
+	CU_ASSERT(treecmp(bt->root, clone->root, bt->n));
+
+	cbt_destroy(clone, free);
+	cbt_destroy(bt, free);
+}
+
+/**
+  * many nodes
+  */
+void cbt_clone_test4(void)
+{
+	cranbtree_t* bt = cbt_create(5);
+	int keys[] = {2, 9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10, 56, 45, 56, 345, 675, 675, 4566,2345, 543, 222, 5566, 7554, 3453};
+	for(int i = 0; i < 32; i++)
+	{
+		int* z = malloc(sizeof(int));
+		cbt_insert(bt, keys[i], z);
+	}
+	cranbtree_t* clone = cbt_clone(bt);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(clone);	
+	
+	CU_ASSERT_EQUAL(clone->length, bt->length);
+	CU_ASSERT_EQUAL(clone->n, bt->n);
+	CU_ASSERT_EQUAL(clone->max_key, bt->max_key);
+	CU_ASSERT_EQUAL(clone->min_key, bt->min_key);
+	CU_ASSERT(clone->is_cloned);
+	CU_ASSERT(treecmp(bt->root, clone->root, bt->n));
+
+	cbt_destroy(clone, free);
+	cbt_destroy(bt, free);
+}
 
 void merge_leaf_nodes_test(void)
 {

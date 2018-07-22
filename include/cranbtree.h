@@ -69,6 +69,7 @@ typedef struct cranbtree
 	int max_key;
 	int min_key;
 	unsigned int n;
+	bool is_cloned;
 }cranbtree_t;
 
 
@@ -89,7 +90,7 @@ cranbtree_t* cbt_create(int n);
   * EFFECTS: clones the given cranbtree_t 
   * RETURNS: a pointer to the clone, or NULL if the given cbt is not valid
   */
-cranbtree_t* cbt_clone(cranbtree_t cbt);
+cranbtree_t* cbt_clone(cranbtree_t* cbt);
 
 /**
   * cranbtree_t*, int, void* -> void

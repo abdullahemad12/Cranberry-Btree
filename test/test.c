@@ -88,6 +88,10 @@ static struct test utests[] =
 	{"cbt_calculate_max_key_test", cbt_calculate_max_key_test},
 	{"cbt_update_test", cbt_update_test},
 	{"cbt_update_test1", cbt_update_test1},
+	{"cbt_clone_test1", cbt_clone_test1},
+	{"cbt_clone_test2", cbt_clone_test2},
+	{"cbt_clone_test3", cbt_clone_test3},
+	{"cbt_clone_test4", cbt_clone_test4},
 	{NULL, NULL}
 
 };

@@ -79,7 +79,7 @@ cranbtree_t* cbt_create(int n)
   * EFFECTS: clones the given cranbtree_t 
   * RETURNS: a pointer to the clone, or NULL if the given cbt is not valid
   */
-cranbtree_t* cbt_clone(cranbtree_t cbt)
+cranbtree_t* cbt_clone(cranbtree_t* cbt)
 {
 	return NULL;
 }
