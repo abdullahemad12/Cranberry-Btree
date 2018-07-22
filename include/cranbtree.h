@@ -69,7 +69,7 @@ typedef struct cranbtree
 	int max_key;
 	int min_key;
 	unsigned int n;
-	bool is_cloned;
+	bool is_clone;
 }cranbtree_t;
 
 

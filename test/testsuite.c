@@ -1529,7 +1529,7 @@ void cbt_clone_test3(void)
 	CU_ASSERT_EQUAL(clone->n, bt->n);
 	CU_ASSERT_EQUAL(clone->max_key, bt->max_key);
 	CU_ASSERT_EQUAL(clone->min_key, bt->min_key);
-	CU_ASSERT(clone->is_cloned);
+	CU_ASSERT(clone->is_clone);
 	CU_ASSERT(treecmp(bt->root, clone->root, bt->n));
 
 	cbt_destroy(clone, free);
@@ -1555,7 +1555,7 @@ void cbt_clone_test4(void)
 	CU_ASSERT_EQUAL(clone->n, bt->n);
 	CU_ASSERT_EQUAL(clone->max_key, bt->max_key);
 	CU_ASSERT_EQUAL(clone->min_key, bt->min_key);
-	CU_ASSERT(clone->is_cloned);
+	CU_ASSERT(clone->is_clone);
 	CU_ASSERT(treecmp(bt->root, clone->root, bt->n));
 
 	cbt_destroy(clone, free);
@@ -1691,7 +1691,6 @@ void cbt_update_test1(void)
 
 bool treecmp(cbt_node_t* root1, cbt_node_t* root2, int n)
 {
-	debug_log(root1, n);
 	if((root1 == NULL && root2 != NULL)
 		|| (root2 == NULL && root1 != NULL))
 	{
@@ -1720,6 +1719,7 @@ bool treecmp(cbt_node_t* root1, cbt_node_t* root2, int n)
 
 bool entriescmp(cbt_node_t* root1, cbt_node_t* root2, int n)
 {
+	(void) debug_log;
 	for(int i = 0; i < n; i++)
 	{
 		if((root1->entry[i] == NULL && root2->entry[i] != NULL)

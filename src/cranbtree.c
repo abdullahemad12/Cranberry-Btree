@@ -37,6 +37,7 @@
 #include "lib/statistics.c"
 #include "lib/helpers.c"
 #include "lib/update.c"
+#include "lib/clone.c"
 
 
 /*prototypes*/
@@ -70,7 +71,7 @@ cranbtree_t* cbt_create(int n)
 	bt->min_key = -1;
 	bt->max_key = -1;
 	bt->n = n;
-	bt->is_cloned = false;
+	bt->is_clone = false;
 	return bt;
 }
 
@@ -82,7 +83,20 @@ cranbtree_t* cbt_create(int n)
   */
 cranbtree_t* cbt_clone(cranbtree_t* cbt)
 {
-	return NULL;
+	if(cbt == NULL)
+	{
+		return NULL;
+	}
+	assert(cbt->n > 2);
+	assert(cbt->n % 2 != 0);
+	cranbtree_t* clone = malloc(sizeof(cranbtree_t));
+	if(clone == NULL)
+	{
+		return NULL;
+	}
+	cbt_copy_metadata(cbt, clone);
+	clone->root = cbt_copy_nodes(cbt->root, cbt->n);
+	return clone;
 }
 
 /**
@@ -244,6 +258,10 @@ int cbt_get_length(cranbtree_t* cbt)
   */
 void cbt_destroy(cranbtree_t* bt, void (* destroy_object)(void*))
 {
+	if(bt->is_clone)
+	{
+		destroy_object = NULL;
+	}
 	destroy_bt_helper(bt->root, bt->n, destroy_object);
 	free(bt);
 }
