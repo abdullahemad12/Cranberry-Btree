@@ -67,10 +67,23 @@ cranbtree_t* cbt_create(int n)
 	}
 	bt->root = NULL;
 	bt->length = 0;
+	bt->min_key = -1;
 	bt->max_key = -1;
 	bt->n = n;
 	return bt;
 }
+
+
+/**
+  * cranbtree_t* -> cranbtree_t*
+  * EFFECTS: clones the given cranbtree_t 
+  * RETURNS: a pointer to the clone, or NULL if the given cbt is not valid
+  */
+cranbtree_t* cbt_clone(cranbtree_t cbt)
+{
+	return NULL;
+}
+
 /**
   * cranbtree_t*, int, void* -> void
   * EFFECTS: inserts an object in the btree in respect with the search key
@@ -90,8 +103,16 @@ void cbt_insert(cranbtree_t* bt, int key, void* object)
 	bt_insert_helper(bt, bt->root, entry);
 	
 	/*updates the min and max if needed*/
-	bt->max_key = bt->max_key < key ? key : bt->max_key;
-	bt->min_key = bt->min_key > key ? key : bt->min_key;
+	if(bt->length == 0) /*first insertion*/
+	{	
+		bt->max_key = key;
+		bt->min_key = key;
+	}
+	else
+	{
+		bt->max_key = bt->max_key < key ? key : bt->max_key;
+		bt->min_key = bt->min_key > key ? key : bt->min_key;
+	}
 	bt->length++;
 }
 

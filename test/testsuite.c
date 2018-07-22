@@ -1482,6 +1482,32 @@ void cbt_calculate_max_key_test(void)
 	cbt_destroy(bt, free);
 }
 
+/**
+  * NULL pointer
+  */
+void cbt_clone_test1(void)
+{
+	cranbtree_t* clone = cbt_clone(NULL);
+	CU_ASSERT_PTR_NULL(clone);
+}
+
+/**
+  * empty tree
+  */
+void cbt_clone_test2(void)
+{
+	cranbtree_t* bt = cbt_create(3);
+	
+	cranbtree_t clone = cbt_clone(bt);
+	
+	CU_ASSERT_PTR_NOT_NULL(clone);
+	CU_ASSERT_PTR_NULL(clone->root);
+	CU_ASSERT_EQUAL(clone->length, 0);
+	CU_ASSERT_EQUAL(clone->n, bt->n)
+	cbt_destroy(bt, free);
+}
+
+
 void merge_leaf_nodes_test(void)
 {
 	
