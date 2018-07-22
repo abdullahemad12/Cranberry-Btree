@@ -29,7 +29,8 @@
 #include <stdbool.h>
 #include <cranbtree.h>
 
-/*protoypes*/
+/*prototypes*/
+static void destroy_bt_helper(cbt_node_t* root, int n, void (* done)(void*));
 static cbt_node_t* bt_create_node(int n);
 static cbt_entry_t* bt_create_entry(int key, void* object);
 static void bt_destroy_node(cbt_node_t* node, int n, void (* done)(void*));
@@ -53,7 +54,6 @@ static void destroy_bt_helper(cbt_node_t* root, int n, void (* done)(void*));
 static bool is_root(cranbtree_t* bt, cbt_node_t* node);
 static void* bt_delete_entry_helper(cbt_node_t* node, int key, int n);
 static int get_last_entry_index(cbt_node_t* node, int n);
-static int min(int x, int y);
 static cbt_node_t* merge_leaf_nodes(cbt_node_t* node1, cbt_node_t* node2, int n);
 static void node_entry_set_null(cbt_node_t* node, int entry_index, int n);
 static void children_shift_right(cbt_node_t* nodes[], int n);
@@ -63,7 +63,7 @@ static int get_entry_index(cbt_node_t* node, int key);
 static void* bt_delete_int_case(cranbtree_t* bt, cbt_node_t* node, int key);
 static void fix_pointers_gaps(cbt_node_t* node, int n);
 static void node_shift_right_without_children(cbt_node_t* node, int i,  int n);
-static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* parent,  cbt_node_t* node, int key);
+static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* node, int key);
 static cbt_node_t* get_right_sibling(cbt_node_t* parent, cbt_node_t* node);
 static cbt_node_t* get_left_sibling(cbt_node_t* parent, cbt_node_t* node);
 static cbt_node_t* merge_nodes(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* left, cbt_node_t* right);
@@ -76,14 +76,14 @@ static void balance_node(cranbtree_t* bt, cbt_node_t** parent_ptr, int key);
 static void entry_move_up_clockwise(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* right, int key , int n);
 static void entry_move_up_counter_clockwise(cranbtree_t* bt, cbt_node_t* parent, cbt_node_t* right, int key , int n);
 static cbt_node_t* remove_last_child(cbt_node_t* nodes[], int len);
-cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node);
-cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node);
+static cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node);
+static cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node);
 static int cbt_calculate_min_key(cbt_node_t* root);
 static int cbt_calculate_max_key(cbt_node_t* root);
 static void* cbt_update_helper(cbt_node_t* node, int key, void* new_object, int n);
 static void cbt_copy_metadata(cranbtree_t* src, cranbtree_t* dest);
-static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n);
-
+static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int len);
+static int calculate_depth(cbt_node_t* node);
 
 /*
  * int -> bptree_t* 
@@ -115,6 +115,7 @@ cranbtree_t* cbt_create(int n)
 	bt->is_clone = false;
 	return bt;
 }
+
 
 /**
   * cranbtree_t* -> cranbtree_t*
@@ -156,9 +157,18 @@ void cbt_insert(cranbtree_t* bt, int key, void* object)
 	
 	cbt_entry_t* entry = bt_create_entry(key, object);
 	bt_insert_helper(bt, bt->root, entry);
+	
 	/*updates the min and max if needed*/
-	bt->max_key = bt->max_key < key ? key : bt->max_key;
-	bt->min_key = bt->min_key > key ? key : bt->min_key;
+	if(bt->length == 0) /*first insertion*/
+	{	
+		bt->max_key = key;
+		bt->min_key = key;
+	}
+	else
+	{
+		bt->max_key = bt->max_key < key ? key : bt->max_key;
+		bt->min_key = bt->min_key > key ? key : bt->min_key;
+	}
 	bt->length++;
 }
 
@@ -184,6 +194,33 @@ void* cbt_update(cranbtree_t* bt, int key, void* object)
 	return old_object;
 }
 
+/**
+  * cranbtree_t*, int, void* -> void
+  * MODIFIES: cranbtree_t* 
+  * EFFECTS: Updates the object of the entry that has the specified key with the new pointer only if it 
+  * exists. 
+  * PARAMETERS: 
+  * - cranbtree_t* cbt, pointer to the BTree struct
+  * - int key: the key of the entry to be updated
+  * - void* object: pointer to the object
+  * RETURNS: pointer to the old object, or NULL if it does not exist
+  */
+void* cbt_update_if_exists(cranbtree_t* bt, int key, void* object)
+{
+	return NULL;
+}
+
+/**
+  * cranbtree_t*, void* -> int
+  * REQUIRES: the object to be already inserted in the tree
+  * EFFECTS: Figures out the key of a given object in the tree
+  * RETURNS: the key of the object, or -1 if the object was not found
+  *
+  */
+int cbt_key_search(cranbtree_t* cbt, void* object)
+{
+	return 0;
+}
 
 /**
   * cranbtree_t*, int -> void*
@@ -206,7 +243,7 @@ void* cbt_search(cranbtree_t* bt, int key)
 void* cbt_delete(cranbtree_t* bt, int key)
 {
 	assert(bt != NULL);
-	void* object = bt_delete_helper(bt, NULL, bt->root, key);
+	void* object = bt_delete_helper(bt, bt->root, key);
 	
 	if(object != NULL)
 	{
@@ -218,6 +255,7 @@ void* cbt_delete(cranbtree_t* bt, int key)
 	return object;
 }
 
+
 /**
   * cranbtree_t* -> int
   * EFFECTS: gets the maximum key in the Tree
@@ -225,7 +263,7 @@ void* cbt_delete(cranbtree_t* bt, int key)
   */
 int cbt_get_max_key(cranbtree_t* cbt)
 {
-	return cbt->max_key;
+	return 0;
 }
 
 
@@ -236,10 +274,19 @@ int cbt_get_max_key(cranbtree_t* cbt)
   */
 int cbt_get_min_key(cranbtree_t* cbt)
 {
-	return cbt->min_key;
+	return 0;
 }
-  
-  
+
+
+/**
+  * cranbtree_t* -> int
+  * EFFECTS: gets the length of the B-tree
+  * RETURNS: the length of the B-tree
+  */
+int cbt_get_length(cranbtree_t* cbt)
+{
+	return 0;
+}
 
 /**
   * cranbtree_t*, (void) destroy_object(void*) -> void
@@ -250,132 +297,303 @@ int cbt_get_min_key(cranbtree_t* cbt)
   * 				  i.e: object_destroy(object). In case the pointer is NULL, nothing is done 
   *						on the object and it becomes the user's responsibility to free it
   */
- void bt_destroy(cranbtree_t* bt, void (* destroy_object)(void*))
- {
- 	if(bt->is_clone)
+void cbt_destroy(cranbtree_t* bt, void (* destroy_object)(void*))
+{
+	if(bt->is_clone)
 	{
 		destroy_object = NULL;
 	}
 	destroy_bt_helper(bt->root, bt->n, destroy_object);
 	free(bt);
- }						
+}
+ 
+ 
+void printTree(cranbtree_t* bt)
+{
+	printf("\n\n");
+	for(int i = 0, n = calculate_depth(bt->root); i < n; i++)
+	{
+			print_level(bt->root, bt->n, i, 0);
+			printf("\n\n");
+	}
 
-/*******************************************
- *								 		   *
- *		 Static private Functions          *
- *								 		   *
- *******************************************/
 
- /**
-  * int n -> cbt_node_t*
-  * Creates a node according to the size n
+}						
+
+/************************************
+  * Helpers functions for the clone *
+  ***********************************/
+
+/**
+  * cranbtree_t*, cranbtree_t* -> void
+  * EFFECTS: copies the metadata over from the src cranbtree to the destination cranbtree
+  * REQUIRES: the metadata of the original to be valid and correct
+  * MODIFIES: cranbtree_t* dest
+  * PARAMETERS: 
+  * - cranbtree_t* src: the source cranbtree which contains the infromation to be copied.
+  * - cranbtree_t* dest: the destination cranbtree
+  */
+static void cbt_copy_metadata(cranbtree_t* src, cranbtree_t* dest)
+{
+	dest->root = NULL;
+	dest->length = src->length;
+	dest->max_key = src->max_key;
+	dest->min_key = src->min_key;
+	dest->n = src->n;
+	dest->is_clone = true;
+} 
+
+
+/** 
+  * cbt_node_t*, int -> cbt_node_t* 
+  * EFFECTS: Given a root of the tree, creates a clone of all of the node in the tree
+  * RETURNS: the new root of the clone
+  * PARAMETERS:
+  * - cbt_node_t* node: root of the cranbtree to be cloned
+  * - int n: the order of the tree
   *
   */
-static cbt_node_t* bt_create_node(int n)
+
+static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n)
 {
-	if(n < 3)
-	{
-		return NULL;
-	}
-	
-	cbt_node_t* node = malloc(sizeof(cbt_node_t));
 	if(node == NULL)
 	{
 		return NULL;
 	}
-	size_t entry_size = sizeof(cbt_entry_t*) * n;
-	node->entry = malloc(entry_size);
-	if(node->entry == NULL)
-	{
-		free(node);
-		return NULL;
-	}
-	memset(node->entry, 0, sizeof(cbt_entry_t*) * n);
-	
-	size_t children_size =  sizeof(cbt_node_t*) * (n+1);
-	node->children = malloc(children_size);
-	if(node->children == NULL)
-	{
-		free(node->entry);
-		free(node);
-		return NULL;
-	}
-	memset(node->children, 0, children_size);
-	node->len = 0;
-	return node;
-}
-
-
-/*
- * int key, void* object -> bvt_entry_t*
- * Given the key and the object, creates a node entry
- */
-static cbt_entry_t* bt_create_entry(int key, void* object)
-{
-	assert(object != NULL);
-	assert(key >= 0);
-	cbt_entry_t* entry = calloc(1, sizeof(cbt_entry_t));
-	if(entry == NULL)
+	cbt_node_t* new_node = bt_create_node(n);
+	if(new_node == NULL)
 	{
 		return NULL;
 	}
-	entry->key = key;
-	entry->object = object;
-	return entry;
-}
 
-static void destroy_bt_helper(cbt_node_t* root, int n, void (* done)(void*))
-{
-	if(root == NULL)
-	{
-		return;
-	}
-	for(int i = 0, n1 = n + 1; i < n1; i++)
-	{
-		destroy_bt_helper(root->children[i], n, done);
-	}
-	bt_destroy_node(root, n, done);
-}
-
-/*
- * cbt_node_t*, void (* done)(int) -> void
- * destroys all the data associated with a given node
- */
- 
-static void bt_destroy_node(cbt_node_t* node, int n, void (* done)(void*))
-{
-	assert(node != NULL);
+	/*copies the entries*/
 	for(int i = 0; i < n; i++)
 	{
 		if(node->entry[i] != NULL)
 		{
-			bt_destroy_entry(node->entry[i], done);
-			node->entry[i] = NULL;
+			new_node->entry[i] = cpy_entry(node->entry[i]);
 		}
 	}
-	free(node->entry);
-	free(node->children);
-	free(node);
-}
-
-/*
- * cbt_entry_t*, void (*)(int) -> void*
- * Frees entry  and calls the passed in function on the entry's object if it is not NULL
- */
-static void* bt_destroy_entry(cbt_entry_t* entry, void (* done)(void*)) 
-{
-	if(done != NULL)
+	
+	/*copies the children*/
+	for(int i = 0; i < n; i++)
 	{
-		(*done)(entry->object);
-		entry->object = NULL;
+		new_node->children[i] = cbt_copy_nodes(node->children[i], n);
 	}
-	void* object = entry->object;
-	free(entry);
-	return object;
-	
-	
+		
+	return new_node;
 }
 
+
+/******************************
+ * Functions for the deletion *
+ ******************************/
+
+/**
+  * cranbtree_t* , cbt_node_t* , int -> void*
+  * EFFECTS: Deletes an entry in respecte to the given search key
+  * 		 does nothing if no such entry exist
+  * MODIFIES: cranbtree_t* bt
+  * RETURNS: the object associated with the entry, or NULL if no such entry was found
+  */
+static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* node, int key)
+{
+	if(node == NULL)
+	{
+		return NULL;
+	}
+
+	cbt_node_t* old_root = bt->root;
+	balance_node(bt, &node, key);
+	
+	/*restarts execution if the root was altered*/
+	if(bt->root != old_root)
+	{
+		return bt_delete_helper(bt, bt->root, key);
+	}
+	
+	/*Not found yet*/
+	int next_node_index = get_next_node_index(node, key, bt->n);
+	cbt_entry_t* objentry = bt_node_search_helper(node->entry, key, 0, node->len);
+	void* object = NULL;
+	if(objentry != NULL)
+	{
+		object = objentry->object;
+	}
+	
+	assert(next_node_index != -1);
+	if(object == NULL)
+	{
+		return bt_delete_helper(bt, node->children[next_node_index], key);
+	}	
+	
+	/*is it a leaf*/	
+	if(is_leaf(node->children[0]))
+	{	
+		 void* object = bt_delete_entry_helper(node, key, bt->n);
+		 if(is_root(bt, node) && node->len == 0)
+		 {
+		 	bt_destroy_node(node, bt->n, NULL);
+			bt->root = NULL;
+		 }
+		return object;
+	}
+	else
+	{
+		/*delete from intermediate node*/
+		return bt_delete_int_case(bt, node, key);
+	}
+
+}
+
+
+
+
+
+/**
+  * cranbtree_t*, cbt_node_t**, int -> void*
+  * REQUIRES: node to be an leaf node
+  * EFFECTS: Removes the given node and rebalances the tree
+  * MODIFIES: cranbtree_t* bt, cbt_node_t** parent, cbt_node_t* node
+  */
+static void balance_node(cranbtree_t* bt, cbt_node_t** parent_ptr, int key)
+{
+	
+	cbt_node_t* parent = *(parent_ptr);
+	/*nothing to split*/
+	if(is_leaf(parent->children[0]))
+	{
+		return;
+	}
+	
+	int index = get_next_node_index(parent, key, bt->n);
+	cbt_node_t* node = parent->children[index];
+	
+	int min_n = is_leaf(node->children[0]) ? bt->n / 2 : ceil_fn(((double) bt->n) / 2.0) - 1;
+	if(node->len > min_n)
+	{
+		return;
+	}
+	cbt_node_t* right_sibling = get_right_sibling(parent, node);
+	cbt_node_t* left_sibling = get_left_sibling(parent, node);  
+	
+	/*case 2a)*/
+	if(right_sibling != NULL && right_sibling->len > min_n)
+	{
+		entry_rotate_counter_clockwise(parent, node, right_sibling, bt->n);
+	}
+	else if (left_sibling != NULL && left_sibling->len > min_n)
+	{
+		entry_rotate_clockwise(parent, left_sibling, node, bt->n);
+	}
+	/*case 2b)*/
+	else if(right_sibling != NULL)
+	{
+		
+		*(parent_ptr) = merge_nodes(bt, parent, node, right_sibling);
+	}
+	else if(left_sibling != NULL)
+	{
+		*(parent_ptr) = merge_nodes(bt, parent, left_sibling, node);
+	}
+
+
+}
+
+/**
+  * cranbtree_t*, cbt_node_t**, int -> void*
+  * REQUIRES: node to be an intermediate node
+  * EFFECTS: Removes the given node and rebalances the tree
+  * MODIFIES: cranbtree_t* bt
+  */
+static void* bt_delete_int_case(cranbtree_t* bt, cbt_node_t* node, int key)
+{
+
+	int index = get_entry_index(node,  key);
+	assert(index >= 0);
+	void* object  = node->entry[index]->object;
+	
+	node->entry[index]->object = NULL;
+	cbt_node_t* left = node->children[index];
+	cbt_node_t* right = node->children[index+1];
+	assert(left != NULL && right != NULL);/*every entry must have a right and left children*/
+
+	
+	
+	if(right != NULL)
+	{
+		entry_move_up_counter_clockwise(bt, node, right, key , bt->n);
+		return object;
+	}
+	else if(left != NULL)
+	{
+		entry_move_up_clockwise(bt, node, left, key , bt->n);
+		return object;
+	}
+	
+	return NULL;	
+}
+
+
+
+static void* bt_delete_entry_helper(cbt_node_t* node, int key, int n)
+{
+	for(int i = 0; i < n; i++)
+	{
+		if(node->entry[i] == NULL)
+		{
+			return NULL;
+		}
+		if(node->entry[i]->key == key)
+		{
+			void* object = bt_destroy_entry(node->entry[i], NULL);
+			node->entry[i] = NULL;
+			node_shift_left_without_children(node, i,  n);
+			fix_pointers_gaps(node, n);
+			node->len--;
+			return object;
+		}
+	}
+	return NULL;
+}
+
+ 
+/**
+  * cbt_node_t* , cbt_node_t*, int n -> cbt_node_t*
+  * REQUIRES: entries 0 < len <= min_n and len1 + len2 <= n
+  * EFFECTS: merges two leaf nodes entries into one node
+  */ 
+static cbt_node_t* merge_leaf_nodes(cbt_node_t* node1, cbt_node_t* node2, int n)
+{
+	if(node1->entry[0]->key > node2->entry[0]->key)
+	{
+		cbt_node_t* tmp = node1; 
+		node1 = node2; 
+		node2 = tmp;
+	}
+	assert(node1->len + node2->len <= n);
+	
+	/*edge case*/
+	node1->children[node1->len] = node2->children[0];
+	for(int i = 0;  node2->entry[i] != NULL; i++)
+	{
+		int ind = node_insert_entry(node1, node2->entry[i], true, n);
+		node1->children[ind] = node2->children[i+1];
+		node2->entry[i] = NULL;
+		node2->children[i+1] = NULL;
+		node2->len--;
+	}
+	
+
+	bt_destroy_node(node2, n, NULL);
+	
+	return node1;
+
+}
+
+/***************************************************
+  * Code for handling the insertions in the B-Tree *
+  **************************************************/
 
 /**
   * cbt_node_t*, cbt_entry_t* -> cbt_node_t*
@@ -441,6 +659,7 @@ static void bt_insert_helper(cranbtree_t* bt ,cbt_node_t* root, cbt_entry_t* ent
 	}
 }
 
+
 /*
  * cbt_node_t*, int -> cbt_node_t*
  *
@@ -469,160 +688,9 @@ static void bt_insert_helper(cranbtree_t* bt ,cbt_node_t* root, cbt_entry_t* ent
 		}
  	
  }
-
-/*
- * cbt_node_t*, cbt_entry_t*, int -> int
- * MODIFIES: cbt_node_t* node
- * EFFECTS: inserts an entry in the node preserving the the order of the entries. i.e 
- * 			keeping the node sorted after the insertions
- * REQUIRES: the node should not be full
- * RETURNS: returns the index of the child corresponding to the new inserted entry on success, or
- * 			-1 on Failure
- * if bool shift is true then the children are shifted
- */
-static int node_insert_entry(cbt_node_t* node, cbt_entry_t* entry, bool shift,  int n)
-{
-	assert(node != NULL);
-	assert(entry != NULL);
-	assert( n > 2);
-	assert(!is_full_node(node, n));
-	
-	node->len++;
-	for(int i = 0; i < n; i++)
-	{
-		/*reached the end of the entries list*/
-		if(node->entry[i] == NULL)
-		{
-			node->entry[i] = entry;
-			return i + 1;
-		}
-		/*found the location*/
-		if(node->entry[i]->key > entry->key)
-		{
-			/*shift and insert*/
-			if(shift)
-				node_shift_right(node, i, n);
-			else
-				node_shift_right_without_children(node, i, n);
-			node->entry[i] = entry; 
-			return i + 1;
-		}	
-	}
-	return -1;
-}
-
-/*
- * cbt_node_t*, int n
- * MODIFIES: cbt_node_t*
- * EFFECTS: shifts all the entries and children in the array to the right 
- *			starting from position i and i+1 respectively
- * REQUIRES: the node should not be full, otherwise the rightmost element will be orphaned "i < n - 1"
- * RETURNS: void
- *
- */
-static void node_shift_right(cbt_node_t* node, int i,  int n)
-{
-	for(int j = n - 1; j > i; j--)
-	{
-		node->entry[j] = node->entry[j - 1];
-		node->children[j+1] = node->children[j]; 
-	}
-	node->entry[i] = NULL;
-	node->children[i+1] = NULL;
-}
-
-
-/*
- * cbt_node_t*, int n
- * MODIFIES: cbt_node_t*
- * EFFECTS: shifts all the entries in the array to the right
- * REQUIRES: the node should not be full, otherwise the rightmost element will be orphaned "i < n - 1"
- * RETURNS: void
- *
- */
-static void node_shift_right_without_children(cbt_node_t* node, int i,  int n)
-{
-	for(int j = n - 1; j > i; j--)
-	{
-		node->entry[j] = node->entry[j - 1];
-	}
-	node->entry[i] = NULL;
-}
-
-/*
- * cbt_node_t*, int n
- * MODIFIES: cbt_node_t*
- * EFFECTS: shifts all the entries and children in the array to the left 
- *			starting from position i and i-1 respectively
- * REQUIRES:  position i be NULL , otherwise the the i'th element will be orphaned "0 =< i < n-1"
- * RETURNS: void
- *
- */
-static void node_shift_left(cbt_node_t* node, int i,  int n)
-{
-	
-	for(int j = i + 1; j < n; j++)
-	{
-		node->entry[j - 1] = node->entry[j];
-		node->children[j-1] = node->children[j]; 
-	}
-	node->children[n-1] = node->children[n]; 
-	node->entry[n-1] = NULL;
-	node->children[n] = NULL;
-	
-}
-
+ 
+ 
  /*
- * cbt_node_t*, int n
- * MODIFIES: cbt_node_t*
- * EFFECTS: shifts all the entries in the array to the left 
- * REQUIRES:  position i be NULL , otherwise the the i'th element will be orphaned "0 =< i < n-1"
- * RETURNS: void
- *
- */
-static void node_shift_left_without_children(cbt_node_t* node, int i,  int n)
-{
-	
-	for(int j = i + 1; j < n; j++)
-	{
-		node->entry[j - 1] = node->entry[j];
-	}
-	node->entry[n-1] = NULL;
-	
-}
-
-
-/*
- * cbt_node_t*, int, int 
- * EFFECTS: calculates the index of the entry in the node entry array 
- * REQUIRES: the entries in the array to be packed together to the left and no of entries > 0
- * RETURNS: an index or -1 on error
- */
-static int get_next_node_index(cbt_node_t* node, int key, int n)
-{
-	assert(node != NULL);
-
-	
-	if(node->entry[0] == NULL)
-	{
-		return -1;
-	}
-	
-	if(node->entry[0]->key > key)
-	{
-		return 0;
-	}
-	for(int i = 0, nm1 = n-1; i < nm1; i++)
-	{
-		if(node->entry[i]->key <= key && (node->entry[i+1] == NULL || key < node->entry[i+1]->key))
-		{
-			return i + 1;
-		}
-	}
-	
-	return n;
-}
-/*
  * cbt_node_t*, cbt_node_t**, int -> cbt_entry_t*
  * splits a given node into two and returns the entry that should be inserted in the parent node
  * return NULL if no split is needed. i.e: the node is not full
@@ -665,337 +733,12 @@ static cbt_entry_t* bt_split_child(cbt_node_t* node, cbt_node_t** splitted_node,
 }
 
 
-/*
- * cbt_node_t*, int -> bool
- * return true if the node has no room for more entries
- */
-static bool is_full_node(cbt_node_t* node, int n)
-{
-	for(int i = 0; i < n; i++)
-	{
-		if(node->entry[i] == NULL)
-		{
-			return false;
-		}		
-		assert(node->entry[i] != NULL);
-	}
-	return true;
-}
 
-
-static void* bt_search_helper(cbt_node_t* node, int key, int n)
-{
-	if(node == NULL)
-	{
-		return NULL;
-	}
-	
-	cbt_entry_t* entryobj = bt_node_search_helper(node->entry, key, 0, node->len);
-
-	if(entryobj == NULL)
-	{
-		int i = get_next_node_index(node,  key,  n);
-		return bt_search_helper(node->children[i], key, n);
-	}
-		
-	void* object = entryobj->object;
-	return object;
-}
-
-/*
- * cbt_entry_t*[], int key -> void* 
- * EFFECTS: looks for an entry in the entry list with the given search key
- * RETURNS: pointer to the object or NULL if it was not found
- *
- */
-static cbt_entry_t* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max)
-{
-	if(min == max)
-	{
-		return NULL;
-	}
-	int avg = (max + min) / 2;
-	if(key == entries[avg]->key)
-	{
-		return entries[avg];
-	}
-	else if(key > entries[avg]->key)
-	{
-		return bt_node_search_helper(entries, key, avg + 1, max);
-	}
-	else
-	{
-		return  bt_node_search_helper(entries, key, min, avg);
-	}	
-
-}
-
-/**
-  * cranbtree_t* , cbt_node_t* , int -> void*
-  * EFFECTS: Deletes an entry in respecte to the given search key
-  * 		 does nothing if no such entry exist
-  * MODIFIES: cranbtree_t* bt
-  * RETURNS: the object associated with the entry, or NULL if no such entry was found
-  */
-static void* bt_delete_helper(cranbtree_t* bt, cbt_node_t* parent,  cbt_node_t* node, int key)
-{
-	if(node == NULL)
-	{
-		return NULL;
-	}
-
-	cbt_node_t* old_root = bt->root;
-	balance_node(bt, &node, key);
-	
-	/*restarts execution if the root was altered*/
-	if(bt->root != old_root)
-	{
-		return bt_delete_helper(bt, NULL,  bt->root, key);
-	}
-	
-	/*Not found yet*/
-	int next_node_index = get_next_node_index(node, key, bt->n);
-	cbt_entry_t* entryobj = bt_node_search_helper(node->entry, key, 0, node->len);
-	void* object = NULL;
-	if(entryobj != NULL)
-	{
-	 	object = entryobj->object;
-	}
-
-	assert(next_node_index != -1);
-	if(object == NULL)
-	{
-		return bt_delete_helper(bt, node, node->children[next_node_index], key);
-	}	
-	
-	/*is it a leaf*/	
-	if(is_leaf(node->children[0]))
-	{	
-		 void* object = bt_delete_entry_helper(node, key, bt->n);
-		 if(is_root(bt, node) && node->len == 0)
-		 {
-		 	bt_destroy_node(node, bt->n, NULL);
-			bt->root = NULL;
-		 }
-		return object;
-	}
-	else
-	{
-		/*delete from intermediate node*/
-		return bt_delete_int_case(bt, node, key);
-	}
-
-}
-
-
-
-/**
-  * cranbtree_t*, cbt_node_t**, int -> void*
-  * REQUIRES: node to be an intermediate node
-  * EFFECTS: Removes the given node and rebalances the tree
-  * MODIFIES: cranbtree_t* bt
-  */
-static void* bt_delete_int_case(cranbtree_t* bt, cbt_node_t* node, int key)
-{
-
-	int index = get_entry_index(node,  key);
-	assert(index >= 0);
-	void* object  = node->entry[index]->object;
-	
-	node->entry[index]->object = NULL;
-	cbt_node_t* left = node->children[index];
-	cbt_node_t* right = node->children[index+1];
-	assert(left != NULL && right != NULL);/*every entry must have a right and left children*/
-
-	
-	
-	if(right != NULL)
-	{
-		entry_move_up_counter_clockwise(bt, node, right, key , bt->n);
-		return object;
-	}
-	else if(left != NULL)
-	{
-		entry_move_up_clockwise(bt, node, left, key , bt->n);
-		return object;
-	}
-	
-	return NULL;	
-}
-
-
-
-/**
-  * cranbtree_t*, cbt_node_t**, int -> void*
-  * REQUIRES: node to be an leaf node
-  * EFFECTS: Removes the given node and rebalances the tree
-  * MODIFIES: cranbtree_t* bt, cbt_node_t** parent, cbt_node_t* node
-  */
-static void balance_node(cranbtree_t* bt, cbt_node_t** parent_ptr, int key)
-{
-	
-	cbt_node_t* parent = *(parent_ptr);
-	/*nothing to split*/
-	if(is_leaf(parent->children[0]))
-	{
-		return;
-	}
-	
-	int index = get_next_node_index(parent, key, bt->n);
-	cbt_node_t* node = parent->children[index];
-	
-	int min_n = is_leaf(node->children[0]) ? bt->n / 2 : ceil_fn(((double) bt->n) / 2.0) - 1;
-	if(node->len > min_n)
-	{
-		return;
-	}
-	cbt_node_t* right_sibling = get_right_sibling(parent, node);
-	cbt_node_t* left_sibling = get_left_sibling(parent, node);  
-	
-	/*case 2a)*/
-	if(right_sibling != NULL && right_sibling->len > min_n)
-	{
-		entry_rotate_counter_clockwise(parent, node, right_sibling, bt->n);
-	}
-	else if (left_sibling != NULL && left_sibling->len > min_n)
-	{
-		entry_rotate_clockwise(parent, left_sibling, node, bt->n);
-	}
-	/*case 2b)*/
-	else if(right_sibling != NULL)
-	{
-		
-		*(parent_ptr) = merge_nodes(bt, parent, node, right_sibling);
-	}
-	else if(left_sibling != NULL)
-	{
-		*(parent_ptr) = merge_nodes(bt, parent, left_sibling, node);
-	}
-
-
-}
-
-static void* bt_delete_entry_helper(cbt_node_t* node, int key, int n)
-{
-	for(int i = 0; i < n; i++)
-	{
-		if(node->entry[i] == NULL)
-		{
-			return NULL;
-		}
-		if(node->entry[i]->key == key)
-		{
-			void* object = bt_destroy_entry(node->entry[i], NULL);
-			node->entry[i] = NULL;
-			node_shift_left_without_children(node, i,  n);
-			fix_pointers_gaps(node, n);
-			node->len--;
-			return object;
-		}
-	}
-	return NULL;
-}
-
-/*
- * get_last_entry_index
- */
-static int get_last_entry_index(cbt_node_t* node, int n)
-{
-	for(int i = 0; i < n; i++)
-	{
-		if(node->entry[i] == NULL)
-		{
-			return i - 1;
-		}
-	}
-	return n - 1;
-}
- 
-/**
-  * cbt_node_t* , cbt_node_t*, int n -> cbt_node_t*
-  * REQUIRES: entries 0 < len <= min_n and len1 + len2 <= n
-  * EFFECTS: merges two leaf nodes entries into one node
-  */ 
-static cbt_node_t* merge_leaf_nodes(cbt_node_t* node1, cbt_node_t* node2, int n)
-{
-	if(node1->entry[0]->key > node2->entry[0]->key)
-	{
-		cbt_node_t* tmp = node1; 
-		node1 = node2; 
-		node2 = tmp;
-	}
-	assert(node1->len + node2->len <= n);
-	
-	/*edge case*/
-	node1->children[node1->len] = node2->children[0];
-	for(int i = 0;  node2->entry[i] != NULL; i++)
-	{
-		int ind = node_insert_entry(node1, node2->entry[i], true, n);
-		node1->children[ind] = node2->children[i+1];
-		node2->entry[i] = NULL;
-		node2->children[i+1] = NULL;
-		node2->len--;
-	}
-	
-
-	bt_destroy_node(node2, n, NULL);
-	
-	return node1;
-
-}
-
-
-
-/*******************************
- *						       *
- *        node helpers         *
- *							   *
- *******************************/
-
-/**
-  * cbt_node_t*, cbt_node_t* -> cbt_node_t*
-  * EFFECTS: gets the right sibling of a node
-  * RETURNS: the right sibling of a node, or NULL if doesn't have one
-  */
-static cbt_node_t* get_right_sibling(cbt_node_t* parent, cbt_node_t* node)
-{
-	if(parent->children[parent->len] == node)
-	{
-		return NULL;
-	}
-	
-	for(int i = 0; i < parent->len; i++)
-	{
-		if(parent->children[i] == node)
-		{
-			return parent->children[i+1];
-		}
-	}
-	return NULL;
-}
-
-/**
-  * cbt_node_t*, cbt_node_t* -> cbt_node_t*
-  * EFFECTS: gets the left sibling of a node
-  * RETURNS: the left sibling of a node, or NULL if doesn't have one
-  */
-static cbt_node_t* get_left_sibling(cbt_node_t* parent, cbt_node_t* node)
-{
-
-	if(parent->children[0] == node)	
-	{
-		return NULL;
-	}
-	
-	for(int i = 1, n1 = parent->len+1; i < n1 ; i++)
-	{
-		if(parent->children[i] == node)
-		{
-			return parent->children[i-1];
-		}
-	}
-	return NULL;
-}
+/**********************************
+ *						          *
+ *        node delete helpers     *
+ *							      *
+ **********************************/
 
 
 /**
@@ -1134,7 +877,7 @@ static void entry_move_up_counter_clockwise(cranbtree_t* bt, cbt_node_t* parent,
   * MODIFIES: bt
   * RETURNS: entry with the minimum key
   */
-cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node)
+static cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node)
 {
 	/*the min will always be at the leafs*/
 	if(is_leaf(node->children[0]))
@@ -1159,7 +902,7 @@ cbt_entry_t* bt_delete_minimum(cranbtree_t* bt, cbt_node_t* node)
   * MODIFIES: bt
   * RETURNS: entry with the maximum key
   */
-cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node)
+static cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node)
 {
 	/*the max will always be at the leafs*/
 	int index = get_last_entry_index(node, bt->n);
@@ -1177,52 +920,11 @@ cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node)
 }
 
 
-
-/**
-  * ccbt_node_t* -> int
-  * EFFECTS: calculates the minimum key in the tree
-  * REQUIRES: The tree should not be empty
-  * RETURNS: the minimum key in the tree
-  */
-static int cbt_calculate_min_key(cbt_node_t* root)
-{
-	if(root == NULL)
-	{
-		return 0;
-	}
-
-	if(is_leaf(root->children[0]))
-	{
-		return root->entry[0]->key;
-	}
-
-	return cbt_calculate_min_key(root->children[0]);	
-}
+/***********************************************
+  * Code for handling the Updates in the B-Tree*
+  **********************************************/
 
 
-/**
-  * ccbt_node_t* -> int
-  * EFFECTS: calculates the maximum key in the tree
-  * REQUIRES: The tree should not be empty
-  * RETURNS: the maximum key in the tree
-  */
-static int cbt_calculate_max_key(cbt_node_t* root)
-{
-
-	if(root == NULL)
-	{
-		return 0;
-	}
-
-	if(is_leaf(root->children[0]))
-	{
-		return root->entry[root->len-1]->key;
-	}
-
-	return cbt_calculate_max_key(root->children[root->len]);	
-}
-
-  
 /**
   * cbt_node_t*, int, void*, int -> void* 
   * EFFECTS: Updates the pointer of a certain entry with the specified key if it exists
@@ -1247,139 +949,447 @@ static void* cbt_update_helper(cbt_node_t* node, int key, void* new_object, int 
 	void* old_object = entry->object;
 	entry->object = new_object;
 	return old_object;
-}  
-  
-/*******************************
- *						       *
- *        helpers              *
- *							   *
- *******************************/
- 
-static int ceil_fn(double n)
-{
-	int n_tmp = (int) n;
-	return n_tmp < n ? n_tmp+1 : n_tmp;
 }
 
-static int calculate_depth(cbt_node_t* node)
+/**************************************************
+ * code for calculating statistics about the tree *
+ **************************************************/
+
+/**
+  * cbt_node_t* -> int
+  * EFFECTS: calculates the minimum key in the tree
+  * REQUIRES: The tree should not be empty
+  * RETURNS: the minimum key in the tree
+  */
+static int cbt_calculate_min_key(cbt_node_t* root)
 {
-	if(node == NULL)
+	if(root == NULL)
 	{
 		return 0;
 	}
-	return 1 + calculate_depth(node->children[0]);
-}
-void printTree(cranbtree_t* bt)
-{
-	printf("\n\n");
-	for(int i = 0, n = calculate_depth(bt->root); i < n; i++)
+
+	if(is_leaf(root->children[0]))
 	{
-			print_level(bt->root, bt->n, i, 0);
-			printf("\n\n");
+		return root->entry[0]->key;
 	}
 
-
+	return cbt_calculate_min_key(root->children[0]);	
 }
 
-static bool print_level(cbt_node_t* root, int n, int level, int currentLevel)
+
+/**
+  * cbt_node_t* -> int
+  * EFFECTS: calculates the maximum key in the tree
+  * REQUIRES: The tree should not be empty
+  * RETURNS: the maximum key in the tree
+  */
+static int cbt_calculate_max_key(cbt_node_t* root)
 {
 
-
-	min(1,2);
-	if(level == currentLevel)
-	{
-		if(root == NULL)
-		{
-			return false;
-		}
-		print_node(root, n);
-		return true;
-	}
 	if(root == NULL)
 	{
-		return false;
+		return 0;
 	}
-	bool ret = true;
-	for(int i = 0; i < n+1; i++)
+
+	if(is_leaf(root->children[0]))
 	{
-		if(root->children[i] != NULL)
-		{
-			ret = print_level(root->children[i], n, level, currentLevel+1);
-			if(ret == false)
-			{
-				return false;
-			}
-		}
-		
+		return root->entry[root->len-1]->key;
 	}
-	return ret;
+
+	return cbt_calculate_max_key(root->children[root->len]);	
+}
+
+
+/**************************************
+  * code for the search functionality *
+  *************************************/
+
+static void* bt_search_helper(cbt_node_t* node, int key, int n)
+{
+	if(node == NULL)
+	{
+		return NULL;
+	}
+	
+	cbt_entry_t* entry = bt_node_search_helper(node->entry, key, 0, node->len);
+
+	
+	if(entry == NULL)
+	{
+		int i = get_next_node_index(node,  key,  n);
+		return bt_search_helper(node->children[i], key, n);
+	}
+	void* object = entry->object;
+	return object;
+}
+
+/*
+ * cbt_entry_t*[], int key -> void* 
+ * EFFECTS: looks for an entry in the entry list with the given search key
+ * RETURNS: pointer to the object or NULL if it was not found
+ *
+ */
+static cbt_entry_t* bt_node_search_helper(cbt_entry_t* entries[], int key, int min, int max)
+{
+	if(min == max)
+	{
+		return NULL;
+	}
+	int avg = (max + min) / 2;
+	if(key == entries[avg]->key)
+	{
+		return entries[avg];
+	}
+	else if(key > entries[avg]->key)
+	{
+		return bt_node_search_helper(entries, key, avg + 1, max);
+	}
+	else
+	{
+		return  bt_node_search_helper(entries, key, min, avg);
+	}	
+
+}
+
+/*****************************************
+  * functions that operate on cbt_node_t *
+  ****************************************/
+
+
+ /**
+  * int n -> cbt_node_t*
+  * Creates a node according to the size n
+  *
+  */
+static cbt_node_t* bt_create_node(int n)
+{
+	if(n < 3)
+	{
+		return NULL;
+	}
+	
+	cbt_node_t* node = malloc(sizeof(cbt_node_t));
+	if(node == NULL)
+	{
+		return NULL;
+	}
+	size_t entry_size = sizeof(cbt_entry_t*) * n;
+	node->entry = calloc(1, entry_size);
+	if(node->entry == NULL)
+	{
+		free(node);
+		return NULL;
+	}
+
+	
+	size_t children_size =  sizeof(cbt_node_t*) * (n+1);
+	node->children = calloc(1, children_size);
+	if(node->children == NULL)
+	{
+		free(node->entry);
+		free(node);
+		return NULL;
+	}
+	node->len = 0;
+	return node;
+}
+
+/*
+ * cbt_node_t*, int, int 
+ * EFFECTS: calculates the index of the entry in the node entry array 
+ * REQUIRES: the entries in the array to be packed together to the left and no of entries > 0
+ * RETURNS: an index or -1 on error
+ */
+static int get_next_node_index(cbt_node_t* node, int key, int n)
+{
+	assert(node != NULL);
+
+	
+	if(node->entry[0] == NULL)
+	{
+		return -1;
+	}
+	
+	if(node->entry[0]->key > key)
+	{
+		return 0;
+	}
+	for(int i = 0, nm1 = n-1; i < nm1; i++)
+	{
+		if(node->entry[i]->key <= key && (node->entry[i+1] == NULL || key < node->entry[i+1]->key))
+		{
+			return i + 1;
+		}
+	}
+	
+	return n;
+}
+
+/*
+ * cbt_node_t*, int -> bool
+ * return true if the node has no room for more entries
+ */
+static bool is_full_node(cbt_node_t* node, int n)
+{
+	for(int i = 0; i < n; i++)
+	{
+		if(node->entry[i] == NULL)
+		{
+			return false;
+		}		
+		assert(node->entry[i] != NULL);
+	}
+	return true;
+}
+
+/*
+ * cbt_node_t*, int n
+ * MODIFIES: cbt_node_t*
+ * EFFECTS: shifts all the entries and children in the array to the right 
+ *			starting from position i and i+1 respectively
+ * REQUIRES: the node should not be full, otherwise the rightmost element will be orphaned "i < n - 1"
+ * RETURNS: void
+ *
+ */
+static void node_shift_right(cbt_node_t* node, int i,  int n)
+{
+	for(int j = n - 1; j > i; j--)
+	{
+		node->entry[j] = node->entry[j - 1];
+		node->children[j+1] = node->children[j]; 
+	}
+	node->entry[i] = NULL;
+	node->children[i+1] = NULL;
+}
+
+/*
+ * cbt_node_t*, int n
+ * MODIFIES: cbt_node_t*
+ * EFFECTS: shifts all the entries in the array to the right
+ * REQUIRES: the node should not be full, otherwise the rightmost element will be orphaned "i < n - 1"
+ * RETURNS: void
+ *
+ */
+static void node_shift_right_without_children(cbt_node_t* node, int i,  int n)
+{
+	for(int j = n - 1; j > i; j--)
+	{
+		node->entry[j] = node->entry[j - 1];
+	}
+	node->entry[i] = NULL;
+}
+
+
+/*
+ * cbt_node_t*, int n
+ * MODIFIES: cbt_node_t*
+ * EFFECTS: shifts all the entries and children in the array to the left 
+ *			starting from position i and i-1 respectively
+ * REQUIRES:  position i be NULL , otherwise the the i'th element will be orphaned "0 =< i < n-1"
+ * RETURNS: void
+ *
+ */
+static void node_shift_left(cbt_node_t* node, int i,  int n)
+{
+	
+	for(int j = i + 1; j < n; j++)
+	{
+		node->entry[j - 1] = node->entry[j];
+		node->children[j-1] = node->children[j]; 
+	}
+	node->children[n-1] = node->children[n]; 
+	node->entry[n-1] = NULL;
+	node->children[n] = NULL;
 	
 }
 
-static void print_node(cbt_node_t* node, int n)
+ /*
+ * cbt_node_t*, int n
+ * MODIFIES: cbt_node_t*
+ * EFFECTS: shifts all the entries in the array to the left 
+ * REQUIRES:  position i be NULL , otherwise the the i'th element will be orphaned "0 =< i < n-1"
+ * RETURNS: void
+ *
+ */
+static void node_shift_left_without_children(cbt_node_t* node, int i,  int n)
+{
+	
+	for(int j = i + 1; j < n; j++)
+	{
+		node->entry[j - 1] = node->entry[j];
+	}
+	node->entry[n-1] = NULL;
+	
+}
+
+
+/**
+  * cbt_node_t*, cbt_node_t* -> cbt_node_t*
+  * EFFECTS: gets the right sibling of a node
+  * RETURNS: the right sibling of a node, or NULL if doesn't have one
+  */
+static cbt_node_t* get_right_sibling(cbt_node_t* parent, cbt_node_t* node)
+{
+	if(parent->children[parent->len] == node)
+	{
+		return NULL;
+	}
+	
+	for(int i = 0; i < parent->len; i++)
+	{
+		if(parent->children[i] == node)
+		{
+			return parent->children[i+1];
+		}
+	}
+	return NULL;
+}
+
+/**
+  * cbt_node_t*, cbt_node_t* -> cbt_node_t*
+  * EFFECTS: gets the left sibling of a node
+  * RETURNS: the left sibling of a node, or NULL if doesn't have one
+  */
+static cbt_node_t* get_left_sibling(cbt_node_t* parent, cbt_node_t* node)
 {
 
-	printf(" || ");
+	if(parent->children[0] == node)	
+	{
+		return NULL;
+	}
+	
+	for(int i = 1, n1 = parent->len+1; i < n1 ; i++)
+	{
+		if(parent->children[i] == node)
+		{
+			return parent->children[i-1];
+		}
+	}
+	return NULL;
+}
+
+/*
+ * get_last_entry_index
+ */
+static int get_last_entry_index(cbt_node_t* node, int n)
+{
+	for(int i = 0; i < n; i++)
+	{
+		if(node->entry[i] == NULL)
+		{
+			return i - 1;
+		}
+	}
+	return n - 1;
+}
+
+/*
+ * cbt_node_t*, void (* done)(int) -> void
+ * destroys all the data associated with a given node
+ */
+ 
+static void bt_destroy_node(cbt_node_t* node, int n, void (* done)(void*))
+{
+	assert(node != NULL);
 	for(int i = 0; i < n; i++)
 	{
 		if(node->entry[i] != NULL)
 		{
-			printf("%d ,", node->entry[i]->key);
+			bt_destroy_entry(node->entry[i], done);
+			node->entry[i] = NULL;
 		}
-		else
+	}
+	free(node->entry);
+	free(node->children);
+	free(node);
+}
+
+
+
+
+/*****************************
+ *							 *
+ *	cbt_entry_t node helpers  *
+ *							 *
+ *****************************/
+
+
+/*
+ * int key, void* object -> bvt_entry_t*
+ * Given the key and the object, creates a node entry
+ */
+static cbt_entry_t* bt_create_entry(int key, void* object)
+{
+	assert(object != NULL);
+	assert(key >= 0);
+	cbt_entry_t* entry = calloc(1, sizeof(cbt_entry_t));
+	if(entry == NULL)
+	{
+		return NULL;
+	}
+	entry->key = key;
+	entry->object = object;
+	return entry;
+}
+
+
+/*
+ * cbt_node_t*, cbt_entry_t*, int -> int
+ * MODIFIES: cbt_node_t* node
+ * EFFECTS: inserts an entry in the node preserving the the order of the entries. i.e 
+ * 			keeping the node sorted after the insertions
+ * REQUIRES: the node should not be full
+ * RETURNS: returns the index of the child corresponding to the new inserted entry on success, or
+ * 			-1 on Failure
+ * if bool shift is true then the children are shifted
+ */
+static int node_insert_entry(cbt_node_t* node, cbt_entry_t* entry, bool shift,  int n)
+{
+	assert(node != NULL);
+	assert(entry != NULL);
+	assert( n > 2);
+	assert(!is_full_node(node, n));
+	
+	node->len++;
+	for(int i = 0; i < n; i++)
+	{
+		/*reached the end of the entries list*/
+		if(node->entry[i] == NULL)
 		{
-			printf("* ,");
+			node->entry[i] = entry;
+			return i + 1;
 		}
+		/*found the location*/
+		if(node->entry[i]->key > entry->key)
+		{
+			/*shift and insert*/
+			if(shift)
+				node_shift_right(node, i, n);
+			else
+				node_shift_right_without_children(node, i, n);
+			node->entry[i] = entry; 
+			return i + 1;
+		}	
 	}
-	printf(" || ");
+	return -1;
 }
 
 /*
- * Improves code readability
+ * cbt_entry_t*, void (*)(int) -> void*
+ * Frees entry  and calls the passed in function on the entry's object if it is not NULL
  */
-static bool is_leaf(cbt_node_t* node)
+static void* bt_destroy_entry(cbt_entry_t* entry, void (* done)(void*)) 
 {
-	return node == NULL;
-}
-
-/*
- * Improves code readability
- */
-static bool is_root(cranbtree_t* bt, cbt_node_t* node)
-{
-	return bt->root == node;
-}
-
-static int min(int x, int y)
-{
-	return x < y ? x : y;
-}
-
-
-static void children_shift_right(cbt_node_t* nodes[], int n)
-{
-	for(int i = n; i > 0; i--)
+	if(done != NULL)
 	{
-		nodes[i] = nodes[i-1];
+		(*done)(entry->object);
+		entry->object = NULL;
 	}
-}
-
-static void node_entry_set_null(cbt_node_t* node, int entry_index, int n)
-{
-	node->entry[entry_index] = NULL;
-	if(entry_index < n-1)
-	{
-		node_shift_left(node, entry_index,  n);
-	}
-	node->len--;
-}
-/**
-  * makes a copy of given entry
-  */
-static cbt_entry_t* cpy_entry(cbt_entry_t* entry_original)
-{
-	assert(entry_original != NULL);
-	return bt_create_entry(entry_original->key, entry_original->object);
+	void* object = entry->object;
+	free(entry);
+	return object;
+	
+	
 }
 
 /**
@@ -1398,6 +1408,44 @@ static int get_entry_index(cbt_node_t* node, int key)
 	}
 	return -1;
 }  
+
+/**
+  * makes a copy of given entry
+  */
+static cbt_entry_t* cpy_entry(cbt_entry_t* entry_original)
+{
+	assert(entry_original != NULL);
+	return bt_create_entry(entry_original->key, entry_original->object);
+}
+
+
+static void node_entry_set_null(cbt_node_t* node, int entry_index, int n)
+{
+	node->entry[entry_index] = NULL;
+	if(entry_index < n-1)
+	{
+		node_shift_left(node, entry_index,  n);
+	}
+	node->len--;
+}
+
+
+/*****************************
+ *							 *
+ *	 node children helpers   *
+ *							 *
+ *****************************/
+
+
+static void children_shift_right(cbt_node_t* nodes[], int n)
+{
+	for(int i = n; i > 0; i--)
+	{
+		nodes[i] = nodes[i-1];
+	}
+}
+
+
 
 /**
   * cbt_node_t*, int -> int
@@ -1543,63 +1591,118 @@ static cbt_node_t* children_shift_left(cbt_node_t* nodes[], int n)
  	return last;
  
  }
- 
- /**
-  * cranbtree_t*, cranbtree_t* -> void
-  * EFFECTS: copies the metadata over from the src cranbtree to the destination cranbtree
-  * REQUIRES: the metadata of the original to be valid and correct
-  * MODIFIES: cranbtree_t* dest
-  * PARAMETERS: 
-  * - cranbtree_t* src: the source cranbtree which contains the infromation to be copied.
-  * - cranbtree_t* dest: the destination cranbtree
-  */
-static void cbt_copy_metadata(cranbtree_t* src, cranbtree_t* dest)
+
+/*******************************************
+ *								 		   *
+ *		 Static private Functions          *
+ *								 		   *
+ *******************************************/
+
+
+static void destroy_bt_helper(cbt_node_t* root, int n, void (* done)(void*))
 {
-	dest->root = NULL;
-	dest->length = src->length;
-	dest->max_key = src->max_key;
-	dest->min_key = src->min_key;
-	dest->n = src->n;
-	dest->is_clone = true;
-} 
+	if(root == NULL)
+	{
+		return;
+	}
+	for(int i = 0, n1 = n + 1; i < n1; i++)
+	{
+		destroy_bt_helper(root->children[i], n, done);
+	}
+	bt_destroy_node(root, n, done);
+}
 
 
-/** 
-  * cbt_node_t*, int -> cbt_node_t* 
-  * EFFECTS: Given a root of the tree, creates a clone of all of the node in the tree
-  * RETURNS: the new root of the clone
-  * PARAMETERS:
-  * - cbt_node_t* node: root of the cranbtree to be cloned
-  * - int n: the order of the tree
-  *
-  */
+/*
+ * Improves code readability
+ */
+static bool is_root(cranbtree_t* bt, cbt_node_t* node)
+{
+	return bt->root == node;
+}
 
-static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n)
+
+/*
+ * Improves code readability
+ */
+static bool is_leaf(cbt_node_t* node)
+{
+	return node == NULL;
+}
+
+
+static int ceil_fn(double n)
+{
+	int n_tmp = (int) n;
+	return n_tmp < n ? n_tmp+1 : n_tmp;
+}
+
+
+
+static int calculate_depth(cbt_node_t* node)
 {
 	if(node == NULL)
 	{
-		return NULL;
+		return 0;
 	}
-	cbt_node_t* new_node = bt_create_node(n);
-	if(new_node == NULL)
-	{
-		return NULL;
-	}
+	return 1 + calculate_depth(node->children[0]);
+}
 
-	/*copies the entries*/
+
+static void print_node(cbt_node_t* node, int n)
+{
+
+	printf(" || ");
 	for(int i = 0; i < n; i++)
 	{
 		if(node->entry[i] != NULL)
 		{
-			new_node->entry[i] = cpy_entry(node->entry[i]);
+			printf("%d ,", node->entry[i]->key);
+		}
+		else
+		{
+			printf("* ,");
 		}
 	}
-	
-	/*copies the children*/
-	for(int i = 0; i < n; i++)
-	{
-		new_node->children[i] = cbt_copy_nodes(node->children[i], n);
-	}
-		
-	return new_node;
+	printf(" || ");
 }
+
+static bool print_level(cbt_node_t* root, int n, int level, int currentLevel)
+{
+
+
+	if(level == currentLevel)
+	{
+		if(root == NULL)
+		{
+			return false;
+		}
+		print_node(root, n);
+		return true;
+	}
+	if(root == NULL)
+	{
+		return false;
+	}
+	bool ret = true;
+	for(int i = 0; i < n+1; i++)
+	{
+		if(root->children[i] != NULL)
+		{
+			ret = print_level(root->children[i], n, level, currentLevel+1);
+			if(ret == false)
+			{
+				return false;
+			}
+		}
+		
+	}
+	return ret;
+	
+}
+
+int main(void)
+{
+	return 0;
+}
+
