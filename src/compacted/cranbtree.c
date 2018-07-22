@@ -1700,9 +1700,3 @@ static bool print_level(cbt_node_t* root, int n, int level, int currentLevel)
 	return ret;
 	
 }
-
-int main(void)
-{
-	return 0;
-}
-
