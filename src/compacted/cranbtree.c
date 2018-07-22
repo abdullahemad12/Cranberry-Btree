@@ -81,8 +81,8 @@ cbt_entry_t* bt_delete_maximum(cranbtree_t* bt, cbt_node_t* node);
 static int cbt_calculate_min_key(cbt_node_t* root);
 static int cbt_calculate_max_key(cbt_node_t* root);
 static void* cbt_update_helper(cbt_node_t* node, int key, void* new_object, int n);
-
-
+static void cbt_copy_metadata(cranbtree_t* src, cranbtree_t* dest);
+static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n);
 
 
 /*
@@ -109,10 +109,36 @@ cranbtree_t* cbt_create(int n)
 	}
 	bt->root = NULL;
 	bt->length = 0;
+	bt->min_key = -1;
 	bt->max_key = -1;
 	bt->n = n;
+	bt->is_clone = false;
 	return bt;
 }
+
+/**
+  * cranbtree_t* -> cranbtree_t*
+  * EFFECTS: clones the given cranbtree_t 
+  * RETURNS: a pointer to the clone, or NULL if the given cbt is not valid
+  */
+cranbtree_t* cbt_clone(cranbtree_t* cbt)
+{
+	if(cbt == NULL)
+	{
+		return NULL;
+	}
+	assert(cbt->n > 2);
+	assert(cbt->n % 2 != 0);
+	cranbtree_t* clone = malloc(sizeof(cranbtree_t));
+	if(clone == NULL)
+	{
+		return NULL;
+	}
+	cbt_copy_metadata(cbt, clone);
+	clone->root = cbt_copy_nodes(cbt->root, cbt->n);
+	return clone;
+}
+
 /**
   * cranbtree_t*, int, void* -> void
   * EFFECTS: inserts an object in the btree in respect with the search key
@@ -226,8 +252,12 @@ int cbt_get_min_key(cranbtree_t* cbt)
   */
  void bt_destroy(cranbtree_t* bt, void (* destroy_object)(void*))
  {
- 	destroy_bt_helper(bt->root, bt->n, destroy_object);
- 	free(bt);
+ 	if(bt->is_clone)
+	{
+		destroy_object = NULL;
+	}
+	destroy_bt_helper(bt->root, bt->n, destroy_object);
+	free(bt);
  }						
 
 /*******************************************
@@ -1514,4 +1544,62 @@ static cbt_node_t* children_shift_left(cbt_node_t* nodes[], int n)
  
  }
  
- 
+ /**
+  * cranbtree_t*, cranbtree_t* -> void
+  * EFFECTS: copies the metadata over from the src cranbtree to the destination cranbtree
+  * REQUIRES: the metadata of the original to be valid and correct
+  * MODIFIES: cranbtree_t* dest
+  * PARAMETERS: 
+  * - cranbtree_t* src: the source cranbtree which contains the infromation to be copied.
+  * - cranbtree_t* dest: the destination cranbtree
+  */
+static void cbt_copy_metadata(cranbtree_t* src, cranbtree_t* dest)
+{
+	dest->root = NULL;
+	dest->length = src->length;
+	dest->max_key = src->max_key;
+	dest->min_key = src->min_key;
+	dest->n = src->n;
+	dest->is_clone = true;
+} 
+
+
+/** 
+  * cbt_node_t*, int -> cbt_node_t* 
+  * EFFECTS: Given a root of the tree, creates a clone of all of the node in the tree
+  * RETURNS: the new root of the clone
+  * PARAMETERS:
+  * - cbt_node_t* node: root of the cranbtree to be cloned
+  * - int n: the order of the tree
+  *
+  */
+
+static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n)
+{
+	if(node == NULL)
+	{
+		return NULL;
+	}
+	cbt_node_t* new_node = bt_create_node(n);
+	if(new_node == NULL)
+	{
+		return NULL;
+	}
+
+	/*copies the entries*/
+	for(int i = 0; i < n; i++)
+	{
+		if(node->entry[i] != NULL)
+		{
+			new_node->entry[i] = cpy_entry(node->entry[i]);
+		}
+	}
+	
+	/*copies the children*/
+	for(int i = 0; i < n; i++)
+	{
+		new_node->children[i] = cbt_copy_nodes(node->children[i], n);
+	}
+		
+	return new_node;
+}
