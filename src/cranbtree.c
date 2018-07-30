@@ -247,6 +247,20 @@ int cbt_get_length(cranbtree_t* cbt)
 	return 0;
 }
 
+
+/**
+  * cranbtree_t* -> void
+  * EFFECTS: detaches a cloned cranbtree_t from its parent and turns it into a normal cranbtree
+  * MODIFIES: cranbtree_t* cbt
+  * NOTE: This should generally be used when your cloned cranbtree will start storing objects different 
+  * 	   then those of the original; However, when using it, it becomes your responsibility to free 
+  *		   and manipulate objects correctly
+  */
+void cbt_detach_clone(cranbtree_t* cbt)
+{
+	
+}
+
 /**
   * cranbtree_t*, (void) destroy_object(void*) -> void
   * MODIFIES: cranbtree_t* bt

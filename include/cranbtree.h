@@ -24,6 +24,7 @@
 
 #ifndef _BTREE_H_
 #define _BTREE_H_
+#include <stdbool.h>
 
 /*
  * Struct for the B-tree node's entries;
@@ -182,6 +183,17 @@ int cbt_get_min_key(cranbtree_t* cbt);
   * RETURNS: the length of the B-tree
   */
 int cbt_get_length(cranbtree_t* cbt);
+
+
+/**
+  * cranbtree_t* -> void
+  * EFFECTS: detaches a cloned cranbtree_t from its parent and turns it into a normal cranbtree
+  * MODIFIES: cranbtree_t* cbt
+  * NOTE: This should generally be used when your cloned cranbtree will start storing objects different 
+  * 	   then those of the original; However, when using it, it becomes your responsibility to free 
+  *		   and manipulate objects correctly
+  */
+void cbt_detach_clone(cranbtree_t* cbt);
 
 
 /**
