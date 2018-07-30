@@ -1569,10 +1569,10 @@ void cbt_clone_test4(void)
 void cbt_clone_test5(void)
 {
 	cranbtree_t* bt = cbt_create(5);
-	static int keys[1000];
-	int n = 1000;
+	static int keys[50000];
+	int n = 50000;
 	pickNRandomNumber(keys, n);
-	int n1 = 500;
+	int n1 = 25000;
 	for(int i = 0; i < n1; i++)
 	{
 		int* z = malloc(sizeof(int));
@@ -1602,13 +1602,9 @@ void cbt_clone_test5(void)
 	for(int i = 0; i < n1; i++)
 	{
 		int* z = malloc(sizeof(int));
-		void* object = cbt_update(bt, keys[i], z);
+		void* object = cbt_update(clone, keys[i], z);
 		CU_ASSERT_PTR_NOT_NULL(object);
-		if(object != NULL)
-		{
-			free(object);
-		}
-		void* newobj = cbt_search(bt, keys[i]);
+		void* newobj = cbt_search(clone, keys[i]);
 		CU_ASSERT_EQUAL(z, newobj);
 	}
 	
@@ -1616,13 +1612,13 @@ void cbt_clone_test5(void)
 	for(int i = n1; i < n; i++)
 	{
 		int* z = malloc(sizeof(int));
-		cbt_insert(bt, keys[i], z);
+		cbt_insert(clone, keys[i], z);
 	}	
 
 	/*makes sure all the objects are there*/
 	for(int i = 0; i < n; i++)
 	{
-		void* object = cbt_search(bt, keys[i]);
+		void* object = cbt_search(clone, keys[i]);
 		CU_ASSERT_PTR_NOT_NULL(object);
 	}
 
@@ -1631,7 +1627,7 @@ void cbt_clone_test5(void)
 	/*deletes the object*/
 	for(int i = 0; i < n; i++)
 	{
-		void* object = cbt_delete(bt, keys[i]);
+		void* object = cbt_delete(clone, keys[i]);
 		CU_ASSERT_PTR_NOT_NULL(object);
 		if(object != NULL)
 		{
@@ -1639,10 +1635,9 @@ void cbt_clone_test5(void)
 		}
 	}
 
+	CU_ASSERT_EQUAL(clone->length, 0);
 
-	CU_ASSERT_EQUAL(bt->length, 0);
-
-
+	clone->is_clone = false;
 	cbt_destroy(clone, free);
 	cbt_destroy(bt, free);
 }
