@@ -1407,6 +1407,7 @@ void bt_delete_test2(void)
 	CU_ASSERT_PTR_NULL(object);
 	
 	cbt_destroy(bt, free);
+	cbt_destroy(bt1, free);
 }
 
 
