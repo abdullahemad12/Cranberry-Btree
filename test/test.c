@@ -157,8 +157,8 @@ static int init(void)
 	{
 		return err;
 	}
-	(void) ctests;
-	//err = createSuite("Suite 2", ctests);
+	
+	err = createSuite("Suite 2", ctests);
 	return err;
 	
 }
