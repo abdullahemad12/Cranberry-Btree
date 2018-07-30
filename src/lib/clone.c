@@ -87,6 +87,6 @@ static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n)
 	{
 		new_node->children[i] = cbt_copy_nodes(node->children[i], n);
 	}
-		
+	new_node->len = node->len;	
 	return new_node;
 }

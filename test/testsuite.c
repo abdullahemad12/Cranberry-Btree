@@ -13,6 +13,7 @@ static void debug_log(cbt_node_t* x, int n);
 int get_leaf_key (cbt_node_t* node);
 void validate_tree(cbt_node_t* node, int n);
 static bool contains(int arr[], int n, int key);
+void pickNRandomNumber(int arr[], int n);
 
 cbt_node_t* node21 = NULL;
 cbt_node_t* children_original21[22];
@@ -1557,6 +1558,101 @@ void cbt_clone_test4(void)
 	CU_ASSERT_EQUAL(clone->min_key, bt->min_key);
 	CU_ASSERT(clone->is_clone);
 	CU_ASSERT(treecmp(bt->root, clone->root, bt->n));
+
+	cbt_destroy(clone, free);
+	cbt_destroy(bt, free);
+}
+
+/**
+  * insertion, deletion and update on a clone
+  */
+void cbt_clone_test5(void)
+{
+	cranbtree_t* bt = cbt_create(5);
+	int keys[] = {2, 9, 8, 100, 50, 60, 70, 80, 5, 6, 57, 71, 73, 72, 85, 200, 300, 45, 10, 56, 45, 56, 345, 675, 675, 4566,2345, 543, 222, 5566, 7554, 3453};
+	int n = 32;
+	for(int i = 0; i < n; i++)
+	{
+		int* z = malloc(sizeof(int));
+		cbt_insert(bt, keys[i], z);
+	}
+	cranbtree_t* clone = cbt_clone(bt);
+	CU_ASSERT_PTR_NOT_NULL_FATAL(clone);	
+	
+	CU_ASSERT_EQUAL(clone->length, bt->length);
+	CU_ASSERT_EQUAL(clone->n, bt->n);
+	CU_ASSERT_EQUAL(clone->max_key, bt->max_key);
+	CU_ASSERT_EQUAL(clone->min_key, bt->min_key);
+	CU_ASSERT(clone->is_clone);
+	CU_ASSERT(treecmp(bt->root, clone->root, bt->n));
+
+	/*tries search for all the keys*/
+	for(int i = 0; i < n; i++)
+	{
+		void* object = cbt_search(bt, keys[i]);
+		CU_ASSERT_PTR_NOT_NULL(object);
+	}
+
+	/*tries to update all the entries*/
+	for(int i = 0; i < n; i++)
+	{
+		int* z = malloc(sizeof(int));
+		void* object = cbt_update(bt, keys[i], z);
+		CU_ASSERT_PTR_NOT_NULL(object);
+		if(object != NULL)
+		{
+			free(object);
+		}
+		void* newobj = cbt_search(bt, keys[i]);
+		CU_ASSERT_EQUAL(z, newobj);
+	}
+	
+	/*insert new 100 keys*/
+	static int keys1[100];
+	int n1 = 100;
+	pickNRandomNumber(keys1, n1);
+	
+	for(int i = 0; i < n1; i++)
+	{
+		int* z = malloc(sizeof(int));
+		cbt_insert(bt, keys1[i], z);
+	}	
+
+	/*makes sure all the objects are there*/
+	for(int i = 0; i < n; i++)
+	{
+		void* object = cbt_search(bt, keys[i]);
+		CU_ASSERT_PTR_NOT_NULL(object);
+	}
+	for(int i = 0; i < n1; i++)
+	{
+		void* object = cbt_search(bt, keys1[i]);
+		CU_ASSERT_PTR_NOT_NULL(object);
+	}
+
+
+	/*deletes the object*/
+	for(int i = 0; i < n; i++)
+	{
+		void* object = cbt_delete(bt, keys[1]);
+		CU_ASSERT_PTR_NOT_NULL(object);
+		if(object != NULL)
+		{
+			free(object);	
+		}
+	}
+
+	for(int i = 0; i < n1; i++)
+	{
+		void* object = cbt_delete(bt, keys1[1]);
+		CU_ASSERT_PTR_NOT_NULL(object);
+		if(object != NULL)
+		{
+			free(object);	
+		}
+	}
+	CU_ASSERT_EQUAL(bt->length, 0);
+
 
 	cbt_destroy(clone, free);
 	cbt_destroy(bt, free);
