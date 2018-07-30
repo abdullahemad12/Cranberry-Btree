@@ -37,7 +37,7 @@ Return value: returns a pointer to the Cranberry Tree struct.
 
 <b>1. cranbtree_t* cbt_clone(cranbtree_t* cbt);</b>
 
-Description: creates an identical clone to the given cranbtree. It will create a new cranbtree with new nodes and new entries in memory that will have the same structure as the given cranbtree.
+Description: creates an identical clone to the given cranbtree. It will create a new cranbtree with new nodes and new entries in memory that will have the same structure as the given cranbtree. The function will not deep copy the objects being stored in the cranbtree but rather will copy the pointers over from the original. As a result, you will have to take care when freeing or manipulating this objects.
 
 Parameters: cranbtree_t* cbt: the cranbtree to be cloned.
 
@@ -95,7 +95,7 @@ parameter:
 - cranbtree_t* bt: pointer to the cranbtree structure.
 - void (* destroy_object)(void*)): a pointer to a function that will be called on the object in the database to free it's memory, or destroy it. i.e pass `free`. 
 
-**Note**: the destroy_object function will not be applied on any object in a cranbtree that was created by the cbt_clone() function.
+**Note**: the destroy_object function will not be applied on any object in a cranbtree that was created by the cbt_clone() function. If you want the function to be applied, you need to call cbt_detach_clone() first on the cloned cranbtree.
 
 <b>6. void printTree(cranbtree_t* bt);</b>
 
