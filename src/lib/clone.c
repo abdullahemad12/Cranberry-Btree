@@ -52,16 +52,17 @@ static void cbt_copy_metadata(cranbtree_t* src, cranbtree_t* dest)
 
 
 /** 
-  * cbt_node_t*, int -> cbt_node_t* 
+  * cbt_node_t*, int,  void* (* clone_object)(void*) -> cbt_node_t* 
   * EFFECTS: Given a root of the tree, creates a clone of all of the node in the tree
   * RETURNS: the new root of the clone
   * PARAMETERS:
   * - cbt_node_t* node: root of the cranbtree to be cloned
   * - int n: the order of the tree
+  * - void* (* clone_object)(void*): a function that takes a void pointer and returns a void pointer.
+  * 								 It will be called on every object in the tree in case it was not NULL,
   *
   */
-
-static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n)
+static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n,  void* (* clone_object)(void*))
 {
 	if(node == NULL)
 	{
@@ -79,13 +80,15 @@ static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n)
 		if(node->entry[i] != NULL)
 		{
 			new_node->entry[i] = cpy_entry(node->entry[i]);
+			if(clone_object != NULL)
+				new_node->entry[i]->object = clone_object(new_node->entry[i]->object);
 		}
 	}
 	
 	/*copies the children*/
 	for(int i = 0; i < n + 1; i++)
 	{
-		new_node->children[i] = cbt_copy_nodes(node->children[i], n);
+		new_node->children[i] = cbt_copy_nodes(node->children[i], n, clone_object);
 	}
 	new_node->len = node->len;	
 	return new_node;

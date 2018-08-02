@@ -76,4 +76,4 @@ static int cbt_calculate_min_key(cbt_node_t* root);
 static int cbt_calculate_max_key(cbt_node_t* root);
 static void* cbt_update_helper(cbt_node_t* node, int key, void* new_object, int n);
 static void cbt_copy_metadata(cranbtree_t* src, cranbtree_t* dest);
-static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int len);
+static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n,  void* (* clone_object)(void*));

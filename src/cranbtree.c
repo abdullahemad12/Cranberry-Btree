@@ -77,11 +77,15 @@ cranbtree_t* cbt_create(int n)
 
 
 /**
-  * cranbtree_t* -> cranbtree_t*
-  * EFFECTS: clones the given cranbtree_t 
+  * cranbtree_t*, void* (*)(void*) -> cranbtree_t*
+  * EFFECTS: clones the given cranbtree_t and clones the user objects if the
+  *                     the passed function pointer is not NULL
   * RETURNS: a pointer to the clone, or NULL if the given cbt is not valid
+  * NOTE: if the function is NULL, clone will copy the original object pointers to the new 
+  *                  clone . This you must be careful in this case when manipulating the objects and destroying
+  *                  them. Otherwise, the tree will store copies of the objects
   */
-cranbtree_t* cbt_clone(cranbtree_t* cbt)
+cranbtree_t* cbt_clone(cranbtree_t* cbt,  void* (* clone_object)(void*))
 {
 	if(cbt == NULL)
 	{
@@ -95,7 +99,7 @@ cranbtree_t* cbt_clone(cranbtree_t* cbt)
 		return NULL;
 	}
 	cbt_copy_metadata(cbt, clone);
-	clone->root = cbt_copy_nodes(cbt->root, cbt->n);
+	clone->root = cbt_copy_nodes(cbt->root, cbt->n, clone_object);
 	return clone;
 }
 

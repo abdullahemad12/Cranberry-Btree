@@ -1489,7 +1489,7 @@ void cbt_calculate_max_key_test(void)
   */
 void cbt_clone_test1(void)
 {
-	cranbtree_t* clone = cbt_clone(NULL);
+	cranbtree_t* clone = cbt_clone(NULL, NULL);
 	CU_ASSERT_PTR_NULL(clone);
 }
 
@@ -1500,7 +1500,7 @@ void cbt_clone_test2(void)
 {
 	cranbtree_t* bt = cbt_create(3);
 	
-	cranbtree_t* clone = cbt_clone(bt);
+	cranbtree_t* clone = cbt_clone(bt, NULL);
 	
 	CU_ASSERT_PTR_NOT_NULL_FATAL(clone);
 	CU_ASSERT_PTR_NULL(clone->root);
@@ -1524,7 +1524,7 @@ void cbt_clone_test3(void)
 		int* z = malloc(sizeof(int));
 		cbt_insert(bt, i, z);
 	}
-	cranbtree_t* clone = cbt_clone(bt);
+	cranbtree_t* clone = cbt_clone(bt, NULL);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(clone);	
 	
 	CU_ASSERT_EQUAL(clone->length, bt->length);
@@ -1550,7 +1550,7 @@ void cbt_clone_test4(void)
 		int* z = malloc(sizeof(int));
 		cbt_insert(bt, keys[i], z);
 	}
-	cranbtree_t* clone = cbt_clone(bt);
+	cranbtree_t* clone = cbt_clone(bt, NULL);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(clone);	
 	
 	CU_ASSERT_EQUAL(clone->length, bt->length);
@@ -1579,7 +1579,7 @@ void cbt_clone_test5(void)
 		int* z = malloc(sizeof(int));
 		cbt_insert(bt, keys[i], z);
 	}
-	cranbtree_t* clone = cbt_clone(bt);
+	cranbtree_t* clone = cbt_clone(bt, NULL);
 	CU_ASSERT_PTR_NOT_NULL_FATAL(clone);	
 	
 	CU_ASSERT_EQUAL(clone->length, bt->length);
