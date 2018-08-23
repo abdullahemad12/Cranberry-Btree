@@ -82,7 +82,7 @@ static int cbt_calculate_min_key(cbt_node_t* root);
 static int cbt_calculate_max_key(cbt_node_t* root);
 static void* cbt_update_helper(cbt_node_t* node, int key, void* new_object, int n);
 static void cbt_copy_metadata(cranbtree_t* src, cranbtree_t* dest);
-static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n,  void* (* clone_object)(void*));
+static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n);
 static int calculate_depth(cbt_node_t* node);
 
 /*
@@ -119,14 +119,10 @@ cranbtree_t* cbt_create(int n)
 
 /**
   * cranbtree_t*, void* (*)(void*) -> cranbtree_t*
-  * EFFECTS: clones the given cranbtree_t and clones the user objects if the
-  *                     the passed function pointer is not NULL
+  * EFFECTS: clones the given cranbtree_t 
   * RETURNS: a pointer to the clone, or NULL if the given cbt is not valid
-  * NOTE: if the function is NULL, clone will copy the original object pointers to the new 
-  *                  clone . This you must be careful in this case when manipulating the objects and destroying
-  *                  them. Otherwise, the tree will store copies of the objects
   */
-cranbtree_t* cbt_clone(cranbtree_t* cbt,  void* (* clone_object)(void*))
+cranbtree_t* cbt_clone(cranbtree_t* cbt)
 {
 	if(cbt == NULL)
 	{
@@ -140,7 +136,7 @@ cranbtree_t* cbt_clone(cranbtree_t* cbt,  void* (* clone_object)(void*))
 		return NULL;
 	}
 	cbt_copy_metadata(cbt, clone);
-	clone->root = cbt_copy_nodes(cbt->root, cbt->n, clone_object);
+	clone->root = cbt_copy_nodes(cbt->root, cbt->n);
 	return clone;
 }
 
@@ -355,11 +351,8 @@ static void cbt_copy_metadata(cranbtree_t* src, cranbtree_t* dest)
   * PARAMETERS:
   * - cbt_node_t* node: root of the cranbtree to be cloned
   * - int n: the order of the tree
-  * - void* (* clone_object)(void*): a function that takes a void pointer and returns a void pointer.
-  * 								 It will be called on every object in the tree in case it was not NULL,
-  *
   */
-static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n,  void* (* clone_object)(void*))
+static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n)
 {
 	if(node == NULL)
 	{
@@ -377,15 +370,13 @@ static cbt_node_t* cbt_copy_nodes(cbt_node_t* node, int n,  void* (* clone_objec
 		if(node->entry[i] != NULL)
 		{
 			new_node->entry[i] = cpy_entry(node->entry[i]);
-			if(clone_object != NULL)
-				new_node->entry[i]->object = clone_object(new_node->entry[i]->object);
 		}
 	}
 	
 	/*copies the children*/
 	for(int i = 0; i < n + 1; i++)
 	{
-		new_node->children[i] = cbt_copy_nodes(node->children[i], n, clone_object);
+		new_node->children[i] = cbt_copy_nodes(node->children[i], n);
 	}
 	new_node->len = node->len;	
 	return new_node;

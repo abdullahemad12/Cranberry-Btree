@@ -85,7 +85,7 @@ cranbtree_t* cbt_create(int n)
   *                  clone . This you must be careful in this case when manipulating the objects and destroying
   *                  them. Otherwise, the tree will store copies of the objects
   */
-cranbtree_t* cbt_clone(cranbtree_t* cbt,  void* (* clone_object)(void*))
+cranbtree_t* cbt_clone(cranbtree_t* cbt)
 {
 	if(cbt == NULL)
 	{
@@ -99,7 +99,7 @@ cranbtree_t* cbt_clone(cranbtree_t* cbt,  void* (* clone_object)(void*))
 		return NULL;
 	}
 	cbt_copy_metadata(cbt, clone);
-	clone->root = cbt_copy_nodes(cbt->root, cbt->n, clone_object);
+	clone->root = cbt_copy_nodes(cbt->root, cbt->n);
 	return clone;
 }
 
