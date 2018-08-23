@@ -14,6 +14,7 @@ int get_leaf_key (cbt_node_t* node);
 void validate_tree(cbt_node_t* node, int n);
 static bool contains(int arr[], int n, int key);
 void pickNRandomNumber(int arr[], int n);
+void* copy_int_obj(void* x);
 
 cbt_node_t* node21 = NULL;
 cbt_node_t* children_original21[22];
@@ -1643,6 +1644,72 @@ void cbt_clone_test5(void)
 	cbt_destroy(bt, free);
 }
 
+void cbt_detach_clone_test1(void)
+{
+	cranbtree_t* cbt = NULL;
+	cranbtree_t* clone = cbt_clone(cbt);
+	cbt_detach_clone(clone, NULL);
+	CU_ASSERT_PTR_NULL(clone);
+}
+
+void cbt_detach_clone_test2(void)
+{
+	cranbtree_t* bt = cbt_create(5);
+	static int keys[50000];
+	int n = 50000;
+	pickNRandomNumber(keys, n);
+	for(int i = 0; i < n; i++)
+	{
+		int* z = malloc(sizeof(int));
+		cbt_insert(bt, keys[i], z);
+	}
+
+	cranbtree_t* clone = cbt_clone(bt);
+	
+	cbt_detach_clone(clone, NULL);
+	CU_ASSERT_EQUAL(clone->is_clone, false);
+
+	for(int i = 0; i < n; i++)
+	{
+		void* obj_original = cbt_search(bt, i);
+		void* obj_clone = cbt_search(bt, i);
+		CU_ASSERT_EQUAL(obj_original, obj_clone);
+	}
+	cbt_destroy(bt, free);
+	cbt_destroy(clone, free);
+}
+
+void cbt_detach_clone_test3(void)
+{
+	cranbtree_t* bt = cbt_create(5);
+	static int keys[50000];
+	int n = 50000;
+	pickNRandomNumber(keys, n);
+	for(int i = 0; i < n; i++)
+	{
+		int* z = malloc(sizeof(int));
+		*z = i;
+		cbt_insert(bt, keys[i], z);
+	}
+
+	cranbtree_t* clone = cbt_clone(bt);
+	
+	cbt_detach_clone(clone, copy_int_obj);
+	CU_ASSERT_EQUAL(clone->is_clone, false);
+
+	for(int i = 0; i < n; i++)
+	{
+		void* obj_original = cbt_search(bt, i);
+		void* obj_clone = cbt_search(bt, i);
+		CU_ASSERT_NOT_EQUAL(obj_original, obj_clone);
+		int* x = (int*) obj_original;
+		int* y = (int*) obj_clone;
+		CU_ASSERT_EQUAL(*x, *y);
+	}
+	cbt_destroy(bt, free);
+	cbt_destroy(clone, free);
+}
+
 void merge_leaf_nodes_test(void)
 {
 	
@@ -1942,6 +2009,14 @@ static bool contains(int arr[], int n, int key)
 		}
 	}
 	return false;
+}
+
+void* copy_int_obj(void* x)
+{
+	int* x_int = (int*)x; 
+	int* y = malloc(sizeof(int));
+	*y = *x_int;
+	return y;
 }
 
 /*****************************

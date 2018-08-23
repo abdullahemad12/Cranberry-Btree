@@ -93,6 +93,9 @@ static struct test utests[] =
 	{"cbt_clone_test3", cbt_clone_test3},
 	{"cbt_clone_test4", cbt_clone_test4},
 	{"cbt_clone_test5", cbt_clone_test5},
+	{"cbt_detach_clone_test1", cbt_detach_clone_test1},
+	{"cbt_detach_clone_test2", cbt_detach_clone_test2},
+	{"cbt_detach_clone_test3", cbt_detach_clone_test3},
 	{NULL, NULL}
 
 };

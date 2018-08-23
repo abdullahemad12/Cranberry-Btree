@@ -253,14 +253,20 @@ int cbt_get_length(cranbtree_t* cbt)
 
 
 /**
-  * cranbtree_t* -> void
-  * EFFECTS: detaches a cloned cranbtree_t from its parent and turns it into a normal cranbtree
+  * cranbtree_t*, void* (* copy_object)(void*) -> void
+  * EFFECTS: detaches a cloned cranbtree_t from its parent. If copy_object is not NULL, cbt_detach_clone 
+  * will use it to make a new copy of every object in the tree.
   * MODIFIES: cranbtree_t* cbt
+  * PARAMETERS: 
+  * - cranbtree_t* cbt: a pointer to a cloned cranbtree
+  * - void* (* copy_object)(void*): a pointer to a function (void* -> void*) that will take the old object as a parameter
+  *									and returns a pointer to a copy of the object. This will be invoked on every object in the cranbtree 
+  *
   * NOTE: This should generally be used when your cloned cranbtree will start storing objects different 
   * 	   then those of the original; However, when using it, it becomes your responsibility to free 
   *		   and manipulate objects correctly
   */
-void cbt_detach_clone(cranbtree_t* cbt)
+void cbt_detach_clone(cranbtree_t* cbt, void* (* copy_object)(void*))
 {
 	
 }
