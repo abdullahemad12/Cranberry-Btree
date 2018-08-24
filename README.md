@@ -156,6 +156,15 @@ int main(void)
 ## Contribution
 if you are planning to contribute, it is highly recommended that you read through the docs and go through the [CONTRIBUTING.md](CONTRIBUTING.md) guidlines
 
+#### Opening an issue: 
+For this project, there are three main types of issues that you can open: 
+
+1. [Bug Report](.github/ISSUE_TEMPLATE/bug_report.md)
+2. [Feature Request](.github/ISSUE_TEMPLATE/feature_request.md)
+3. [New Task](.github/ISSUE_TEMPLATE/new-task.md) 
+
+Please follow the format proposed by these templates before opening a new issue.
+
 ## Contact Me: 
 
 For any inquiries please send me at: **abdullahem1997@hotmail.com**
