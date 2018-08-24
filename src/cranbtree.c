@@ -310,9 +310,9 @@ void printTree(cranbtree_t * bt)
 }
 
 /*******************************************
- *								 		   *
- *		 Static private Functions          *
- *								 		   *
+ *                                         *
+ *         Static private Functions        * 
+ *                                         *
  *******************************************/
 
 static void destroy_bt_helper(cbt_node_t * root, int n, void (*done) (void *))
