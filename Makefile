@@ -89,7 +89,7 @@ mkbin:
 
 #Fix any code styling issue
 beautiful: 
-	indent -bad -bap -nbc -bbo -hnl -brs -c33 -cd33 -ncdb -ci4 -cli0 -d0 -bls -di1 -nfc1 -i8 -ip0 -l80 -lp -npcs -nprs -npsl -sai -saf -saw -ncs -nsc -sob -nfca -cp33 -ss -ts8 -il1 -bli0 src/*.c src/lib/* src/compacted/*.c include/*.h test/*.c
+	indent -bad -bap -nbc -bbo -hnl -brs -c33 -cd33 -ncdb -ci4 -cli0 -d0 -bls -di1 -nfc1 -i8 -ip0 -l80 -lp -npcs -nprs -npsl -sai -saf -saw -ncs -nsc -sob -nfca -cp33 -ss -ts8 -il1 -bli0 src/*.c src/lib/* src/compacted/*.c include/*.h test/*.c && rm -rf include/*~* src/*~* src/lib/*~* src/compacted/*~* test/*~*
 
 # housekeeping
 clean:
