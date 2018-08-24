@@ -165,6 +165,10 @@ For this project, there are three main types of issues that you can open:
 
 Please follow the format proposed by these templates before opening a new issue.
 
+#### Creating a Pull request 
+Please follow that pull request guidelines specified in The [pull Request template](PULL_REQUEST_TEMPLATE.md)
+
+
 ## Contact Me: 
 
 For any inquiries please send me at: **abdullahem1997@hotmail.com**
