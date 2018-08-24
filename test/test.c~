@@ -12,21 +12,23 @@
 static int init(void);
 static int run_tests(void);
 
+
+
 /*Array of all the tests*/
-struct test
-{
-	const char *name;
-	void (*func) (void);
+struct test {
+	const char* name;
+	void (*func)(void);
 };
 
-static struct test utests[] = {
+static struct test utests[] = 
+{	
 	{"children_shift_left_test", children_shift_left_test},
-	{"delete_test_root_entry", delete_test_root_entry},
+	{"delete_test_root_entry", delete_test_root_entry}, 
 	{"get_child_index_test", get_child_index_test},
 	{"insert_child_test", insert_child_test},
 	{"creation_test", bt_create_test},
-	{"creation_test1", bt_create_test1},
-	{"node_creation_test", bt_create_node_test},
+	{"creation_test1",bt_create_test1},
+	{"node_creation_test",bt_create_node_test},
 	{"entry creation test", bt_create_entry_test},
 	{"Entry Destroy test", bt_destroy_entry_test},
 	{"node Destroy test", bt_destroy_node_test},
@@ -61,24 +63,18 @@ static struct test utests[] = {
 	{"merge_nodes_test1", merge_nodes_test1},
 	{"merge_nodes_test2", merge_nodes_test2},
 	{"delete_child_test", delete_child_test},
-	{"entry_rotate_counter_clockwise_test",
-	 entry_rotate_counter_clockwise_test},
-	{"entry_rotate_counter_clockwise_test1",
-	 entry_rotate_counter_clockwise_test1},
-	{"entry_rotate_counter_clockwise_test2",
-	 entry_rotate_counter_clockwise_test2},
+	{"entry_rotate_counter_clockwise_test", entry_rotate_counter_clockwise_test},
+	{"entry_rotate_counter_clockwise_test1", entry_rotate_counter_clockwise_test1},
+	{"entry_rotate_counter_clockwise_test2", entry_rotate_counter_clockwise_test2},
 	{"entry_rotate_clockwise_test", entry_rotate_clockwise_test},
 	{"entry_rotate_clockwise_test1", entry_rotate_clockwise_test1},
 	{"entry_rotate_clockwise_test2", entry_rotate_clockwise_test2},
 	{"entry_move_up_clockwise_test", entry_move_up_clockwise_test},
 	{"entry_move_up_clockwise_test1", entry_move_up_clockwise_test1},
 	{"entry_move_up_clockwise_test2", entry_move_up_clockwise_test2},
-	{"entry_move_up_counter_clockwise_test",
-	 entry_move_up_counter_clockwise_test},
-	{"entry_move_up_counter_clockwise_test1",
-	 entry_move_up_counter_clockwise_test1},
-	{"entry_move_up_counter_clockwise_test2",
-	 entry_move_up_counter_clockwise_test2},
+	{"entry_move_up_counter_clockwise_test", entry_move_up_counter_clockwise_test},
+	{"entry_move_up_counter_clockwise_test1", entry_move_up_counter_clockwise_test1},
+	{"entry_move_up_counter_clockwise_test2", entry_move_up_counter_clockwise_test2},
 	{"bt_delete_minimum_test", bt_delete_minimum_test},
 	{"bt_delete_minimum_test1", bt_delete_minimum_test1},
 	{"bt_delete_minimum_test2", bt_delete_minimum_test2},
@@ -104,7 +100,9 @@ static struct test utests[] = {
 
 };
 
-static struct test ctests[] = {
+
+static struct test ctests[] = 
+{	
 	{"bt_comp_test", bt_comp_test},
 	{"bt_comp_test1", bt_comp_test1},
 	{"bt_comp_test2", bt_comp_test2},
@@ -112,66 +110,69 @@ static struct test ctests[] = {
 
 };
 
+
 int main(void)
 {
-
-	int err;
-
-	/*initialize */
+	
+	int err; 
+	/*initialize*/
 	err = init();
-	if (err != CUE_SUCCESS)
+	if(err != CUE_SUCCESS)
 	{
 		return err;
 	}
-	/* Run all tests */
+   /* Run all tests */
 	return run_tests();
 
 }
 
-static int createSuite(const char *suite_name, struct test tests[])
+static int createSuite(const char* suite_name, struct test tests[])
 {
 	CU_pSuite pSuite = NULL;
-
-	/* add a suite to the registry */
-	pSuite = CU_add_suite(suite_name, init_suite, clean_suite);
-	if (NULL == pSuite)
+	
+   /* add a suite to the registry */
+   pSuite = CU_add_suite(suite_name , init_suite, clean_suite);
+   if (NULL == pSuite)
+   {
+      CU_cleanup_registry();
+      return CU_get_error();
+   }
+   for(int i = 0; tests[i].name != NULL && tests[i].func != NULL; i++)
 	{
-		CU_cleanup_registry();
-		return CU_get_error();
-	}
-	for (int i = 0; tests[i].name != NULL && tests[i].func != NULL; i++)
-	{
-		if ((NULL == CU_add_test(pSuite, tests[i].name, tests[i].func)))
-		{
-			CU_cleanup_registry();
-			return CU_get_error();
-		}
+		 if ((NULL == CU_add_test(pSuite, tests[i].name, tests[i].func)))
+		 {
+		 	CU_cleanup_registry();
+		 	return CU_get_error();
+		 }
 	}
 	return CUE_SUCCESS;
 }
 
 static int init(void)
 {
-	/* initialize the CUnit test registry */
-	if (CUE_SUCCESS != CU_initialize_registry())
-		return CU_get_error();
+   /* initialize the CUnit test registry */
+   if (CUE_SUCCESS != CU_initialize_registry())
+      return CU_get_error();
 
-	int err = createSuite("Suite 1", utests);
-
-	if (err != CUE_SUCCESS)
+	
+	int err = createSuite("Suite 1",utests);
+	if(err != CUE_SUCCESS)
 	{
 		return err;
 	}
-
+	
 	err = createSuite("Suite 2", ctests);
 	return err;
-
+	
 }
+
 
 static int run_tests(void)
 {
-	CU_basic_set_mode(CU_BRM_VERBOSE);
-	CU_basic_run_tests();
-	CU_cleanup_registry();
-	return CU_get_error();
+   CU_basic_set_mode(CU_BRM_VERBOSE);
+   CU_basic_run_tests();
+   CU_cleanup_registry();
+   return CU_get_error();
 }
+
+

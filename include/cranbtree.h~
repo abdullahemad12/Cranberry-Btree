@@ -33,8 +33,7 @@
  *
  * Keys for the B-tree are assumed to be positive, otherwise the entry is treated as invalid
  */
-typedef struct cbt_entry
-{
+typedef struct cbt_entry {
 	int key;
 	void *object;
 } cbt_entry_t;
@@ -45,8 +44,7 @@ typedef struct cbt_entry
  * A B+ Tree with n entries can have n+1 pointers
  */
 
-typedef struct cbt_node
-{
+typedef struct cbt_node {
 	cbt_entry_t **entry;
 	struct cbt_node **children;
 	unsigned int len;
@@ -61,8 +59,7 @@ typedef struct cbt_node
  * unsinged int n: the maximum number of entries in a node
  */
 
-typedef struct cranbtree
-{
+typedef struct cranbtree {
 	cbt_node_t *root;
 	unsigned int length;
 	int max_key;
