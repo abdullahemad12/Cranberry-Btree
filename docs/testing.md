@@ -1,13 +1,13 @@
-#Testing Using CUNIT
+# Testing Using CUNIT
 
 This document explains how to write tests for this project using the [CUnit framework](http://cunit.sourceforge.net) for unit testing. Please note, this document does not cover the interface for the CUnit and you are highly encouraged to go through the CUnit documentations before writing any tests.
 
-##Prerequisites
+## Prerequisites
 
 You will need to install the [CUnit library](https://sourceforge.net/projects/cunit/) before compiling your tests.
  
 
-#Test Structure 
+# Test Structure 
 
 The structure is fairly simple. There are two main components for testing: 
 
