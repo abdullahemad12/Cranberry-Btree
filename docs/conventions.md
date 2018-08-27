@@ -28,3 +28,15 @@ Please follow these simple naming conventions and guidelines when picking functi
 1. All the variables should be lower case
 2. Variable could include numbers in their names. 
 3. The variable name must describe what it stores and why is it there.
+
+
+#### Test Naming Conventions:
+
+1. The the prefix of the test name will be the name the of the function being tested
+2. The suffix will be test(n) where n is the index of the test written for this function.
+
+For example, the name of the tests for cbt_insert should be: 
+
+1. cbt_insert_test1
+2. cbt_insert_test2
+3. cbt_insert_test3
