@@ -44,6 +44,20 @@ Parameters: cranbtree_t* cbt: the cranbtree to be cloned.
 Return value: returns a pointer to the clone of the Cranberry Tree struct.
 
 
+
+<b>2. void cbt_detach_clone(cranbtree_t* cbt, void* (* copy_object)(void*));</b>
+
+Description: Detaches a cloned cranbtree_t and use copy_object (If not NULL) to create new copies of the objects stored in the cranbtree and stores the new objects instead of the old ones. Note that, after calling this function, insert, update, delete, destroy will not treat this cranbtree as a clone any more and will be applied normally. It has no effect when called on an already detached cranbtree or a normal cranbtree.
+
+parameter: 
+- cranbtree_t* bt: pointer to the cranbtree structure.
+- void* (* copy_object)(void*): a pointer to a function that takes void* and returns void*. The function should expect an object stored in the tree as a paramter and return a void pointer pointing to a new copy of that object.
+
+**Note**: that cbt_detach_clone will still be applied to the tree even if copy_object is NULL; However, it will not copy any objects and it becomes the responsibility of the user to make sure that destroy will not cause a double free memory corruption.
+
+
+
+
 <b>2. void cbt_insert(cranbtree_t* bt, int key, void* object);</b>
 
 Description: inserts an object into the tree with a search key "key".
