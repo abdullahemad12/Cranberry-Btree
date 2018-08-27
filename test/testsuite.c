@@ -1741,13 +1741,12 @@ void cbt_detach_clone_test2(void)
 
 	for (int i = 0; i < n; i++)
 	{
-		void *obj_original = cbt_search(bt, i);
-		void *obj_clone = cbt_search(bt, i);
-
+		void *obj_original = cbt_search(bt, keys[i]);
+		void *obj_clone = cbt_search(bt, keys[i]);
 		CU_ASSERT_EQUAL(obj_original, obj_clone);
 	}
 	cbt_destroy(bt, free);
-	cbt_destroy(clone, free);
+	cbt_destroy(clone, NULL);
 }
 
 void cbt_detach_clone_test3(void)
@@ -1772,8 +1771,8 @@ void cbt_detach_clone_test3(void)
 
 	for (int i = 0; i < n; i++)
 	{
-		void *obj_original = cbt_search(bt, i);
-		void *obj_clone = cbt_search(bt, i);
+		void *obj_original = cbt_search(bt, keys[i]);
+		void *obj_clone = cbt_search(bt, keys[i]);
 
 		CU_ASSERT_NOT_EQUAL(obj_original, obj_clone);
 		int *x = (int *)obj_original;
