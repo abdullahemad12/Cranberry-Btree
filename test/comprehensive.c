@@ -146,7 +146,11 @@ void pickNRandomNumber(int arr[], int n)
 
 	for (int i = 0; i < n; i++)
 	{
-		printf("\r\tPicked: %d random numbers ", i + 1);
+		/** Removed output here to make visible 
+		  * Test: cbt_detach_clone_test2 ...passed
+		  * Test: cbt_detach_clone_test3 ...passed
+		  */
+		/*printf("\r\tPicked: %d random numbers ", i + 1);*/
 		r = rand() % n;
 		int swap = arr[r];
 
