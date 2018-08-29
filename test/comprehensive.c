@@ -150,7 +150,7 @@ void pickNRandomNumber(int arr[], int n)
 		  * Test: cbt_detach_clone_test2 ...passed
 		  * Test: cbt_detach_clone_test3 ...passed
 		  */
-		/*printf("\r\tPicked: %d random numbers ", i + 1);*/
+		/*printf("\r\tPicked: %d random numbers ", i + 1); */
 		r = rand() % n;
 		int swap = arr[r];
 
