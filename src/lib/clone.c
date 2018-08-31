@@ -86,3 +86,45 @@ static cbt_node_t *cbt_copy_nodes(cbt_node_t * node, int n)
 	new_node->len = node->len;
 	return new_node;
 }
+
+/** 
+  * cbt_node_t*, int, void* (* copy_object)(void*)) -> void 
+  * EFFECTS: replaces each object pointer in the tree with the result of
+  *          the copy transformation provided by third parameter.
+  * RETURNS: nothing
+  * PARAMETERS:
+  * - cbt_node_t* node: root of the cranbtree to be processed
+  * - int n: the order of the tree
+  * - void* (* copy_object)(void*): the function to be called on each
+  *                                 object
+  *
+  */
+static void cbt_copy_objects(cbt_node_t * node, int n,
+			     void *(*copy_object) (void *))
+{
+	/* if no copy_object is supplied, we're done */
+	if (copy_object == NULL)
+	{
+		return;
+	}
+
+	/* copy every object associated with each entry that exists at this node */
+	for (int i = 0; i < n; i++)
+	{
+		/* if this entry exists, copy its object */
+		if (node->entry[i] != NULL)
+		{
+			node->entry[i]->object =
+			    copy_object(node->entry[i]->object);
+		}
+	}
+
+	/* descend into this node's children if they are defined */
+	for (int i = 0; i < n + 1; i++)
+	{
+		if (node->children[i] != NULL)
+		{
+			cbt_copy_objects(node->children[i], n, copy_object);
+		}
+	}
+}

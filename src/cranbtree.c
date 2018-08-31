@@ -276,7 +276,17 @@ int cbt_get_length(cranbtree_t * cbt)
   */
 void cbt_detach_clone(cranbtree_t * cbt, void *(*copy_object) (void *))
 {
+	/* if there is no tree do nothing */
+	if (cbt == NULL)
+	{
+		return;
+	}
 
+	/* this tree is no longer a clone, mark it as such */
+	cbt->is_clone = false;
+
+	/* copy the objects starting from the root node recursively */
+	cbt_copy_objects(cbt->root, cbt->n, copy_object);
 }
 
 /**
