@@ -69,9 +69,22 @@ typedef struct cranbtree
 	int min_key;
 	unsigned int n;
 	bool is_clone;
+	int op_errno;
 } cranbtree_t;
 
 /*interface*/
+
+/*
+ * error numbers
+ */
+#define CBT_NO_ERROR        0
+#define CBT_CLONE_BAD_OP    (CBT_NO_ERROR + 1)
+
+/*
+ * cranbtree_t* -> const char* 
+ * Return pointer to string describing last error. NULL if no error recorded.
+ */
+const char* cbt_error(cranbtree_t* bt);
 
 /*
  * int -> bptree_t* 
