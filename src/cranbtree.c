@@ -52,7 +52,7 @@ static void destroy_bt_helper(cbt_node_t * root, int n, void (*done) (void *));
 
 static char *errorMessages[] = {
 	NULL,
-	"Cannot perfrom this operation on a cloned tree",
+	"Cannot perform this operation on a cloned tree",
 };
 
 /*

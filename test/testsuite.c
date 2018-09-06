@@ -1728,7 +1728,7 @@ void cbt_clone_test5(void)
 	/*last operation of clone failed (was ignored), test error message */
 	errorMessage = cbt_error(clone);
 	CU_ASSERT_STRING_EQUAL(errorMessage,
-			       "Cannot perfrom this operation on a cloned tree");
+			       "Cannot perform this operation on a cloned tree");
 
 	cbt_destroy(clone, free);
 	cbt_destroy(bt, free);
