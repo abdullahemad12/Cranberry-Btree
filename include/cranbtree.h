@@ -84,7 +84,7 @@ typedef struct cranbtree
  * cranbtree_t* -> const char* 
  * Return pointer to string describing last error. NULL if no error recorded.
  */
-const char* cbt_error(cranbtree_t* bt);
+const char *cbt_error(cranbtree_t * bt);
 
 /*
  * int -> bptree_t* 

@@ -55,12 +55,11 @@ static char *errorMessages[] = {
 	"Cannot perfrom this operation on a cloned tree",
 };
 
-
 /*
  * cranbtree_t* -> const char*
  * Return pointer to string describing last error. NULL if no error recorded.
  */
-const char* cbt_error(cranbtree_t* bt)
+const char *cbt_error(cranbtree_t * bt)
 {
 	assert(bt != NULL);
 
@@ -147,7 +146,7 @@ void cbt_insert(cranbtree_t * bt, int key, void *object)
 {
 	assert(bt != NULL);
 	assert(object != NULL);
-	
+
 	if (bt->is_clone)
 	{
 		bt->op_errno = CBT_CLONE_BAD_OP;
@@ -384,4 +383,3 @@ static void destroy_bt_helper(cbt_node_t * root, int n, void (*done) (void *))
 	}
 	bt_destroy_node(root, n, done);
 }
-

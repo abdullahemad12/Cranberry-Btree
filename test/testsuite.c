@@ -1634,7 +1634,8 @@ void cbt_clone_test5(void)
 	int n = 50;
 
 	/*test no initial error recorded */
-	const char* errorMessage = cbt_error(bt);
+	const char *errorMessage = cbt_error(bt);
+
 	CU_ASSERT_PTR_NULL(errorMessage);
 
 	pickNRandomNumber(keys, n);
@@ -1678,10 +1679,12 @@ void cbt_clone_test5(void)
 		void *oldobj = cbt_search(clone, keys[i]);
 
 		void *object = cbt_update(clone, keys[i], z);
+
 		CU_ASSERT_PTR_NULL(object);
 		CU_ASSERT_EQUAL(clone->op_errno, CBT_CLONE_BAD_OP);
 
 		void *newobj = cbt_search(clone, keys[i]);
+
 		CU_ASSERT_EQUAL(oldobj, newobj);
 		CU_ASSERT_NOT_EQUAL(z, newobj);
 	}
@@ -1695,7 +1698,7 @@ void cbt_clone_test5(void)
 		CU_ASSERT_EQUAL(clone->op_errno, CBT_CLONE_BAD_OP);
 	}
 
-	/*makes sure nothing was inserted*/
+	/*makes sure nothing was inserted */
 
 	CU_ASSERT_EQUAL(clone->length, bt->length);
 	CU_ASSERT_EQUAL(clone->n, bt->n);
@@ -1709,11 +1712,12 @@ void cbt_clone_test5(void)
 	{
 		clone->op_errno = CBT_NO_ERROR;
 		void *object = cbt_delete(clone, keys[i]);
+
 		CU_ASSERT_PTR_NULL(object);
 		CU_ASSERT_EQUAL(clone->op_errno, CBT_CLONE_BAD_OP);
 	}
 
-	/*makes sure nothing was deleted*/
+	/*makes sure nothing was deleted */
 
 	CU_ASSERT_EQUAL(clone->length, bt->length);
 	CU_ASSERT_EQUAL(clone->n, bt->n);
@@ -1721,9 +1725,10 @@ void cbt_clone_test5(void)
 	CU_ASSERT_EQUAL(clone->min_key, bt->min_key);
 	CU_ASSERT(treecmp(bt->root, clone->root, bt->n));
 
-	/*last operation of clone failed (was ignored), test error message*/
+	/*last operation of clone failed (was ignored), test error message */
 	errorMessage = cbt_error(clone);
-	CU_ASSERT_STRING_EQUAL(errorMessage, "Cannot perfrom this operation on a cloned tree");
+	CU_ASSERT_STRING_EQUAL(errorMessage,
+			       "Cannot perfrom this operation on a cloned tree");
 
 	cbt_destroy(clone, free);
 	cbt_destroy(bt, free);
