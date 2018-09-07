@@ -42,7 +42,9 @@ void comp_test(void)
 	{
 		int *z = malloc(sizeof(int));
 
-		cbt_insert(bt, keys[i], z);
+		void *insertedObj = cbt_insert(bt, keys[i], z);
+
+		CU_ASSERT_PTR_NOT_NULL(insertedObj);
 		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
 	}
 
@@ -1625,16 +1627,23 @@ void cbt_clone_test4(void)
 }
 
 /**
-  * insertion, deletion and update on a clone
+  * insertion, deletion and update on a clone, are no-op (invaild) operations
   */
 void cbt_clone_test5(void)
 {
 	cranbtree_t *bt = cbt_create(5);
-	static int keys[50000];
-	int n = 50000;
+	static int keys[50];
+	int n = 50;
+
+	/*test no initial error recorded */
+	int errorNo = cbt_errno(bt);
+	const char *errorMessage = cbt_errstr(bt);
+
+	CU_ASSERT(errorNo == 0);
+	CU_ASSERT_PTR_NULL(errorMessage);
 
 	pickNRandomNumber(keys, n);
-	int n1 = 25000;
+	int n1 = 25;
 
 	for (int i = 0; i < n1; i++)
 	{
@@ -1669,44 +1678,64 @@ void cbt_clone_test5(void)
 	for (int i = 0; i < n1; i++)
 	{
 		int *z = malloc(sizeof(int));
+
+		clone->op_errno = CBT_NO_ERROR;
+		void *oldobj = cbt_search(clone, keys[i]);
+
 		void *object = cbt_update(clone, keys[i], z);
 
-		CU_ASSERT_PTR_NOT_NULL(object);
+		CU_ASSERT_PTR_NULL(object);
+		CU_ASSERT_EQUAL(clone->op_errno, CBT_CLONE_BAD_OP);
+
 		void *newobj = cbt_search(clone, keys[i]);
 
-		CU_ASSERT_EQUAL(z, newobj);
+		CU_ASSERT_EQUAL(oldobj, newobj);
+		CU_ASSERT_NOT_EQUAL(z, newobj);
 	}
 
 	for (int i = n1; i < n; i++)
 	{
 		int *z = malloc(sizeof(int));
 
+		clone->op_errno = CBT_NO_ERROR;
 		cbt_insert(clone, keys[i], z);
+		CU_ASSERT_EQUAL(clone->op_errno, CBT_CLONE_BAD_OP);
 	}
 
-	/*makes sure all the objects are there */
-	for (int i = 0; i < n; i++)
-	{
-		void *object = cbt_search(clone, keys[i]);
+	/*makes sure nothing was inserted */
 
-		CU_ASSERT_PTR_NOT_NULL(object);
-	}
+	CU_ASSERT_EQUAL(clone->length, bt->length);
+	CU_ASSERT_EQUAL(clone->n, bt->n);
+	CU_ASSERT_EQUAL(clone->max_key, bt->max_key);
+	CU_ASSERT_EQUAL(clone->min_key, bt->min_key);
+	CU_ASSERT(clone->is_clone);
+	CU_ASSERT(treecmp(bt->root, clone->root, bt->n));
 
 	/*deletes the object */
-	for (int i = 0; i < n; i++)
+	for (int i = 0; i < n1; i++)
 	{
+		clone->op_errno = CBT_NO_ERROR;
 		void *object = cbt_delete(clone, keys[i]);
 
-		CU_ASSERT_PTR_NOT_NULL(object);
-		if (object != NULL)
-		{
-			free(object);
-		}
+		CU_ASSERT_PTR_NULL(object);
+		CU_ASSERT_EQUAL(clone->op_errno, CBT_CLONE_BAD_OP);
 	}
 
-	CU_ASSERT_EQUAL(clone->length, 0);
+	/*makes sure nothing was deleted */
 
-	clone->is_clone = false;
+	CU_ASSERT_EQUAL(clone->length, bt->length);
+	CU_ASSERT_EQUAL(clone->n, bt->n);
+	CU_ASSERT_EQUAL(clone->max_key, bt->max_key);
+	CU_ASSERT_EQUAL(clone->min_key, bt->min_key);
+	CU_ASSERT(treecmp(bt->root, clone->root, bt->n));
+
+	/*last operation of clone failed (was ignored), test error message */
+	errorNo = cbt_errno(clone);
+	errorMessage = cbt_errstr(clone);
+	CU_ASSERT(errorNo == CBT_CLONE_BAD_OP);
+	CU_ASSERT_STRING_EQUAL(errorMessage,
+			       "Cannot perform this operation on a cloned tree");
+
 	cbt_destroy(clone, free);
 	cbt_destroy(bt, free);
 }
