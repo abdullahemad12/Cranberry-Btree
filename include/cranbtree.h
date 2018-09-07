@@ -81,10 +81,16 @@ typedef struct cranbtree
 #define CBT_CLONE_BAD_OP    (CBT_NO_ERROR + 1)
 
 /*
+ * cranbtree_t* -> int
+ * Return pointer to string describing last error. NULL if no error recorded.
+ */
+int cbt_errno(cranbtree_t * bt);
+
+/*
  * cranbtree_t* -> const char* 
  * Return pointer to string describing last error. NULL if no error recorded.
  */
-const char *cbt_error(cranbtree_t * bt);
+const char *cbt_errstr(cranbtree_t * bt);
 
 /*
  * int -> bptree_t* 
@@ -104,15 +110,17 @@ cranbtree_t *cbt_clone(cranbtree_t * cbt);
 
 /**
   * cranbtree_t*, int, void* -> void
-  * EFFECTS: inserts an object in the btree in respect with the search key
+  * EFFECTS: Inserts an object in the btree in respect with the search key.
+  *          Unless the tree is a clone, in which case it return immediately.
+  *          Sets op_errno on any error.
   * MODIFIES: cranbtree_t* bt
-  * RETURNS: void
+  * RETURNS: Pointer to the inserted object or NULL on any error
   *
   * cranbtree_t* bt: Tree structs that will hold the object
   * int key: search key (choosen by the user)
   * void* object: pointer to the object to be inserted
   */
-void cbt_insert(cranbtree_t * bt, int key, void *object);
+void *cbt_insert(cranbtree_t * bt, int key, void *object);
 
 /**
   * cranbtree_t*, int, void* -> void

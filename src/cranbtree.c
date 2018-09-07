@@ -56,10 +56,21 @@ static char *errorMessages[] = {
 };
 
 /*
+ * cranbtree_t* -> int
+ * Return last detected error code/number
+ */
+int cbt_errno(cranbtree_t * bt)
+{
+	assert(bt != NULL);
+
+	return bt->op_errno;
+}
+
+/*
  * cranbtree_t* -> const char*
  * Return pointer to string describing last error. NULL if no error recorded.
  */
-const char *cbt_error(cranbtree_t * bt)
+const char *cbt_errstr(cranbtree_t * bt)
 {
 	assert(bt != NULL);
 
@@ -136,13 +147,13 @@ cranbtree_t *cbt_clone(cranbtree_t * cbt)
   * 		 Unless the tree is a clone, in which case it return immediately.
   * 		 Sets op_errno on any error.
   * MODIFIES: cranbtree_t* bt
-  * RETURNS: void
+  * RETURNS: Pointer to the inserted object or NULL on any error
   *
   * cranbtree_t* bt: Tree structs that will hold the object
   * int key: search key (choosen by the user)
   * void* object: pointer to the object to be inserted
   */
-void cbt_insert(cranbtree_t * bt, int key, void *object)
+void *cbt_insert(cranbtree_t * bt, int key, void *object)
 {
 	assert(bt != NULL);
 	assert(object != NULL);
@@ -150,7 +161,7 @@ void cbt_insert(cranbtree_t * bt, int key, void *object)
 	if (bt->is_clone)
 	{
 		bt->op_errno = CBT_CLONE_BAD_OP;
-		return;
+		return (cranbtree_t *) NULL;
 	}
 
 	cbt_entry_t *entry = bt_create_entry(key, object);
@@ -171,6 +182,8 @@ void cbt_insert(cranbtree_t * bt, int key, void *object)
 		bt->min_key = bt->min_key > key ? key : bt->min_key;
 	}
 	bt->length++;
+
+	return object;
 }
 
 /**

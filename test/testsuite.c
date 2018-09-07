@@ -42,7 +42,9 @@ void comp_test(void)
 	{
 		int *z = malloc(sizeof(int));
 
-		cbt_insert(bt, keys[i], z);
+		void *insertedObj = cbt_insert(bt, keys[i], z);
+
+		CU_ASSERT_PTR_NOT_NULL(insertedObj);
 		CU_ASSERT_PTR_NOT_NULL(cbt_search(bt, keys[i]));
 	}
 
@@ -1634,8 +1636,10 @@ void cbt_clone_test5(void)
 	int n = 50;
 
 	/*test no initial error recorded */
-	const char *errorMessage = cbt_error(bt);
+	int errorNo = cbt_errno(bt);
+	const char *errorMessage = cbt_errstr(bt);
 
+	CU_ASSERT(errorNo == 0);
 	CU_ASSERT_PTR_NULL(errorMessage);
 
 	pickNRandomNumber(keys, n);
@@ -1726,7 +1730,9 @@ void cbt_clone_test5(void)
 	CU_ASSERT(treecmp(bt->root, clone->root, bt->n));
 
 	/*last operation of clone failed (was ignored), test error message */
-	errorMessage = cbt_error(clone);
+	errorNo = cbt_errno(clone);
+	errorMessage = cbt_errstr(clone);
+	CU_ASSERT(errorNo == CBT_CLONE_BAD_OP);
 	CU_ASSERT_STRING_EQUAL(errorMessage,
 			       "Cannot perform this operation on a cloned tree");
 
