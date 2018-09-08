@@ -14,11 +14,11 @@ This struct represents The B-tree. It is what the user will pass into any of the
 1. [struct cbt_node](#cbt-node) root: this represents the root node of the tree which is used to traverse the whole tree. Initially this is NULL and is set to NULL whenever the tree is empty. 
 2. unsigned int length: this is the length of the tree, i.e the count of the [struct cbt_entry](#cbt-entry) in tree. This is updated on every succussfull deletion and insertions.
 3. int max_key: this is the Maximum key in the tree. It's used to speed up answering questions about the maximum key. It is updated on every succussfull deletion and insertions. On Insertions, the max key is compared to the newly inserted key, if it is larger, it is replaced. Otherwise nothing is done. On deletion, however, if the key that was successfully deleted happens to be the maximum key. The tree is traversed from root to the most right node and the right most element is chosen to replace the old max_key.
-4. unsigned int n: by convention of several books, this is named n. n is defined to be the B-tree order, or the maximum number of keys a node can have.
+4. unsigned int n: by convention of several books, this is named n. n is defined to be the maximum number of keys each node can have.
 
 #### The creation and deletion of a B-tree: 
 Two interface functions are responsible for deletions and insertions into B-trees. cbt_create() and cbt_destroy(). 
-- Creation is simple, it just takes the order of the tree, n, as an argument, allocates memory for the cranbtree struct, sets all the fields appropriately and returns a pointer to that cranbtree. 
+- Creation is simple, it just takes the maximum number of keys in the tree's node, n, as an argument, allocates memory for the cranbtree struct, sets all the fields appropriately and returns a pointer to that cranbtree. 
 
 - However, destroying requires more work to be done, since the B-tree might not be empty by the time it's destroyed. First, the root is passed on to a helper function which traverses the tree recursively. Destroys each of the children of a [node](#cbt-node), and all the [entries](#cbt-entry) in the node. However, there is a catch here, since the a non empty entry will contain a pointer to an object, all these pointers will be lost, which might result in memory leaks overall. In this case, the user can choose between several options: 
 	1. Do nothing these objects and handle them on their own.
