@@ -135,6 +135,7 @@ parameters: cranbtree_t* bt: pointer to the cranbtree structure.
 
 - No error: CBT_NO_ERROR 0
 - Attempt to modify a cloned tree: CBT_CLONE_BAD_OP 1
+- The key was not found: CBT_KEY_NOT_FOUND 2
 
 ## Installation: 
 This section will guide you on how to install the library in your computers depending on your machine, or use it as a portable library.

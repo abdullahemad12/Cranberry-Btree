@@ -1966,13 +1966,14 @@ void cbt_key_not_found_error_test1(void)
 	CU_ASSERT_PTR_NULL(obj);
 	int errorno = cbt_errno(bt);
 	CU_ASSERT_EQUAL(errorno, CBT_KEY_NOT_FOUND);
-
+	bt->op_errno = 0;
+	
 	/*tries to search for a non-existing key*/	
 	obj = cbt_search(bt, n * 100);
 	CU_ASSERT_PTR_NULL(obj);
 	errorno = cbt_errno(bt);
 	CU_ASSERT_EQUAL(errorno, CBT_KEY_NOT_FOUND);
-
+	bt->op_errno = 0;
 
 	/*tries to update a non-existing key*/
 	int* z = malloc(sizeof(int));
@@ -1980,7 +1981,7 @@ void cbt_key_not_found_error_test1(void)
 	CU_ASSERT_PTR_NULL(obj);
 	errorno = cbt_errno(bt);
 	CU_ASSERT_EQUAL(errorno, CBT_KEY_NOT_FOUND);
-
+	bt->op_errno = 0;
 
 	cbt_destroy(bt, free);
 
@@ -2005,13 +2006,14 @@ void cbt_key_not_found_error_test2(void)
 	int errorno = cbt_errno(bt);
 	CU_ASSERT_EQUAL(errorno, CBT_NO_ERROR);
 	free(obj);
+	bt->op_errno = 0;
 
 	/*tries to search for a non-existing key*/	
 	obj = cbt_search(bt, (n/2) + 1);
 	CU_ASSERT_PTR_NOT_NULL(obj);
 	errorno = cbt_errno(bt);
 	CU_ASSERT_EQUAL(errorno, CBT_NO_ERROR);
-
+	bt->op_errno = 0;
 
 	/*tries to update a non-existing key*/
 	int* z = malloc(sizeof(int));
@@ -2020,6 +2022,7 @@ void cbt_key_not_found_error_test2(void)
 	errorno = cbt_errno(bt);
 	CU_ASSERT_EQUAL(errorno, CBT_NO_ERROR);
 	free(obj);
+	bt->op_errno = 0;
 
 	cbt_destroy(bt, free);
 

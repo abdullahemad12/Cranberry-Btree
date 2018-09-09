@@ -64,9 +64,9 @@ void bt_comp_test(void)
   */
 static void bt_comp_test1(void)
 {
-	int n = 500;
+	int n = 5000000;
 
-	static int keys[500];
+	static int keys[5000000];
 
 	memset(keys, 0, n);
 
@@ -105,7 +105,7 @@ static void bt_comp_test1(void)
 static void bt_comp_test2(void)
 {
 
-	int n = 1000;
+	int n = 100000000;
 	cranbtree_t *bt = cbt_create(3);
 
 	printf("\n");
