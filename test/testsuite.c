@@ -1918,6 +1918,23 @@ void cbt_update_test1(void)
 	cbt_destroy(bt, free);
 }
 
+void cbt_get_length_test(void)
+{
+	unsigned int n = 1000;
+	cranbtree_t *bt = cbt_create(4);
+
+	for (int i = 0; i < n; i++)
+	{
+		int *z = malloc(sizeof(int));
+
+		cbt_insert(bt, i, z);
+	}
+
+	CU_ASSERT_EQUAL(n, cbt_get_length(bt));
+
+	cbt_destroy(bt, free);
+}
+
 bool treecmp(cbt_node_t * root1, cbt_node_t * root2, int n)
 {
 	if ((root1 == NULL && root2 != NULL)

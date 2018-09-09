@@ -237,7 +237,7 @@ void *cbt_delete(cranbtree_t * bt, int key)
   */
 int cbt_get_max_key(cranbtree_t * cbt)
 {
-	return 0;
+	return cbt->max_key;
 }
 
 /**
@@ -247,7 +247,7 @@ int cbt_get_max_key(cranbtree_t * cbt)
   */
 int cbt_get_min_key(cranbtree_t * cbt)
 {
-	return 0;
+	return cbt->min_key;
 }
 
 /**
@@ -255,9 +255,9 @@ int cbt_get_min_key(cranbtree_t * cbt)
   * EFFECTS: gets the length of the B-tree
   * RETURNS: the length of the B-tree
   */
-int cbt_get_length(cranbtree_t * cbt)
+unsigned int cbt_get_length(cranbtree_t * cbt)
 {
-	return 0;
+	return cbt->length;
 }
 
 /**
