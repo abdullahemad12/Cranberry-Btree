@@ -42,6 +42,12 @@
 #include "lib/clone.c"
 
 /*
+ *macros
+ */
+
+#define CBT_KEY_NOT_FOUND 2
+
+/*
  * prototypes
  */
 static void destroy_bt_helper(cbt_node_t * root, int n, void (*done) (void *));
@@ -205,6 +211,7 @@ void *cbt_update(cranbtree_t * bt, int key, void *object)
 	if (old_object == NULL)
 	{
 		cbt_insert(bt, key, object);
+		return CBT_KEY_NOT_FOUND;
 	}
 	return old_object;
 }
@@ -380,7 +387,7 @@ static void destroy_bt_helper(cbt_node_t * root, int n, void (*done) (void *))
 {
 	if (root == NULL)
 	{
-		return;
+		return CBT_KEY_NOT_FOUND;
 	}
 	for (int i = 0, n1 = n + 1; i < n1; i++)
 	{
