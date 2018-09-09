@@ -1947,6 +1947,82 @@ void cbt_update_test1(void)
 	cbt_destroy(bt, free);
 }
 
+void cbt_key_not_found_error_test1(void)
+{
+	int n = 10000;
+	cranbtree_t *bt = cbt_create(3);
+
+	for (int i = 0; i < n; i++)
+	{
+		int *z = malloc(sizeof(int));
+
+		cbt_insert(bt, i, z);
+	}
+	
+	/*tries to delete a non-existing key*/
+	void* obj = cbt_delete(bt, n * 100);
+	CU_ASSERT_PTR_NULL(obj);
+	int errorno = cbt_errno(bt);
+	CU_ASSERT_EQUAL(errorno, CBT_KEY_NOT_FOUND);
+
+	/*tries to search for a non-existing key*/	
+	obj = cbt_search(bt, n * 100);
+	CU_ASSERT_PTR_NULL(obj);
+	errorno = cbt_errno(bt);
+	CU_ASSERT_EQUAL(errorno, CBT_KEY_NOT_FOUND);
+
+
+	/*tries to update a non-existing key*/
+	int* z = malloc(sizeof(int));
+	obj = cbt_update(bt, n * 100, z);
+	CU_ASSERT_PTR_NULL(obj);
+	errorno = cbt_errno(bt);
+	CU_ASSERT_EQUAL(errorno, CBT_KEY_NOT_FOUND);
+
+
+	cbt_destroy(bt, free);
+
+}
+
+
+void cbt_key_not_found_error_test2(void)
+{
+	int n = 10000;
+	cranbtree_t *bt = cbt_create(3);
+
+	for (int i = 0; i < n; i++)
+	{
+		int *z = malloc(sizeof(int));
+
+		cbt_insert(bt, i, z);
+	}
+	
+	/*tries to delete a existing key*/
+	void* obj = cbt_delete(bt, n/2);
+	CU_ASSERT_PTR_NOT_NULL(obj);
+	int errorno = cbt_errno(bt);
+	CU_ASSERT_EQUAL(errorno, CBT_NO_ERROR);
+	free(obj);
+
+	/*tries to search for a non-existing key*/	
+	obj = cbt_search(bt, (n/2) + 1);
+	CU_ASSERT_PTR_NOT_NULL(obj);
+	errorno = cbt_errno(bt);
+	CU_ASSERT_EQUAL(errorno, CBT_NO_ERROR);
+
+
+	/*tries to update a non-existing key*/
+	int* z = malloc(sizeof(int));
+	obj = cbt_update(bt,(n/2) + 2, z);
+	CU_ASSERT_PTR_NOT_NULL(obj);
+	errorno = cbt_errno(bt);
+	CU_ASSERT_EQUAL(errorno, CBT_NO_ERROR);
+	free(obj);
+
+	cbt_destroy(bt, free);
+
+}
+
 bool treecmp(cbt_node_t * root1, cbt_node_t * root2, int n)
 {
 	if ((root1 == NULL && root2 != NULL)

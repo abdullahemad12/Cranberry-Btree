@@ -46,14 +46,6 @@
  */
 static void destroy_bt_helper(cbt_node_t * root, int n, void (*done) (void *));
 
-/*
- * errors
- */
-
-static char *errorMessages[] = {
-	NULL,
-	"Cannot perform this operation on a cloned tree",
-};
 
 /*
  * cranbtree_t* -> int

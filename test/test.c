@@ -100,6 +100,8 @@ static struct test utests[] = {
 	{"cbt_detach_clone_test1", cbt_detach_clone_test1},
 	{"cbt_detach_clone_test2", cbt_detach_clone_test2},
 	{"cbt_detach_clone_test3", cbt_detach_clone_test3},
+	{"cbt_key_not_found_error_test1", cbt_key_not_found_error_test1},
+	{"cbt_key_not_found_error_test2", cbt_key_not_found_error_test2},
 	{NULL, NULL}
 
 };

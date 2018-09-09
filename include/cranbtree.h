@@ -27,6 +27,23 @@
 #include <stdbool.h>
 
 /*
+ * error numbers
+ */
+#define CBT_NO_ERROR        0
+#define CBT_CLONE_BAD_OP    1
+#define CBT_KEY_NOT_FOUND   2
+
+/*
+ * error messages
+ */
+
+static char *errorMessages[] = {
+	NULL,
+	"Cannot perform this operation on a cloned tree",
+};
+
+
+/*
  * Struct for the B-tree node's entries;
  * All the nodes in the left subtree must have value >= this.key
  * All the nodes in the right subtree must have value < this.key
@@ -74,11 +91,6 @@ typedef struct cranbtree
 
 /*interface*/
 
-/*
- * error numbers
- */
-#define CBT_NO_ERROR        0
-#define CBT_CLONE_BAD_OP    (CBT_NO_ERROR + 1)
 
 /*
  * cranbtree_t* -> int
