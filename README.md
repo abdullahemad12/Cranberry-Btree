@@ -60,7 +60,7 @@ parameter:
 
 <b>2. void cbt_insert(cranbtree_t* bt, int key, void* object);</b>
 
-Description: inserts an object into the tree with a search key "key".
+Description: inserts an object into the tree with a search key "key". It will fail if it was called on a cloned cranbtree unless the tree was detached.
 
 parameter: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
@@ -70,7 +70,7 @@ parameter:
 <b>2. void* cbt_update(cranbtree_t* bt, int key, void* object);</b>
 
 Description: updates an existing entry in the tree with a new object given the key of the entry. If no entry with such a key was found,
-a new entry is inserted. 
+a new entry is inserted. It will fail if it was called on a cloned cranbtree unless the tree was detached. 
 
 parameters: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
@@ -93,7 +93,7 @@ Return value: returns a pointer to the object that was inserted by the user, or 
 
 <b>4. void* cbt_delete(cranbtree_t* bt, int key);</b>
 
-Description: deletes an object from the tree with a search key "key".
+Description: deletes an object from the tree with a search key "key". It will fail if it was called on a cloned cranbtree unless the tree was detached.
 
 parameter: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
@@ -117,6 +117,24 @@ Description: Prints the tree to the screen. can be used for visualization and de
 
 parameters: cranbtree_t* bt: pointer to the cranbtree structure.
 
+<b>7. int cbt_errno(cranbtree_t * bt); </b>
+
+Description: returns an error code that describes the last failure. returns 0 if no failure has occured.
+
+parameters: cranbtree_t* bt: pointer to the cranbtree structure.
+
+<b>8. const char *cbt_errstr(cranbtree_t * bt); </b>
+
+Description: returns a pointer a string describing the last failure on the cranbtree. returns NULL if no failure has occured.
+
+parameters: cranbtree_t* bt: pointer to the cranbtree structure.
+
+**Note:** Do not attempt to free this pointer.
+
+#### Error codes: 
+
+- No error: CBT_NO_ERROR 0
+- Attempt to modify a cloned tree: CBT_CLONE_BAD_OP 1
 
 ## Installation: 
 This section will guide you on how to install the library in your computers depending on your machine, or use it as a portable library.
