@@ -1691,6 +1691,7 @@ void cbt_clone_test5(void)
 
 		CU_ASSERT_EQUAL(oldobj, newobj);
 		CU_ASSERT_NOT_EQUAL(z, newobj);
+		free(z);
 	}
 
 	for (int i = n1; i < n; i++)
@@ -1700,6 +1701,7 @@ void cbt_clone_test5(void)
 		clone->op_errno = CBT_NO_ERROR;
 		cbt_insert(clone, keys[i], z);
 		CU_ASSERT_EQUAL(clone->op_errno, CBT_CLONE_BAD_OP);
+		free(z);
 	}
 
 	/*makes sure nothing was inserted */
