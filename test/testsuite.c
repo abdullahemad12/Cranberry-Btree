@@ -1926,14 +1926,68 @@ void cbt_get_length_test(void)
 	for (int i = 0; i < n; i++)
 	{
 		int *z = malloc(sizeof(int));
-
+		CU_ASSERT_EQUAL(i, cbt_get_length(bt));
 		cbt_insert(bt, i, z);
 	}
-
 	CU_ASSERT_EQUAL(n, cbt_get_length(bt));
 
+	for(int i = 0; i < n; i++)
+	{
+		CU_ASSERT_EQUAL(n - i, cbt_get_length(bt));
+		cbt_delete(bt, i);	
+	}
+
+	CU_ASSERT_EQUAL(0, cbt_get_length(bt));
 	cbt_destroy(bt, free);
 }
+
+void cbt_get_min_key_test(void)
+{
+	unsigned int n = 1000;
+	cranbtree_t *bt = cbt_create(4);
+
+	for (int i = 0; i < n; i++)
+	{
+		int *z = malloc(sizeof(int));
+		cbt_insert(bt, i, z);
+		CU_ASSERT_EQUAL(0, cbt_get_min_key(bt));
+
+	}
+
+	for(int i = 0; i < n; i++)
+	{
+		CU_ASSERT_EQUAL(i, cbt_get_min_key(bt));
+		cbt_delete(bt, i);	
+	}
+
+	cbt_destroy(bt, free);
+
+}
+
+void cbt_get_max_key_test(void)
+{
+	unsigned int n = 1000;
+	cranbtree_t *bt = cbt_create(4);
+
+	for (int i = 0; i < n; i++)
+	{
+		int *z = malloc(sizeof(int));
+		cbt_insert(bt, i, z);
+		CU_ASSERT_EQUAL(i, cbt_get_max_key(bt));
+
+	}
+
+	for(int i = 0; i < n; i++)
+	{
+		CU_ASSERT_EQUAL(n - 1, cbt_get_max_key(bt));
+		cbt_delete(bt, i);	
+	}
+
+	cbt_destroy(bt, free);
+
+}
+
+
 
 bool treecmp(cbt_node_t * root1, cbt_node_t * root2, int n)
 {

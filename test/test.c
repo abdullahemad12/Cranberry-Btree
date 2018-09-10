@@ -101,6 +101,8 @@ static struct test utests[] = {
 	{"cbt_detach_clone_test2", cbt_detach_clone_test2},
 	{"cbt_detach_clone_test3", cbt_detach_clone_test3},
 	{"cbt_get_length", cbt_get_length_test},
+	{"cbt_get_min_key_test", cbt_get_min_key_test},
+	{"cbt_get_max_key_test", cbt_get_max_key_test},
 	{NULL, NULL}
 
 };
