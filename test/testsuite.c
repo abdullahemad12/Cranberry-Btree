@@ -1949,6 +1949,78 @@ void cbt_update_test1(void)
 	cbt_destroy(bt, free);
 }
 
+void cbt_get_length_test(void)
+{
+	unsigned int n = 1000;
+	cranbtree_t *bt = cbt_create(4);
+
+	for (int i = 0; i < n; i++)
+	{
+		int *z = malloc(sizeof(int));
+
+		CU_ASSERT_EQUAL(i, cbt_get_length(bt));
+		cbt_insert(bt, i, z);
+	}
+	CU_ASSERT_EQUAL(n, cbt_get_length(bt));
+
+	for (int i = 0; i < n; i++)
+	{
+		CU_ASSERT_EQUAL(n - i, cbt_get_length(bt));
+		cbt_delete(bt, i);
+	}
+
+	CU_ASSERT_EQUAL(0, cbt_get_length(bt));
+	cbt_destroy(bt, free);
+}
+
+void cbt_get_min_key_test(void)
+{
+	unsigned int n = 1000;
+	cranbtree_t *bt = cbt_create(4);
+
+	for (int i = 0; i < n; i++)
+	{
+		int *z = malloc(sizeof(int));
+
+		cbt_insert(bt, i, z);
+		CU_ASSERT_EQUAL(0, cbt_get_min_key(bt));
+
+	}
+
+	for (int i = 0; i < n; i++)
+	{
+		CU_ASSERT_EQUAL(i, cbt_get_min_key(bt));
+		cbt_delete(bt, i);
+	}
+
+	cbt_destroy(bt, free);
+
+}
+
+void cbt_get_max_key_test(void)
+{
+	unsigned int n = 1000;
+	cranbtree_t *bt = cbt_create(4);
+
+	for (int i = 0; i < n; i++)
+	{
+		int *z = malloc(sizeof(int));
+
+		cbt_insert(bt, i, z);
+		CU_ASSERT_EQUAL(i, cbt_get_max_key(bt));
+
+	}
+
+	for (int i = 0; i < n; i++)
+	{
+		CU_ASSERT_EQUAL(n - 1, cbt_get_max_key(bt));
+		cbt_delete(bt, i);
+	}
+
+	cbt_destroy(bt, free);
+
+}
+
 void cbt_key_not_found_error_test1(void)
 {
 	int n = 10000;
@@ -1960,23 +2032,26 @@ void cbt_key_not_found_error_test1(void)
 
 		cbt_insert(bt, i, z);
 	}
-	
-	/*tries to delete a non-existing key*/
-	void* obj = cbt_delete(bt, n * 100);
+
+	/*tries to delete a non-existing key */
+	void *obj = cbt_delete(bt, n * 100);
+
 	CU_ASSERT_PTR_NULL(obj);
 	int errorno = cbt_errno(bt);
+
 	CU_ASSERT_EQUAL(errorno, CBT_KEY_NOT_FOUND);
 	bt->op_errno = 0;
-	
-	/*tries to search for a non-existing key*/	
+
+	/*tries to search for a non-existing key */
 	obj = cbt_search(bt, n * 100);
 	CU_ASSERT_PTR_NULL(obj);
 	errorno = cbt_errno(bt);
 	CU_ASSERT_EQUAL(errorno, CBT_KEY_NOT_FOUND);
 	bt->op_errno = 0;
 
-	/*tries to update a non-existing key*/
-	int* z = malloc(sizeof(int));
+	/*tries to update a non-existing key */
+	int *z = malloc(sizeof(int));
+
 	obj = cbt_update(bt, n * 100, z);
 	CU_ASSERT_PTR_NULL(obj);
 	errorno = cbt_errno(bt);
@@ -1986,7 +2061,6 @@ void cbt_key_not_found_error_test1(void)
 	cbt_destroy(bt, free);
 
 }
-
 
 void cbt_key_not_found_error_test2(void)
 {
@@ -1999,25 +2073,28 @@ void cbt_key_not_found_error_test2(void)
 
 		cbt_insert(bt, i, z);
 	}
-	
-	/*tries to delete a existing key*/
-	void* obj = cbt_delete(bt, n/2);
+
+	/*tries to delete a existing key */
+	void *obj = cbt_delete(bt, n / 2);
+
 	CU_ASSERT_PTR_NOT_NULL(obj);
 	int errorno = cbt_errno(bt);
+
 	CU_ASSERT_EQUAL(errorno, CBT_NO_ERROR);
 	free(obj);
 	bt->op_errno = 0;
 
-	/*tries to search for a non-existing key*/	
-	obj = cbt_search(bt, (n/2) + 1);
+	/*tries to search for a non-existing key */
+	obj = cbt_search(bt, (n / 2) + 1);
 	CU_ASSERT_PTR_NOT_NULL(obj);
 	errorno = cbt_errno(bt);
 	CU_ASSERT_EQUAL(errorno, CBT_NO_ERROR);
 	bt->op_errno = 0;
 
-	/*tries to update a non-existing key*/
-	int* z = malloc(sizeof(int));
-	obj = cbt_update(bt,(n/2) + 2, z);
+	/*tries to update a non-existing key */
+	int *z = malloc(sizeof(int));
+
+	obj = cbt_update(bt, (n / 2) + 2, z);
 	CU_ASSERT_PTR_NOT_NULL(obj);
 	errorno = cbt_errno(bt);
 	CU_ASSERT_EQUAL(errorno, CBT_NO_ERROR);
