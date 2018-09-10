@@ -44,9 +44,23 @@ Parameters: cranbtree_t* cbt: the cranbtree to be cloned.
 Return value: returns a pointer to the clone of the Cranberry Tree struct.
 
 
+
+<b>2. void cbt_detach_clone(cranbtree_t* cbt, void* (* copy_object)(void*));</b>
+
+Description: Detaches a cloned cranbtree_t and use copy_object (If not NULL) to create new copies of the objects stored in the cranbtree and stores the new objects instead of the old ones. Note that, after calling this function, insert, update, delete, destroy will not treat this cranbtree as a clone any more and will be applied normally. It has no effect when called on an already detached cranbtree or a normal cranbtree.
+
+parameter: 
+- cranbtree_t* bt: pointer to the cranbtree structure.
+- void* (* copy_object)(void*): a pointer to a function that takes void* and returns void*. The function should expect an object stored in the tree as a paramter and return a void pointer pointing to a new copy of that object.
+
+**Note**: that cbt_detach_clone will still be applied to the tree even if copy_object is NULL; However, it will not copy any objects and it becomes the responsibility of the user to make sure that destroy will not cause a double free memory corruption.
+
+
+
+
 <b>2. void cbt_insert(cranbtree_t* bt, int key, void* object);</b>
 
-Description: inserts an object into the tree with a search key "key".
+Description: inserts an object into the tree with a search key "key". It will fail if it was called on a cloned cranbtree unless the tree was detached.
 
 parameter: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
@@ -56,7 +70,7 @@ parameter:
 <b>2. void* cbt_update(cranbtree_t* bt, int key, void* object);</b>
 
 Description: updates an existing entry in the tree with a new object given the key of the entry. If no entry with such a key was found,
-a new entry is inserted. 
+a new entry is inserted. It will fail if it was called on a cloned cranbtree unless the tree was detached. 
 
 parameters: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
@@ -79,7 +93,7 @@ Return value: returns a pointer to the object that was inserted by the user, or 
 
 <b>4. void* cbt_delete(cranbtree_t* bt, int key);</b>
 
-Description: deletes an object from the tree with a search key "key".
+Description: deletes an object from the tree with a search key "key". It will fail if it was called on a cloned cranbtree unless the tree was detached.
 
 parameter: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
@@ -103,6 +117,25 @@ Description: Prints the tree to the screen. can be used for visualization and de
 
 parameters: cranbtree_t* bt: pointer to the cranbtree structure.
 
+<b>7. int cbt_errno(cranbtree_t * bt); </b>
+
+Description: returns an error code that describes the last failure. returns 0 if no failure has occured.
+
+parameters: cranbtree_t* bt: pointer to the cranbtree structure.
+
+<b>8. const char *cbt_errstr(cranbtree_t * bt); </b>
+
+Description: returns a pointer a string describing the last failure on the cranbtree. returns NULL if no failure has occured.
+
+parameters: cranbtree_t* bt: pointer to the cranbtree structure.
+
+**Note:** Do not attempt to free this pointer.
+
+#### Error codes: 
+
+- No error: CBT_NO_ERROR 0
+- Attempt to modify a cloned tree: CBT_CLONE_BAD_OP 1
+- The key was not found: CBT_KEY_NOT_FOUND 2
 
 ## Installation: 
 This section will guide you on how to install the library in your computers depending on your machine, or use it as a portable library.

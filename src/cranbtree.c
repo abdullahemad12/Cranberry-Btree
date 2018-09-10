@@ -46,6 +46,29 @@
  */
 static void destroy_bt_helper(cbt_node_t * root, int n, void (*done) (void *));
 
+
+/*
+ * cranbtree_t* -> int
+ * Return last detected error code/number
+ */
+int cbt_errno(cranbtree_t * bt)
+{
+	assert(bt != NULL);
+
+	return bt->op_errno;
+}
+
+/*
+ * cranbtree_t* -> const char*
+ * Return pointer to string describing last error. NULL if no error recorded.
+ */
+const char *cbt_errstr(cranbtree_t * bt)
+{
+	assert(bt != NULL);
+
+	return errorMessages[bt->op_errno];
+}
+
 /*
  * int -> bptree_t* 
  * Given the maximum number of entries in a node
@@ -77,6 +100,8 @@ cranbtree_t *cbt_create(int n)
 	bt->max_key = -1;
 	bt->n = n;
 	bt->is_clone = false;
+	bt->op_errno = CBT_NO_ERROR;
+
 	return bt;
 }
 
@@ -110,18 +135,26 @@ cranbtree_t *cbt_clone(cranbtree_t * cbt)
 
 /**
   * cranbtree_t*, int, void* -> void
-  * EFFECTS: inserts an object in the btree in respect with the search key
+  * EFFECTS: Inserts an object in the btree in respect with the search key.
+  * 		 Unless the tree is a clone, in which case it return immediately.
+  * 		 Sets op_errno on any error.
   * MODIFIES: cranbtree_t* bt
-  * RETURNS: void
+  * RETURNS: Pointer to the inserted object or NULL on any error
   *
   * cranbtree_t* bt: Tree structs that will hold the object
   * int key: search key (choosen by the user)
   * void* object: pointer to the object to be inserted
   */
-void cbt_insert(cranbtree_t * bt, int key, void *object)
+void *cbt_insert(cranbtree_t * bt, int key, void *object)
 {
 	assert(bt != NULL);
 	assert(object != NULL);
+
+	if (bt->is_clone)
+	{
+		bt->op_errno = CBT_CLONE_BAD_OP;
+		return (cranbtree_t *) NULL;
+	}
 
 	cbt_entry_t *entry = bt_create_entry(key, object);
 
@@ -141,14 +174,17 @@ void cbt_insert(cranbtree_t * bt, int key, void *object)
 		bt->min_key = bt->min_key > key ? key : bt->min_key;
 	}
 	bt->length++;
+
+	return object;
 }
 
 /**
   * cranbtree_t*, int, void* -> void
   * MODIFIES: cranbtree_t* 
   * EFFECTS: Updates the object of the entry that has the specified key with the new pointer. If 
-  * 		 no such entry was found a new entry is inserted.
-  * RETURNS: pointer to the old object, NULL if it was not found
+  * 		 no such entry was found a new entry is inserted. Returns immediately if the tree is
+  * 		 a clone. Sets op_errno on any error.
+  * RETURNS: Pointer to the old object, NULL if it was not found.
   * PARAMETERS: 
   * - cranbtree_t* cbt, pointer to the BTree struct
   * - int key: the key of the entry to be updated
@@ -156,6 +192,14 @@ void cbt_insert(cranbtree_t * bt, int key, void *object)
   */
 void *cbt_update(cranbtree_t * bt, int key, void *object)
 {
+	assert(bt != NULL);
+
+	if (bt->is_clone)
+	{
+		bt->op_errno = CBT_CLONE_BAD_OP;
+		return (void *)NULL;
+	}
+
 	void *old_object = cbt_update_helper(bt->root, key, object, bt->n);
 
 	if (old_object == NULL)
@@ -207,13 +251,20 @@ void *cbt_search(cranbtree_t * bt, int key)
 
 /**
   * cranbtree_t*, int -> void*
-  * EFFECTS: Given a key, removes an object from the tree
+  * EFFECTS: Given a key, removes an object from the tree. Sets errno on any error.
   * MODIFIES: cranbtree_t*
-  * RETURNS: returns the object or NULL if no such a key was found
+  * RETURNS: returns the object or NULL if no such a key was found.
   */
 void *cbt_delete(cranbtree_t * bt, int key)
 {
 	assert(bt != NULL);
+
+	if (bt->is_clone)
+	{
+		bt->op_errno = CBT_CLONE_BAD_OP;
+		return (void *)NULL;
+	}
+
 	void *object = bt_delete_helper(bt, bt->root, key);
 
 	if (object != NULL)

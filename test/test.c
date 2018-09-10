@@ -103,6 +103,8 @@ static struct test utests[] = {
 	{"cbt_get_length", cbt_get_length_test},
 	{"cbt_get_min_key_test", cbt_get_min_key_test},
 	{"cbt_get_max_key_test", cbt_get_max_key_test},
+	{"cbt_key_not_found_error_test1", cbt_key_not_found_error_test1},
+	{"cbt_key_not_found_error_test2", cbt_key_not_found_error_test2},
 	{NULL, NULL}
 
 };

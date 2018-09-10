@@ -1,5 +1,5 @@
 # Deletion
-Deletion can be a little bit more complicated than the other operations on the tree becuase we have to make sure that, after removing an element from a certain node in the tree, the tree is still balanced and the number of keys in a node still satisfies the minimum according to the order of the tree. In this document, we will take a look at the algorithm used for the deletion operation and we will take a quick tour around the implementation and source code responsible for making the deletion.
+Deletion can be a little bit more complicated than the other operations on the tree becuase we have to make sure that, after removing an element from a certain node in the tree, the tree is still balanced and the number of keys in a node still satisfies the minimum according to the n of the tree. In this document, we will take a look at the algorithm used for the deletion operation and we will take a quick tour around the implementation and source code responsible for making the deletion.
 
 # Algorithm
 Let us take a look at the algorithm used for our Btree highlighting that it might be slightly different from other deletion algorithms you might find elsewhere.

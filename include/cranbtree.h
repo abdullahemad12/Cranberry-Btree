@@ -27,6 +27,23 @@
 #include <stdbool.h>
 
 /*
+ * error numbers
+ */
+#define CBT_NO_ERROR        0
+#define CBT_CLONE_BAD_OP    1
+#define CBT_KEY_NOT_FOUND   2
+
+/*
+ * error messages
+ */
+
+static char *errorMessages[] = {
+	NULL,
+	"Cannot perform this operation on a cloned tree",
+};
+
+
+/*
  * Struct for the B-tree node's entries;
  * All the nodes in the left subtree must have value >= this.key
  * All the nodes in the right subtree must have value < this.key
@@ -69,9 +86,23 @@ typedef struct cranbtree
 	int min_key;
 	unsigned int n;
 	bool is_clone;
+	int op_errno;
 } cranbtree_t;
 
 /*interface*/
+
+
+/*
+ * cranbtree_t* -> int
+ * Return pointer to string describing last error. NULL if no error recorded.
+ */
+int cbt_errno(cranbtree_t * bt);
+
+/*
+ * cranbtree_t* -> const char* 
+ * Return pointer to string describing last error. NULL if no error recorded.
+ */
+const char *cbt_errstr(cranbtree_t * bt);
 
 /*
  * int -> bptree_t* 
@@ -91,15 +122,17 @@ cranbtree_t *cbt_clone(cranbtree_t * cbt);
 
 /**
   * cranbtree_t*, int, void* -> void
-  * EFFECTS: inserts an object in the btree in respect with the search key
+  * EFFECTS: Inserts an object in the btree in respect with the search key.
+  *          Unless the tree is a clone, in which case it return immediately.
+  *          Sets op_errno on any error.
   * MODIFIES: cranbtree_t* bt
-  * RETURNS: void
+  * RETURNS: Pointer to the inserted object or NULL on any error
   *
   * cranbtree_t* bt: Tree structs that will hold the object
   * int key: search key (choosen by the user)
   * void* object: pointer to the object to be inserted
   */
-void cbt_insert(cranbtree_t * bt, int key, void *object);
+void *cbt_insert(cranbtree_t * bt, int key, void *object);
 
 /**
   * cranbtree_t*, int, void* -> void
