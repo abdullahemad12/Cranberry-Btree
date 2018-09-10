@@ -46,7 +46,6 @@
  */
 static void destroy_bt_helper(cbt_node_t * root, int n, void (*done) (void *));
 
-
 /*
  * cranbtree_t* -> int
  * Return last detected error code/number

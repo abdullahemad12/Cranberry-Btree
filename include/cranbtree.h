@@ -42,7 +42,6 @@ static char *errorMessages[] = {
 	"Cannot perform this operation on a cloned tree",
 };
 
-
 /*
  * Struct for the B-tree node's entries;
  * All the nodes in the left subtree must have value >= this.key
@@ -90,7 +89,6 @@ typedef struct cranbtree
 } cranbtree_t;
 
 /*interface*/
-
 
 /*
  * cranbtree_t* -> int
