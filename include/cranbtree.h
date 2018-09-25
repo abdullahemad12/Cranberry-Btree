@@ -42,7 +42,6 @@ static char *errorMessages[] = {
 	"Cannot perform this operation on a cloned tree",
 };
 
-
 /*
  * Struct for the B-tree node's entries;
  * All the nodes in the left subtree must have value >= this.key
@@ -90,7 +89,6 @@ typedef struct cranbtree
 } cranbtree_t;
 
 /*interface*/
-
 
 /*
  * cranbtree_t* -> int
@@ -204,7 +202,7 @@ int cbt_get_min_key(cranbtree_t * cbt);
   * EFFECTS: gets the length of the B-tree
   * RETURNS: the length of the B-tree
   */
-int cbt_get_length(cranbtree_t * cbt);
+unsigned int cbt_get_length(cranbtree_t * cbt);
 
 /**
   * cranbtree_t*, void* (* copy_object)(void*) -> void
