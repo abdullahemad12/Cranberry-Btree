@@ -259,8 +259,11 @@ void *cbt_search(cranbtree_t * bt, int key)
   */
 void *cbt_delete(cranbtree_t * bt, int key)
 {
-	assert(bt != NULL);
-
+	//assert(bt != NULL);
+	if (bt == NULL)
+	{
+		bt->op_errno = CBT_KEY_NOT_FOUND;
+	}
 	if (bt->is_clone)
 	{
 		bt->op_errno = CBT_CLONE_BAD_OP;
