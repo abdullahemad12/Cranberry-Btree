@@ -248,7 +248,9 @@ int cbt_key_search(cranbtree_t * cbt, void *object)
 		cbt->op_errno = CBT_KEY_NOT_FOUND;
 		return -1;
 	}
+	else{
 	return 0;
+	}
 }
 
 /**
@@ -262,7 +264,7 @@ void *cbt_search(cranbtree_t * bt, int key)
 	assert(bt != NULL);
 	void *object = bt_search_helper(bt->root, key, bt->n);
 	
-	if(cbt_key_search(bt, object)== -1){
+	if(cbt_key_search(bt, object)== (-1)){
 		return (void *)NULL;
 	}
 	else{
