@@ -199,11 +199,16 @@ void *cbt_update(cranbtree_t * bt, int key, void *object)
 		return (void *)NULL;
 	}
 
+	if(object == NULL)
+	{
+		bt->op_errno = CBT_KEY_NOT_FOUND;
+		return (void *)NULL;
+	}
+
 	void *old_object = cbt_update_helper(bt->root, key, object, bt->n);
 
 	if (old_object == NULL)
 	{
-		bt->op_errno = CBT_KEY_NOT_FOUND;
 		cbt_insert(bt, key, object);
 	}
 	return old_object;
@@ -222,7 +227,13 @@ void *cbt_update(cranbtree_t * bt, int key, void *object)
   */
 void *cbt_update_if_exists(cranbtree_t * bt, int key, void *object)
 {
-	return NULL;
+	if(object==NULL){
+		bt->op_errno == CBT_KEY_NOT_FOUND;
+		return NULL;
+	}
+	else{
+		return object;
+	}
 }
 
 /**
@@ -233,7 +244,11 @@ void *cbt_update_if_exists(cranbtree_t * bt, int key, void *object)
   *
   */
 int cbt_key_search(cranbtree_t * cbt, void *object)
-{
+{	
+	if(object == NULL){
+		cbt->op_errno = CBT_KEY_NOT_FOUND;
+		return -1;
+	}
 	return 0;
 }
 
@@ -246,11 +261,14 @@ int cbt_key_search(cranbtree_t * cbt, void *object)
 void *cbt_search(cranbtree_t * bt, int key)
 {
 	assert(bt != NULL);
-	if(bt_search_helper(bt->root, key, bt->n) == NULL)
-	{
-		bt->op_errno = CBT_KEY_NOT_FOUND;
+	void *object = bt_search_helper(bt->root, key, bt->n);
+	
+	if(cbt_key_search(bt, object)== -1){
+		return (void *)NULL;
 	}
-	return bt_search_helper(bt->root, key, bt->n);
+	else{
+	return object;
+	}
 }
 
 /**
@@ -285,6 +303,7 @@ void *cbt_delete(cranbtree_t * bt, int key)
 	else
 	{
 		bt->op_errno = CBT_KEY_NOT_FOUND;
+		return (void *)NULL;
 	}
 
 	return object;
