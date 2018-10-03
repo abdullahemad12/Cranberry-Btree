@@ -277,6 +277,11 @@ void *cbt_delete(cranbtree_t * bt, int key)
 		bt->length--;
 	}
 
+	else
+	{
+		bt->op_errno = CBT_KEY_NOT_FOUND;
+	}
+
 	return object;
 }
 
