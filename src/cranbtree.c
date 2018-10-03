@@ -199,12 +199,11 @@ void *cbt_update(cranbtree_t * bt, int key, void *object)
 		return (void *)NULL;
 	}
 
-	if(cbt_update_if_exists(bt, key, object) == NULL){
+	void *old_object = cbt_update_helper(bt->root, key, object, bt->n);
+
+	if(cbt_update_if_exists(bt, key, old_object) == NULL){
 		return (void *)NULL;
 	}
-
-
-	void *old_object = cbt_update_helper(bt->root, key, object, bt->n);
 
 	if (old_object == NULL)
 	{
