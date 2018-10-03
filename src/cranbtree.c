@@ -203,6 +203,7 @@ void *cbt_update(cranbtree_t * bt, int key, void *object)
 
 	if (old_object == NULL)
 	{
+		bt->op_errno = CBT_KEY_NOT_FOUND;
 		cbt_insert(bt, key, object);
 	}
 	return old_object;
