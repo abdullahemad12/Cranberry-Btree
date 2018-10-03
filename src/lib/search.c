@@ -32,7 +32,6 @@ static void *bt_search_helper(cbt_node_t * node, int key, int n)
 {
 	if (node == NULL)
 	{
-		bt->op_errorno = CBT_KEY_NOT_FOUND;
 		return NULL;
 	}
 
