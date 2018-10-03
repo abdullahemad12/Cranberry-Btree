@@ -147,11 +147,8 @@ cranbtree_t *cbt_clone(cranbtree_t * cbt)
 void *cbt_insert(cranbtree_t * bt, int key, void *object)
 {
 	assert(bt != NULL);
-	//assert(object != NULL);
-	if(object == NULL) {
-		bt->op_errno = CBT_KEY_NOT_FOUND;
-	}
-
+	assert(object != NULL);
+	
 	if (bt->is_clone)
 	{
 		bt->op_errno = CBT_CLONE_BAD_OP;
@@ -259,11 +256,8 @@ void *cbt_search(cranbtree_t * bt, int key)
   */
 void *cbt_delete(cranbtree_t * bt, int key)
 {
-	//assert(bt != NULL);
-	if (bt == NULL)
-	{
-		bt->op_errno = CBT_KEY_NOT_FOUND;
-	}
+	assert(bt != NULL);
+	
 	if (bt->is_clone)
 	{
 		bt->op_errno = CBT_CLONE_BAD_OP;
