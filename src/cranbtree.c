@@ -247,7 +247,7 @@ void *cbt_search(cranbtree_t * bt, int key)
 	assert(bt != NULL);
 	void *object = bt_search_helper(bt->root, key, bt->n);
 	
-	if(cbt_key_search(bt, object)== (-1)){
+	if(object==NULL){
 		return (void *)NULL;
 	}
 	else{
