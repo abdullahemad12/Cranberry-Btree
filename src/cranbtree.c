@@ -201,10 +201,6 @@ void *cbt_update(cranbtree_t * bt, int key, void *object)
 
 	void *old_object = cbt_update_helper(bt->root, key, object, bt->n);
 
-	if(cbt_update_if_exists(bt, key, old_object) == NULL){
-		return (void *)NULL;
-	}
-
 	if (old_object == NULL)
 	{
 		cbt_insert(bt, key, object);
