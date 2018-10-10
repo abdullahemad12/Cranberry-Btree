@@ -221,13 +221,7 @@ void *cbt_update(cranbtree_t * bt, int key, void *object)
   */
 void *cbt_update_if_exists(cranbtree_t * bt, int key, void *object)
 {
-	if(object==NULL){
-		bt->op_errno = CBT_KEY_NOT_FOUND;
-		return NULL;
-	}
-	else{
-		return object;
-	}
+	
 }
 
 /**
