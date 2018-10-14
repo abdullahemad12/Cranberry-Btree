@@ -221,7 +221,7 @@ void *cbt_update(cranbtree_t * bt, int key, void *object)
   */
 void *cbt_update_if_exists(cranbtree_t * bt, int key, void *object)
 {
-	
+	return;
 }
 
 /**
@@ -233,7 +233,7 @@ void *cbt_update_if_exists(cranbtree_t * bt, int key, void *object)
   */
 int cbt_key_search(cranbtree_t * cbt, void *object)
 {	
-	
+	return 0;
 }
 
 /**
