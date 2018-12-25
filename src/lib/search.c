@@ -78,3 +78,16 @@ static cbt_entry_t *bt_node_search_helper(cbt_entry_t * entries[], int key,
 	}
 
 }
+
+
+/**
+  * void*, int (*)(void*) -> void*
+  * EFFECTS: search for an entry in the tree according to the rules set 
+  *           by the visitor and returns the object
+  * RETURNS: pointer to the object or NULL if it was not found
+  */
+static void *cbt_navigation_search_helper(cranbtree_t* cbt, int (*visitor)(void*))
+{
+	return NULL;	
+}
+
