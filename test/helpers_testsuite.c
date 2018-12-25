@@ -4,6 +4,18 @@
 #include <time.h>
 #include <stdlib.h>
 
+/*static int navigation_search_helper(void* object)
+{
+	int* x = (int*) object;
+	if()
+}
+void navigation_search_test1(void)
+{
+	cranbtree_t* cbt = cbt_create(3);
+
+	
+}*/
+
 void get_right_sibling_test(void)
 {
 	cbt_node_t *parent = bt_create_node(4);

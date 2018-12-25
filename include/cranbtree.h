@@ -178,19 +178,21 @@ void *cbt_search(cranbtree_t * bt, int key);
 int cbt_key_search(cranbtree_t * cbt, void *object);
 
 /**
-  * cranbtree_t*,  int (*)(void*) -> void*
+  * cranbtree_t*, void* key,  int (*)(void*) -> void*
   * EFFECTS: will navigate the tree searching for a specific item using the rules set by the visitor
   *                    function
   * REQUIRES: the function "visitor" to return an integer according to the following rules
   *                      1. positive: means the node to look at next is the right one.
   *                      2. negative: means the node to look at next is the left one.
   *                      3. zero: means the item was found, no further traversal is needed.
+  *                      the visitor will be passed the arguments in the following order: key, current object
   * RETURNS: the item we are looking for, or NULL if the item was not found
   * PARAMETERS: 
   * - cranbtree_t* cbt: cranberry tree to be traversed
-  * - int (*visitor)(void*): visitor function that will be invoked on every object in the tree
+  * - void* key: a key that will be passed to visitor to make a decision
+  * - int (*visitor)(void*, void*): visitor function that will be invoked on every object in the tree
   */
-void *cbt_navigation_search(cranbtree_t* cbt, int (*visitor)(void*));
+void* cbt_navigation_search(cranbtree_t* cbt, void* key, int (*visitor)(void*, void*));
 
 /**
   * cranbtree_t*, int -> void*
