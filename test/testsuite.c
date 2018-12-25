@@ -1966,7 +1966,7 @@ void cbt_get_length_test(void)
 	for (int i = 0; i < n; i++)
 	{
 		CU_ASSERT_EQUAL(n - i, cbt_get_length(bt));
-		void * obj = cbt_delete(bt, i);
+		void *obj = cbt_delete(bt, i);
 		free(obj);
 	}
 
@@ -1991,7 +1991,9 @@ void cbt_get_min_key_test(void)
 	for (int i = 0; i < n; i++)
 	{
 		CU_ASSERT_EQUAL(i, cbt_get_min_key(bt));
-		cbt_delete(bt, i);
+		void *obj = cbt_delete(bt, i);
+		free(obj);
+	
 	}
 
 	cbt_destroy(bt, free);
@@ -2015,7 +2017,8 @@ void cbt_get_max_key_test(void)
 	for (int i = 0; i < n; i++)
 	{
 		CU_ASSERT_EQUAL(n - 1, cbt_get_max_key(bt));
-		cbt_delete(bt, i);
+		void *obj = cbt_delete(bt, i);
+		free(obj);
 	}
 
 	cbt_destroy(bt, free);
