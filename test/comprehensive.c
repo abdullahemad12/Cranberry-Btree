@@ -105,7 +105,7 @@ static void bt_comp_test1(void)
 static void bt_comp_test2(void)
 {
 
-	int n = 100000000;
+	int n = 1000000;
 	cranbtree_t *bt = cbt_create(3);
 
 	printf("\n");
