@@ -190,7 +190,8 @@ int cbt_key_search(cranbtree_t * cbt, void *object);
   * - void* key: a key that will be passed to visitor to make a decision
   * - int (*visitor)(void*, void*): visitor function that will be invoked on every object in the tree
   */
-void* cbt_navigation_search(cranbtree_t* cbt, void* key, int (*visitor)(void*, void*));
+void *cbt_navigation_search(cranbtree_t * cbt, void *key,
+			    int (*visitor) (void *, void *));
 
 /**
   * cranbtree_t*, int -> void*
@@ -253,7 +254,5 @@ void cbt_destroy(cranbtree_t * bt, void (*destroy_object) (void *));
    * EFFECTS: prints the nodes of the tree to the screen for visualization
    */
 void printTree(cranbtree_t * bt);
-
-
 
 #endif				/* _BTREE_H_ */

@@ -248,7 +248,6 @@ void *cbt_search(cranbtree_t * bt, int key)
 	return bt_search_helper(bt->root, key, bt->n);
 }
 
-
 /**
   * cranbtree_t*, void* key,  int (*)(void*) -> void*
   * EFFECTS: will navigate the tree searching for a specific item using the rules set by the visitor
@@ -264,7 +263,8 @@ void *cbt_search(cranbtree_t * bt, int key)
   * - void* key: a key that will be passed to visitor to make a decision
   * - int (*visitor)(void*, void*): visitor function that will be invoked on every object in the tree
   */
-void* cbt_navigation_search(cranbtree_t* cbt, void* key, int (*visitor)(void*, void*))
+void *cbt_navigation_search(cranbtree_t * cbt, void *key,
+			    int (*visitor) (void *, void *))
 {
 	assert(cbt != NULL);
 	assert(visitor != NULL);
