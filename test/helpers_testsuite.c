@@ -64,7 +64,6 @@ void navigation_search_test3(void)
 	for(int i = 0; i < n; i++)
 	{
 		void* ret = cbt_navigation_search(cbt, &i, navigation_search_helper);
-		assert(ret == NULL);
 		CU_ASSERT_PTR_NOT_NULL(ret);
 	}
 	cbt_destroy(cbt, free);

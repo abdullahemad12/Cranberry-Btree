@@ -86,8 +86,24 @@ static cbt_entry_t *bt_node_search_helper(cbt_entry_t * entries[], int key,
   *           by the visitor and returns the object
   * RETURNS: pointer to the object or NULL if it was not found
   */
-static void *cbt_navigation_search_helper(cranbtree_t* cbt, void* key, int (*visitor)(void*, void*))
+static void *cbt_navigation_search_helper(cbt_node_t* node, void* key, int (*visitor)(void*, void*))
 {
-	return NULL;	
+	if(node == NULL)
+	{
+		return NULL;
+	}
+	for(int i = 0; i < node->len; i++)
+	{
+		int direction = visitor(key, node->entry[i]->object);
+		if(direction < 0)
+		{
+			return cbt_navigation_search_helper(node->children[i], key, visitor);	
+		}
+		else if(direction == 0)
+		{
+			return node->entry[i]->object;
+		}
+	}
+	return cbt_navigation_search_helper(node->children[node->len], key, visitor);	
 }
 

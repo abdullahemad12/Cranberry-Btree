@@ -269,7 +269,7 @@ void* cbt_navigation_search(cranbtree_t* cbt, void* key, int (*visitor)(void*, v
 {
 	assert(cbt != NULL);
 	assert(visitor != NULL);
-	return cbt_navigation_search_helper(cbt, key, visitor);
+	return cbt_navigation_search_helper(cbt->root, key, visitor);
 }
 
 /**
