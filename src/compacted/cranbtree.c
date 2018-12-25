@@ -52,6 +52,8 @@ static bool is_leaf(cbt_node_t * node);
 static cbt_entry_t *bt_node_search_helper(cbt_entry_t * entries[], int key,
 					  int min, int max);
 static void *bt_search_helper(cbt_node_t * node, int key, int n);
+static void *cbt_navigation_search_helper(cbt_node_t * node, void *key,
+					  int (*visitor) (void *, void *));
 static void bt_insert_helper(cranbtree_t * bt, cbt_node_t * root,
 			     cbt_entry_t * entry);
 static void destroy_bt_helper(cbt_node_t * root, int n, void (*done) (void *));
@@ -247,6 +249,29 @@ void *cbt_search(cranbtree_t * bt, int key)
 {
 	assert(bt != NULL);
 	return bt_search_helper(bt->root, key, bt->n);
+}
+
+/**
+  * cranbtree_t*, void* key,  int (*)(void*) -> void*
+  * EFFECTS: will navigate the tree searching for a specific item using the rules set by the visitor
+  *                    function
+  * REQUIRES: the function "visitor" to return an integer according to the following rules
+  *                      1. positive: means the node to look at next is the right one.
+  *                      2. negative: means the node to look at next is the left one.
+  *                      3. zero: means the item was found, no further traversal is needed.
+  *                      the visitor will be passed the arguments in the following order: key, current object
+  * RETURNS: the item we are looking for, or NULL if the item was not found
+  * PARAMETERS: 
+  * - cranbtree_t* cbt: cranberry tree to be traversed
+  * - void* key: a key that will be passed to visitor to make a decision
+  * - int (*visitor)(void*, void*): visitor function that will be invoked on every object in the tree
+  */
+void *cbt_navigation_search(cranbtree_t * cbt, void *key,
+			    int (*visitor) (void *, void *))
+{
+	assert(cbt != NULL);
+	assert(visitor != NULL);
+	return cbt_navigation_search_helper(cbt->root, key, visitor);
 }
 
 /**
@@ -1059,6 +1084,37 @@ static void *bt_search_helper(cbt_node_t * node, int key, int n)
 	void *object = entry->object;
 
 	return object;
+}
+
+/**
+  * void*, int (*)(void*) -> void*
+  * EFFECTS: search for an entry in the tree according to the rules set 
+  *           by the visitor and returns the object
+  * RETURNS: pointer to the object or NULL if it was not found
+  */
+static void *cbt_navigation_search_helper(cbt_node_t * node, void *key,
+					  int (*visitor) (void *, void *))
+{
+	if (node == NULL)
+	{
+		return NULL;
+	}
+	for (int i = 0; i < node->len; i++)
+	{
+		int direction = visitor(key, node->entry[i]->object);
+
+		if (direction < 0)
+		{
+			return cbt_navigation_search_helper(node->children[i],
+							    key, visitor);
+		}
+		else if (direction == 0)
+		{
+			return node->entry[i]->object;
+		}
+	}
+	return cbt_navigation_search_helper(node->children[node->len], key,
+					    visitor);
 }
 
 /*
