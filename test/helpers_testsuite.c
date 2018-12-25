@@ -4,17 +4,72 @@
 #include <time.h>
 #include <stdlib.h>
 
-/*static int navigation_search_helper(void* object)
+static int navigation_search_helper(void* key, void* object)
 {
 	int* x = (int*) object;
-	if()
+	int* y = (int*) key; 
+	if(*x > *y)
+	{
+		return -1;		
+	}
+	else if(*x < *y)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
 }
 void navigation_search_test1(void)
 {
 	cranbtree_t* cbt = cbt_create(3);
+	int x = 3;
+	void* ret = cbt_navigation_search(cbt, &x, navigation_search_helper);
+	CU_ASSERT_PTR_NULL(ret);
+	cbt_destroy(cbt, NULL);
+}
 
-	
-}*/
+void navigation_search_test2(void)
+{
+	cranbtree_t* cbt = cbt_create(3);
+	int n = 10000;
+	for(int i = 0; i < n; i++)
+	{
+		int* x = malloc(sizeof(int));
+		*x = i;
+		cbt_insert(cbt, i, x);
+	}
+
+	for(int i = n, n1 = 2 * n; i < n1; i++)
+	{
+		void* ret = cbt_navigation_search(cbt, &i, navigation_search_helper);
+		CU_ASSERT_PTR_NULL(ret);
+	}
+
+	cbt_destroy(cbt, free);
+}
+
+void navigation_search_test3(void)
+{
+	cranbtree_t* cbt = cbt_create(3);
+	int n = 10000;
+	for(int i = 0; i < n; i++)
+	{
+		int* x = malloc(sizeof(int));
+		*x = i;
+		cbt_insert(cbt, i, x);
+	}
+
+	for(int i = 0; i < n; i++)
+	{
+		void* ret = cbt_navigation_search(cbt, &i, navigation_search_helper);
+		assert(ret == NULL);
+		CU_ASSERT_PTR_NOT_NULL(ret);
+	}
+	cbt_destroy(cbt, free);
+}
+
 
 void get_right_sibling_test(void)
 {
