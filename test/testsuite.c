@@ -1966,7 +1966,8 @@ void cbt_get_length_test(void)
 	for (int i = 0; i < n; i++)
 	{
 		CU_ASSERT_EQUAL(n - i, cbt_get_length(bt));
-		cbt_delete(bt, i);
+		void * obj = cbt_delete(bt, i);
+		free(obj);
 	}
 
 	CU_ASSERT_EQUAL(0, cbt_get_length(bt));

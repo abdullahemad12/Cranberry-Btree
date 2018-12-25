@@ -203,6 +203,7 @@ void *cbt_update(cranbtree_t * bt, int key, void *object)
 
 	if (old_object == NULL)
 	{
+		bt->op_errno = CBT_KEY_NOT_FOUND;
 		cbt_insert(bt, key, object);
 	}
 	return old_object;
@@ -245,7 +246,12 @@ int cbt_key_search(cranbtree_t * cbt, void *object)
 void *cbt_search(cranbtree_t * bt, int key)
 {
 	assert(bt != NULL);
-	return bt_search_helper(bt->root, key, bt->n);
+	void* object =  bt_search_helper(bt->root, key, bt->n);
+	if(object == NULL)
+	{
+		bt->op_errno = CBT_KEY_NOT_FOUND;
+	}
+	return object;
 }
 
 /**
@@ -298,6 +304,10 @@ void *cbt_delete(cranbtree_t * bt, int key)
 		    bt->min_key ==
 		    key ? cbt_calculate_min_key(bt->root) : bt->min_key;
 		bt->length--;
+	}
+	else
+	{
+		bt->op_errno = CBT_KEY_NOT_FOUND;		
 	}
 
 	return object;
