@@ -99,7 +99,7 @@ static void *cbt_update_helper(cbt_node_t * node, int key, void *new_object,
 static void cbt_copy_metadata(cranbtree_t * src, cranbtree_t * dest);
 static cbt_node_t *cbt_copy_nodes(cbt_node_t * node, int n);
 static int calculate_depth(cbt_node_t * node);
-
+static int cbt_visit_all_helper(cbt_node_t* node, void (* visitor) (void *));
 /*
  * int -> bptree_t* 
  * Given the maximum number of entries in a node
@@ -250,6 +250,22 @@ void *cbt_search(cranbtree_t * bt, int key)
 	assert(bt != NULL);
 	return bt_search_helper(bt->root, key, bt->n);
 }
+
+/**
+  * crabtree_t* , void (*) (void *)  -> void
+  * EFFECTS: Calls the visitor function on every object pointer stored in the tree
+  * MODIFIES: cranbtree.objects
+  * REQUIRES: The  visitor function to take a void* as an argument and to return nothing 
+  * PARAMETERS: 
+  * - cranbtree_t* cbt: the tree to be traversed
+  * - void (* visitor) (void *): the function that will be invoked on every object in the tree  
+  */
+void cbt_visit_all(cranbtree_t* cbt, void (* visitor) (void *))
+{
+	assert(cbt != NULL);
+ 	cbt_visit_all_helper(cbt->root, visitor);
+}
+
 
 /**
   * cranbtree_t*, void* key,  int (*)(void*) -> void*
@@ -1786,4 +1802,25 @@ static bool print_level(cbt_node_t * root, int n, int level, int currentLevel)
 	}
 	return ret;
 
+}
+
+
+static int cbt_visit_all_helper(cbt_node_t* node, void (* visitor) (void *))
+{
+	if(node == NULL)
+	{
+		return 0;
+	}
+
+	for(int i = 0; i < node->len; i++)
+	{
+		visitor(node->entry[i]->object);		
+	}
+
+	int acc = 0;
+	for(int i = 0, n = node->len + 1; i < n; i++)
+	{
+		acc += cbt_visit_all_helper(node->children[i], visitor);
+	}
+	return acc;
 }

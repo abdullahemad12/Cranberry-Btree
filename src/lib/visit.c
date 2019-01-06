@@ -29,7 +29,7 @@
 #include "lib.h"
 
 
-int cbt_visit_all_helper(cbt_node_t* node, void (* visitor) (void *))
+static int cbt_visit_all_helper(cbt_node_t* node, void (* visitor) (void *))
 {
 	if(node == NULL)
 	{
