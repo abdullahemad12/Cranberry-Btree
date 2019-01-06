@@ -23,11 +23,45 @@ cbt_node_t *children_original21[22];
  * Tests for the visit all function  *
  *************************************/
 int visit = 0;
-void cbt_visit_all_helper(void)
+void cbt_visit_all_helper(void* obj)
+{
+	int x = *((int*) obj);
+	visit += x;
+}
 void cbt_visit_all_test1(void)
 {
 	cranbtree_t* cbt = cbt_create(3);
-	cn
+	cbt_visit_all(cbt, NULL);
+	CU_ASSERT_EQUAL(cbt->op_errno, CBT_INVALID_ARGUMENT);
+	CU_ASSERT_EQUAL(cbt->length, 0);
+	CU_ASSERT_EQUAL(cbt->is_clone, false);
+	CU_ASSERT_EQUAL(cbt->n, 3);
+	cbt_destroy(cbt, free);
+}
+void cbt_visit_all_test2(void)
+{
+	cranbtree_t* cbt = cbt_create(3);
+	cbt_visit_all(cbt, cbt_visit_all_helper);
+	CU_ASSERT_EQUAL(cbt->op_errno, CBT_NO_ERROR);
+	CU_ASSERT_EQUAL(cbt->length, 0);
+	CU_ASSERT_EQUAL(cbt->is_clone, false);
+	CU_ASSERT_EQUAL(cbt->n, 3);
+	cbt_destroy(cbt, free);
+}
+void cbt_visit_all_test3(void)
+{
+	cranbtree_t* cbt = cbt_create(5);
+	for(int i = 0; i <= 10000; i++){
+		int* x = malloc(sizeof(int));
+		*x = i;
+		cbt_insert(cbt, i, x);
+	}
+	cbt_visit_all(cbt, cbt_visit_all_helper);
+	CU_ASSERT_EQUAL(cbt->op_errno, CBT_NO_ERROR);
+	int expected = (10000 * (10000 + 1)) / 2;
+	CU_ASSERT_EQUAL(visit, expected);
+	visit = 0;
+	cbt_destroy(cbt, free);
 }
 
 void comp_test(void)
