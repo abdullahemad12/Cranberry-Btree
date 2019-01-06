@@ -36,7 +36,8 @@ This section contains description of the interface
 	<tr>
 		<td>struct cranbtree*</td>
 		<td>
-			<b><a href="#create">cranbtree_t* cbt_create(int n)</a></b>
+			<b><a href="#create">cranbtree_t* cbt_create(int n)</a></b><br>
+			creates a new cranbtree
 		</td>
 	</tr>
 
