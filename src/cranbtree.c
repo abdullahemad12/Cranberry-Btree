@@ -246,8 +246,9 @@ int cbt_key_search(cranbtree_t * cbt, void *object)
 void *cbt_search(cranbtree_t * bt, int key)
 {
 	assert(bt != NULL);
-	void* object =  bt_search_helper(bt->root, key, bt->n);
-	if(object == NULL)
+	void *object = bt_search_helper(bt->root, key, bt->n);
+
+	if (object == NULL)
 	{
 		bt->op_errno = CBT_KEY_NOT_FOUND;
 	}
@@ -286,12 +287,11 @@ void *cbt_navigation_search(cranbtree_t * cbt, void *key,
   * - cranbtree_t* cbt: the tree to be traversed
   * - void (* visitor) (void *): the function that will be invoked on every object in the tree  
   */
-void cbt_visit_all(cranbtree_t* cbt, void (* visitor) (void *))
+void cbt_visit_all(cranbtree_t * cbt, void (*visitor) (void *))
 {
 	assert(cbt != NULL);
- 	cbt_visit_all_helper(cbt->root, visitor);
+	cbt_visit_all_helper(cbt->root, visitor);
 }
-
 
 /**
   * cranbtree_t*, int -> void*
@@ -323,7 +323,7 @@ void *cbt_delete(cranbtree_t * bt, int key)
 	}
 	else
 	{
-		bt->op_errno = CBT_KEY_NOT_FOUND;		
+		bt->op_errno = CBT_KEY_NOT_FOUND;
 	}
 
 	return object;

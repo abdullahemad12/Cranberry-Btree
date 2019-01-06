@@ -23,14 +23,17 @@ cbt_node_t *children_original21[22];
  * Tests for the visit all function  *
  *************************************/
 int visit = 0;
-void cbt_visit_all_helper_test(void* obj)
+void cbt_visit_all_helper_test(void *obj)
 {
-	int x = *((int*) obj);
+	int x = *((int *)obj);
+
 	visit += x;
 }
+
 void cbt_visit_all_test1(void)
 {
-	cranbtree_t* cbt = cbt_create(3);
+	cranbtree_t *cbt = cbt_create(3);
+
 	cbt_visit_all(cbt, NULL);
 	CU_ASSERT_EQUAL(cbt->op_errno, CBT_INVALID_ARGUMENT);
 	CU_ASSERT_EQUAL(cbt->length, 0);
@@ -38,9 +41,11 @@ void cbt_visit_all_test1(void)
 	CU_ASSERT_EQUAL(cbt->n, 3);
 	cbt_destroy(cbt, free);
 }
+
 void cbt_visit_all_test2(void)
 {
-	cranbtree_t* cbt = cbt_create(3);
+	cranbtree_t *cbt = cbt_create(3);
+
 	cbt_visit_all(cbt, cbt_visit_all_helper_test);
 	CU_ASSERT_EQUAL(cbt->op_errno, CBT_NO_ERROR);
 	CU_ASSERT_EQUAL(cbt->length, 0);
@@ -48,17 +53,22 @@ void cbt_visit_all_test2(void)
 	CU_ASSERT_EQUAL(cbt->n, 3);
 	cbt_destroy(cbt, free);
 }
+
 void cbt_visit_all_test3(void)
 {
-	cranbtree_t* cbt = cbt_create(5);
-	for(int i = 0; i <= 10000; i++){
-		int* x = malloc(sizeof(int));
+	cranbtree_t *cbt = cbt_create(5);
+
+	for (int i = 0; i <= 10000; i++)
+	{
+		int *x = malloc(sizeof(int));
+
 		*x = i;
 		cbt_insert(cbt, i, x);
 	}
 	cbt_visit_all(cbt, cbt_visit_all_helper_test);
 	CU_ASSERT_EQUAL(cbt->op_errno, CBT_NO_ERROR);
 	int expected = (10000 * (10000 + 1)) / 2;
+
 	CU_ASSERT_EQUAL(visit, expected);
 	visit = 0;
 	cbt_destroy(cbt, free);
@@ -2012,6 +2022,7 @@ void cbt_get_length_test(void)
 	{
 		CU_ASSERT_EQUAL(n - i, cbt_get_length(bt));
 		void *obj = cbt_delete(bt, i);
+
 		free(obj);
 	}
 
@@ -2037,8 +2048,9 @@ void cbt_get_min_key_test(void)
 	{
 		CU_ASSERT_EQUAL(i, cbt_get_min_key(bt));
 		void *obj = cbt_delete(bt, i);
+
 		free(obj);
-	
+
 	}
 
 	cbt_destroy(bt, free);
@@ -2063,6 +2075,7 @@ void cbt_get_max_key_test(void)
 	{
 		CU_ASSERT_EQUAL(n - 1, cbt_get_max_key(bt));
 		void *obj = cbt_delete(bt, i);
+
 		free(obj);
 	}
 

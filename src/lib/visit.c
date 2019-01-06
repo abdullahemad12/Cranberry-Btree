@@ -28,21 +28,29 @@
 
 #include "lib.h"
 
-
-static int cbt_visit_all_helper(cbt_node_t* node, void (* visitor) (void *))
+/**
+  * EFFECTS: invokes the function visitor on all the objects in all the entries 
+  *           starting from the root node
+  * RETURNS: the number of visited entries
+  * PARAMETERS: 
+  * - cbt_node_t* node: a parent node
+  * - void (* visitor) (void *): pointer to the function to be called
+  */
+static int cbt_visit_all_helper(cbt_node_t * node, void (*visitor) (void *))
 {
-	if(node == NULL)
+	if (node == NULL)
 	{
 		return 0;
 	}
 
-	for(int i = 0; i < node->len; i++)
+	for (int i = 0; i < node->len; i++)
 	{
-		visitor(node->entry[i]->object);		
+		visitor(node->entry[i]->object);
 	}
 
 	int acc = 0;
-	for(int i = 0, n = node->len + 1; i < n; i++)
+
+	for (int i = 0, n = node->len + 1; i < n; i++)
 	{
 		acc += cbt_visit_all_helper(node->children[i], visitor);
 	}
