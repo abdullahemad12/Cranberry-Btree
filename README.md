@@ -33,10 +33,17 @@ This section contains description of the interface
 		<th>Return</th>
 		<th>Function and Description</th>
 	</tr>
+	<tr>
+		<td>struct cranbtree*</td>
+		<td>
+			<b>[cranbtree_t* cbt_create(int n)](#create)</b>
+		</td>
+	</tr>
+	<>
 </table>
 
 
-<b>1. cranbtree_t* cbt_create(int n);</b>
+<b><a name="create"></a>1. cranbtree_t* cbt_create(int n);</b>
 
 Description: given a number n, Allocates memory for the metadata of the binary.
 
