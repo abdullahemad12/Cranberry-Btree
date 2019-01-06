@@ -19,6 +19,17 @@ void *copy_int_obj(void *x);
 cbt_node_t *node21 = NULL;
 cbt_node_t *children_original21[22];
 
+/*************************************
+ * Tests for the visit all function  *
+ *************************************/
+int visit = 0;
+void cbt_visit_all_helper(void)
+void cbt_visit_all_test1(void)
+{
+	cranbtree_t* cbt = cbt_create(3);
+	cn
+}
+
 void comp_test(void)
 {
 	cranbtree_t *bt = cbt_create(3);

@@ -193,6 +193,18 @@ int cbt_key_search(cranbtree_t * cbt, void *object);
 void *cbt_navigation_search(cranbtree_t * cbt, void *key,
 			    int (*visitor) (void *, void *));
 
+
+/**
+  * crabtree_t* , void (*) (void *)  -> void
+  * EFFECTS: Calls the visitor function on every object pointer stored in the tree
+  * MODIFIES: cranbtree.objects
+  * REQUIRES: The  visitor function to take a void* as an argument and to return nothing 
+  * PARAMETERS: 
+  * - cranbtree_t* cbt: the tree to be traversed
+  * - void (* visitor) (void *): the function that will be invoked on every object in the tree  
+  */
+void cbt_visit_all(cranbtree_t* cbt, void (* visitor) (void *));
+
 /**
   * cranbtree_t*, int -> void*
   * EFFECTS: Given a key, removes an object from the tree
