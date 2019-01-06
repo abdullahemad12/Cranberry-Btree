@@ -75,7 +75,6 @@ This section contains description of the interface
 			updates a specific entry in the tree with the given new object
 		</td>
 	</tr>
-
 	<tr>
 		<td>void*</td>
 		<td>
