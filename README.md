@@ -36,14 +36,14 @@ This section contains description of the interface
 	<tr>
 		<td>struct cranbtree*</td>
 		<td>
-			<b>[cranbtree_t* cbt_create(int n)](#create)</b>
+			<b><a href="#create">cranbtree_t* cbt_create(int n)</a></b>
 		</td>
 	</tr>
-	<>
+
 </table>
 
 
-<b><a name="create"></a>1. cranbtree_t* cbt_create(int n);</b>
+<b><a id="create"></a>1. cranbtree_t* cbt_create(int n);</b>
 
 Description: given a number n, Allocates memory for the metadata of the binary.
 
