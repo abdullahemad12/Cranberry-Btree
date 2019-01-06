@@ -200,6 +200,7 @@ parameter:
 - int key: search key, that will be used later to retrieve the object.
 
 Return value: returns a pointer to the object that was inserted by the user, or NULL if the key was not found. 
+
 <b><a id="visit"></a>7.void cbt_visit_all(cranbtree_t* cbt, void (* visitor) (void *))</b>
 
 Description: Calls the visitor function on every object pointer stored in the tree. Sets op_errno on errors. 
