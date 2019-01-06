@@ -28,11 +28,12 @@ This section contains description of the interface
 
 ##### Functions Summary
 
-| Return Type        | Function and Description      |
-| ------------------ | ----------------------------- |
-| cranbtree_t*       | cranbtree_t* cbt_create(int n)|
-                        creates a cranbree tree
-
+<table>
+	<tr>
+		<th>Return</th>
+		<th>Function and Description</th>
+	</tr>
+</table>
 
 
 <b>1. cranbtree_t* cbt_create(int n);</b>
