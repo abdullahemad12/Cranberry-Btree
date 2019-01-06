@@ -33,6 +33,7 @@
 #define CBT_CLONE_BAD_OP       1
 #define CBT_KEY_NOT_FOUND      2
 #define CBT_INVALID_ARGUMENT   3
+#define CBT_UNEXPECTED_ERROR   4
 /*
  * error messages
  */
@@ -41,7 +42,8 @@ static char *errorMessages[] = {
 	NULL,
 	"Cannot perform this operation on a cloned tree",
 	"No such key was found in the tree",
-	"The function was provided with invalid (Possibly NULL) arguments"
+	"The function was provided with invalid (Possibly NULL) arguments",
+	"An unexpected error occured",
 };
 
 /*

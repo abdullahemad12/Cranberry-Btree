@@ -40,7 +40,7 @@
 #include "lib/helpers.c"
 #include "lib/update.c"
 #include "lib/clone.c"
-
+#include "lib/visit.c"
 /*
  * prototypes
  */
@@ -288,7 +288,8 @@ void *cbt_navigation_search(cranbtree_t * cbt, void *key,
   */
 void cbt_visit_all(cranbtree_t* cbt, void (* visitor) (void *))
 {
-
+	assert(cbt != NULL);
+ 	cbt_visit_all_helper(cbt->root, visitor);
 }
 
 

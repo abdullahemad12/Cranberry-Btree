@@ -45,6 +45,7 @@ static cbt_node_t *split_full_root(cbt_node_t * old_root, int n);
 static bool is_leaf(cbt_node_t * node);
 static cbt_entry_t *bt_node_search_helper(cbt_entry_t * entries[], int key,
 					  int min, int max);
+int cbt_visit_all_helper(cbt_node_t* node, void (* visitor) (void *));
 static void *bt_search_helper(cbt_node_t * node, int key, int n);
 static void *cbt_navigation_search_helper(cbt_node_t * node, void *key,
 					  int (*visitor) (void *, void *));
