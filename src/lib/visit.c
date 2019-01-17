@@ -31,13 +31,14 @@
 /**
   * EFFECTS: invokes the function visitor on all the objects in all the entries 
   *           starting from the root node
-  * RETURNS: the number of visited entries
+  * RETURNS: 0 on success or nonzero number on failure
   * PARAMETERS: 
   * - cbt_node_t* node: a parent node
-  * - void (* visitor) (void *): pointer to the function to be called
+  * - int (* visitor) (int *): pointer to the function to be called
   */
-static int cbt_visit_all_helper(cbt_node_t * node, void (*visitor) (void *))
+static int cbt_visit_all_helper(cbt_node_t * node, int (*visitor) (void *))
 {
+	int err;	
 	if (node == NULL)
 	{
 		return 0;
@@ -45,7 +46,7 @@ static int cbt_visit_all_helper(cbt_node_t * node, void (*visitor) (void *))
 
 	for (int i = 0; i < node->len; i++)
 	{
-		visitor(node->entry[i]->object);
+		err = visitor(node->entry[i]->object);
 	}
 
 	int acc = 0;

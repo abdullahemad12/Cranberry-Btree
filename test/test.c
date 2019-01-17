@@ -111,6 +111,7 @@ static struct test utests[] = {
 	//{"cbt_visit_all_test1", cbt_visit_all_test1},
 	//{"cbt_visit_all_test2", cbt_visit_all_test2},
 	{"cbt_visit_all_test3", cbt_visit_all_test3},
+	{"cbt_visit_all_test4", cbt_visit_all_test4},
 	{NULL, NULL}
 
 };

@@ -23,11 +23,23 @@ cbt_node_t *children_original21[22];
  * Tests for the visit all function  *
  *************************************/
 int visit = 0;
-void cbt_visit_all_helper_test(void *obj)
+int cbt_visit_all_helper_test(void *obj)
 {
 	int x = *((int *)obj);
 
 	visit += x;
+	return 0;
+}
+int cbt_visit_all_helper_test2(void *obj)
+{	
+	int x = *((int *)obj);
+	CU_ASSERT(x <= 500);	
+	if(x == 500)
+	{
+		return 2;
+	}
+	return 0;
+	
 }
 
 void cbt_visit_all_test1(void)
@@ -72,6 +84,26 @@ void cbt_visit_all_test3(void)
 	CU_ASSERT_EQUAL(visit, expected);
 	visit = 0;
 	cbt_destroy(cbt, free);
+}
+void cbt_visit_all_test4(void)
+{
+	int err;
+	cranbtree_t *cbt = cbt_create(5);
+
+	for (int i = 0; i <= 10000; i++)
+	{
+		int *x = malloc(sizeof(int));
+
+		*x = i;
+		cbt_insert(cbt, i, x);
+	}
+	err = cbt_visit_all(cbt, cbt_visit_all_helper_test2);
+	CU_ASSERT_EQUAL(err, 2);
+	CU_ASSERT_EQUAL(cbt->op_errno, CBT_USER_ERROR);
+
+	visit = 0;
+	cbt_destroy(cbt, free);
+
 }
 
 void comp_test(void)

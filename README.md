@@ -204,10 +204,14 @@ Return value: returns a pointer to the object that was inserted by the user, or 
 <b><a id="visit"></a>7.void cbt_visit_all(cranbtree_t* cbt, void (* visitor) (void *))</b>
 
 Description: Calls the visitor function on every object pointer stored in the tree. Sets op_errno on errors. 
-
+Returns: zero on success, nonzero on failure
 parameters: 
 - cranbtree_t* bt: pointer to the cranbtree structure.
 - void (* visitor) (void *): pointer to a function that will be called on every object in the tree
+                             the function should take a generic pointer as an input (which will be the
+                             objects stored in the tree) and return an int. On success, it should return 0
+                             on failure it should return a nonzero integer n which will cause the cbt_vist_all 
+                             function to terminate and return the number n
 
 <b><a id="navigate"></a>8. void* cbt_navigation_search(cranbtree_t* cbt, void* key, int (*visitor)(void*, void*));</b>
 
