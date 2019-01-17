@@ -296,7 +296,13 @@ void *cbt_navigation_search(cranbtree_t * cbt, void *key,
 int cbt_visit_all(cranbtree_t * cbt, int (*visitor) (void *))
 {
 	assert(cbt != NULL);
-	return cbt_visit_all_helper(cbt->root, visitor);
+	int err = cbt_visit_all_helper(cbt->root, visitor);
+
+	if (err)
+	{
+		cbt->op_errno = CBT_USER_ERROR;
+	}
+	return err;
 }
 
 /**

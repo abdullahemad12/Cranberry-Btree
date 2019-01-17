@@ -36,7 +36,6 @@
 #define CBT_UNEXPECTED_ERROR   4
 #define CBT_USER_ERROR         5
 
-
 /*
  * error messages
  */
@@ -217,7 +216,6 @@ void *cbt_navigation_search(cranbtree_t * cbt, void *key,
   * - int (* visitor) (void *): the function that will be invoked on every object in the tree  
   */
 int cbt_visit_all(cranbtree_t * cbt, int (*visitor) (void *));
-
 
 /**
   * cranbtree_t*, int -> void*

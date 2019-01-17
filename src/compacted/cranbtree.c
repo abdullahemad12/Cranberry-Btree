@@ -99,7 +99,7 @@ static void *cbt_update_helper(cbt_node_t * node, int key, void *new_object,
 static void cbt_copy_metadata(cranbtree_t * src, cranbtree_t * dest);
 static cbt_node_t *cbt_copy_nodes(cbt_node_t * node, int n);
 static int calculate_depth(cbt_node_t * node);
-static int cbt_visit_all_helper(cbt_node_t * node, void (*visitor) (void *));
+static int cbt_visit_all_helper(cbt_node_t * node, int (*visitor) (void *));
 
 /*
  * int -> bptree_t* 
@@ -253,18 +253,30 @@ void *cbt_search(cranbtree_t * bt, int key)
 }
 
 /**
-  * crabtree_t* , void (*) (void *)  -> void
+  * crabtree_t* , int (*) (void *)  -> int
   * EFFECTS: Calls the visitor function on every object pointer stored in the tree
   * MODIFIES: cranbtree.objects
-  * REQUIRES: The  visitor function to take a void* as an argument and to return nothing 
+  * REQUIRES: The  visitor function to take a void* as an argument and to return an int
+  *           the int should be zero indicating that the call success and the function 
+  *           should proceed to the other nodes, or nonzero, which will cause the function to
+  *           terminate and return the error code value
+  * RETURNS:
+  * - 0 on success
+  * - nonzero returned by the visitor function on failure 
   * PARAMETERS: 
   * - cranbtree_t* cbt: the tree to be traversed
-  * - void (* visitor) (void *): the function that will be invoked on every object in the tree  
+  * - int (* visitor) (void *): the function that will be invoked on every object in the tree  
   */
-void cbt_visit_all(cranbtree_t * cbt, void (*visitor) (void *))
+int cbt_visit_all(cranbtree_t * cbt, int (*visitor) (void *))
 {
 	assert(cbt != NULL);
-	cbt_visit_all_helper(cbt->root, visitor);
+	int err = cbt_visit_all_helper(cbt->root, visitor);
+
+	if (err)
+	{
+		cbt->op_errno = CBT_USER_ERROR;
+	}
+	return err;
 }
 
 /**
@@ -1804,8 +1816,10 @@ static bool print_level(cbt_node_t * root, int n, int level, int currentLevel)
 
 }
 
-static int cbt_visit_all_helper(cbt_node_t * node, void (*visitor) (void *))
+static int cbt_visit_all_helper(cbt_node_t * node, int (*visitor) (void *))
 {
+	int err;
+
 	if (node == NULL)
 	{
 		return 0;
@@ -1813,14 +1827,20 @@ static int cbt_visit_all_helper(cbt_node_t * node, void (*visitor) (void *))
 
 	for (int i = 0; i < node->len; i++)
 	{
-		visitor(node->entry[i]->object);
+		err = visitor(node->entry[i]->object);
+		if (err)
+		{
+			return err;
+		}
 	}
-
-	int acc = 0;
 
 	for (int i = 0, n = node->len + 1; i < n; i++)
 	{
-		acc += cbt_visit_all_helper(node->children[i], visitor);
+		err = cbt_visit_all_helper(node->children[i], visitor);
+		if (err)
+		{
+			return err;
+		}
 	}
-	return acc;
+	return 0;
 }

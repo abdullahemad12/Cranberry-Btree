@@ -30,16 +30,19 @@ int cbt_visit_all_helper_test(void *obj)
 	visit += x;
 	return 0;
 }
+
 int cbt_visit_all_helper_test2(void *obj)
-{	
+{
 	int x = *((int *)obj);
-	CU_ASSERT(x <= 500);	
-	if(x == 500)
+
+	CU_ASSERT_EQUAL(visit, 0);
+	if (x == 500)
 	{
+		visit = 2;
 		return 2;
 	}
 	return 0;
-	
+
 }
 
 void cbt_visit_all_test1(void)
@@ -85,9 +88,12 @@ void cbt_visit_all_test3(void)
 	visit = 0;
 	cbt_destroy(cbt, free);
 }
+
 void cbt_visit_all_test4(void)
 {
 	int err;
+
+	visit = 0;
 	cranbtree_t *cbt = cbt_create(5);
 
 	for (int i = 0; i <= 10000; i++)

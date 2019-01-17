@@ -38,7 +38,8 @@
   */
 static int cbt_visit_all_helper(cbt_node_t * node, int (*visitor) (void *))
 {
-	int err;	
+	int err;
+
 	if (node == NULL)
 	{
 		return 0;
@@ -47,13 +48,19 @@ static int cbt_visit_all_helper(cbt_node_t * node, int (*visitor) (void *))
 	for (int i = 0; i < node->len; i++)
 	{
 		err = visitor(node->entry[i]->object);
+		if (err)
+		{
+			return err;
+		}
 	}
-
-	int acc = 0;
 
 	for (int i = 0, n = node->len + 1; i < n; i++)
 	{
-		acc += cbt_visit_all_helper(node->children[i], visitor);
+		err = cbt_visit_all_helper(node->children[i], visitor);
+		if (err)
+		{
+			return err;
+		}
 	}
-	return acc;
+	return 0;
 }
